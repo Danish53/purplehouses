@@ -5554,7 +5554,7 @@ li#h_area {
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  
+
 }
 
 .ph-showcase-card__photo {
@@ -5618,16 +5618,16 @@ li#h_area {
 
 .ph-showcase-card__gallery-ic {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 40px;
+  top: 10px;
+  right: 25px;
+  /* width: 40px; */
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 20px;
-  opacity: 0.95;
+  /* font-size: 28px; */
+  /* opacity: 0.95; */
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
 }
 
@@ -5687,7 +5687,7 @@ li#h_area {
 
 .ph-showcase-card__avail {
   margin: 0 0 8px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.75);
 }
@@ -5704,6 +5704,7 @@ li#h_area {
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
+  border-radius: 6px;
   color: #fff !important;
   text-decoration: none !important;
   background: var(--ph-theme, #43086b);

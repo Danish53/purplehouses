@@ -63,7 +63,8 @@ export default function PropertyShowcaseCard({
   const galleryCount = gallery.length;
 
   return (
-    <div className={`ph-showcase-wrap ${columnClass} d-flex`}>
+    <div className={`ph-showcase-wrap ${columnClass} d-flex relative`}>
+      <div className="w-100">
       <article className="ph-showcase-card w-100">
         <div className="ph-showcase-card__media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -93,8 +94,9 @@ export default function PropertyShowcaseCard({
               />
             </div>
           ) : null}
+          
 
-          {galleryCount > 1 ? (
+          {/* {galleryCount > 1 ? (
             <span
               className="ph-showcase-card__gallery-ic"
               title={`${galleryCount} photos`}
@@ -102,7 +104,12 @@ export default function PropertyShowcaseCard({
             >
               <i className="fas fa-images" />
             </span>
-          ) : null}
+          ) : null} */}
+          {availDateStr ? (
+                <p className="ph-showcase-card__avail ph-showcase-card__gallery-ic">
+                  Available {availDateStr}
+                </p>
+              ) : null}
 
           <div className="ph-showcase-card__bottom">
             <div className="ph-showcase-card__left">
@@ -124,18 +131,7 @@ export default function PropertyShowcaseCard({
                   {property.prop_size || "—"}
                 </span>
               </p>
-              {availDateStr ? (
-                <p className="ph-showcase-card__avail">
-                  Available {availDateStr}
-                </p>
-              ) : null}
-              <Link
-                href={`/applying?property_id=${property.id}`}
-                className="ph-showcase-card__apply"
-                onClick={(e) => e.stopPropagation()}
-              >
-                Apply now
-              </Link>
+              
             </div>
             <div className="ph-showcase-card__right">
               <p className="ph-showcase-card__ptype">
@@ -149,7 +145,25 @@ export default function PropertyShowcaseCard({
             </div>
           </div>
         </div>
+        
       </article>
+      <div className="d-flex justify-content-between mt-2">
+      <Link
+                href={`/property/${property.id}`}
+                className="ph-showcase-card__apply"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Details
+              </Link>
+      <Link
+                href={`/applying?property_id=${property.id}`}
+                className="ph-showcase-card__apply"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Apply now
+              </Link>
+              </div>
+              </div>
     </div>
   );
 }

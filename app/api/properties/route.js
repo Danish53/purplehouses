@@ -3,6 +3,17 @@ import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import crypto from "crypto";
+
+/** Short, unique names — avoids very long URLs / odd chars on Linux + nginx. */
+function buildStoredFilename(originalName, subdir) {
+  let ext = path.extname(originalName || "").toLowerCase();
+  if (!ext || !/^\.[a-z0-9]{1,12}$/i.test(ext)) {
+    if (subdir === "property_images") ext = ".jpg";
+    else ext = ".bin";
+  }
+  return `${Date.now()}_${crypto.randomBytes(4).toString("hex")}${ext}`;
+}
 
 async function saveFiles(files, subdir) {
   const paths = [];
@@ -16,7 +27,7 @@ async function saveFiles(files, subdir) {
       if (file.size > 20 * 1024 * 1024) continue; // 20 MB limit per file
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      const filename = buildStoredFilename(file.name, subdir);
       await writeFile(path.join(dir, filename), buffer);
       paths.push(`${subdir}/${filename}`);
     }

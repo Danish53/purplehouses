@@ -88,23 +88,20 @@ export default function DashboardIndexClient({ properties }) {
               paginated.map((prop) => (
                 <tr key={prop.id}>
                   <td>
-                    {prop.gallery_images && prop.gallery_images.length > 0 ? (
-                      <img
-                        src={`/media/${prop.gallery_images[0]}`}
-                        width="100"
-                        height="75"
-                        style={{ objectFit: "cover" }}
-                        alt=""
-                      />
-                    ) : (
-                      <img
-                        src="/images/default-property.jpg"
-                        width="100"
-                        height="75"
-                        style={{ objectFit: "cover" }}
-                        alt=""
-                      />
-                    )}
+                    <img
+                      src={
+                        prop.primary_image_url ||
+                        (Array.isArray(prop.gallery_urls) &&
+                        prop.gallery_urls.length > 0
+                          ? prop.gallery_urls[0]
+                          : null) ||
+                        "/images/1.jpg"
+                      }
+                      width="100"
+                      height="75"
+                      style={{ objectFit: "cover" }}
+                      alt=""
+                    />
                   </td>
                   <td className="detailProp">
                     <span className="fw-bold">{prop.prop_title}</span>

@@ -125,4 +125,17 @@ sshpass -p '9gJhgAYY' rsync -avz \
 sshpass -p '9gJhgAYY' ssh -o StrictHostKeyChecking=no root@74.208.170.184 \
   "cd /var/www/purplehousing && npm run build && pm2 restart purplehousing"
 ```
+
+### Property images on the live server
+
+Photos are saved under `public/media/` (for example `public/media/property_images/`). That path is **gitignored** and the sample deploy command above **excludes `public/media/`**, so the server only has what you copy there.
+
+- **Database vs files**: Rows in MySQL store paths like `property_images/123_photo.jpg`. If you import the DB but never copy the files, browsers request `/media/property_images/...` and get **404** — thumbnails look broken.
+- **Fix**: Copy media to the VPS after deploy (from the machine that has the files), for example:
+
+  `rsync -avz ./public/media/ user@your-server:/var/www/purplehousing/public/media/`
+
+- **New uploads from the dashboard** need a writable folder on the server: `mkdir -p public/media/property_images` (and correct owner/permissions for the user running Node/PM2).
+- **Serverless hosts** (e.g. some Next.js clouds): the filesystem is often read-only or wiped on redeploy — use object storage (S3, R2, etc.) for uploads instead of local disk.
+
 # purplehousing
