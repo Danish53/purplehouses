@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ blog.title }}{% endblock %}
+
+{% block content %}
+
+<section>
+  <div class="aboutUsPage aboutUsPage--wide">
+    <div class="inner">
+
+      <div class="top">
+        <p class="text-center title">Blogs Details</p>
+
+        <div class="bredcrumbs">
+          <p class="m-0">
+            Home <span><i class="fas fa-angle-right fs-5 mx-2"></i></span> Blogs Details</p>
+        </div>
+      </div>
+
+      <div class="content">
+        
+<div class="container py-4">
+    <h1 class="mb-4">{{ blog.title }}</h1>
+
+    {% if blog.safe_image_url %}
+        <img src="{{ blog.safe_image_url }}" class="img-fluid mb-3" alt="{{ blog.title }}">
+    {% elif blog.image %}
+        <img src="{{ blog.image.url }}" class="img-fluid mb-3" alt="{{ blog.title }}">
+    {% endif %}
+
+    <div class="mb-3">
+        {{ blog.description|safe }}
+    </div>
+
+    {% if keyword_list %}
+    <div class="mb-4">
+        <strong>Keywords:</strong>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+            {% for keyword in keyword_list %}
+            <a href="{% url 'blogShow' %}?q={{ keyword|urlencode }}" class="btn btn-sm btn-outline-secondary">{{ keyword }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
+    <a href="{% url 'blogShow' %}" class="btn btn-blogShow">Back to All Blogs</a>
+</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

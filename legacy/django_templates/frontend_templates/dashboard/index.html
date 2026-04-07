@@ -1,0 +1,223 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="dashboardHome">
+  <div class="inner">
+    <div class="top d-flex align-items-center justify-content-between">
+      <p class="m-0 title">Properties</p>
+      <a href="{% url 'dashboardListning' %}" style="
+          background: #43086b;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+      ">Create a Listing</a>
+    </div>
+
+    <div class="dashboard-property-search-wrap my-4 d-none">
+      <div class="d-flex flex-wrap justify-content-between align-items-start">
+        <!-- Search Form -->
+        <div class="flex-grow-1 me-3">
+          <div class="dashboard-property-search">
+            <form method="get" action="">
+              <div class="row g-0">
+                <div class="col-md-8">
+                  <input class="form-control rounded-0" name="keyword" placeholder="Search" type="text"/>
+                </div>
+                <div class="col-md-2">
+                  <input class="form-control rounded-0" name="property_id" placeholder="Property ID" type="text"/>
+                </div>
+                <input type="hidden" name="prop_status" value=""/>
+                <div class="col-md-2 d-grid">
+                  <button class="btn btn-submitSearch" type="submit">Search</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Sort By -->
+        <div class="dashboard-property-sort-by mt-3 mt-lg-0">
+          <div class="sort-by">
+            <div class="d-flex align-items-center">
+              <div class="me-2 sortText">Sort by:</div>
+              <select id="sort_properties" class="form-select" aria-label="Sort Properties">
+                <option value="">Default Order</option>
+                <option value="a_price">Price - Low to High</option>
+                <option value="d_price">Price - High to Low</option>
+                <option value="featured_first">Featured Listings First</option>
+                <option value="a_date">Date - Old to New</option>
+                <option value="d_date">Date - New to Old</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Thumbnail</th>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Type</th>
+          <th>Listing Status</th>
+          <th>Available</th>
+          <th>Price</th>
+          <th>Featured</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for prop in page_obj %}
+        <tr>
+          <!-- Thumbnail -->
+          <td>
+            {% if prop.gallery_images %}
+              <a href="#">
+                <img src="{{ MEDIA_URL }}{{ prop.gallery_images.0 }}" width="100" height="75"/>
+              </a>
+            {% else %}
+              <img src="{% static 'default-property.jpg' %}" width="100" height="75"/>
+            {% endif %}
+          </td>
+
+          <!-- Title & Address -->
+          <td class="detailProp">
+            <a href="#" class="fw-bold">{{ prop.prop_title }}</a><br/>
+            {{ prop.property_map_address }}
+          </td>
+
+          <!-- Status -->
+          <td>
+            <!-- <span class="badge {% if prop.status == 'approved' %}bg-warning{% elif prop.status == 'expire' %}bg-success{% else %}bg-secondary{% endif %}">
+              {{ prop.status|title }}
+            </span> -->
+            <span class="badge
+{% if prop.status == 'approved' %}
+    bg-warning
+{% elif prop.status == 'expire' %}
+    bg-success
+{% else %}
+    bg-secondary
+{% endif %}">
+  {{ prop.status|title }}
+</span>
+          </td>
+
+          <!-- Type & Purpose -->
+          <td class="common">{{ prop.category }}</td>
+          <td class="common">{{ prop.purpose }}</td>
+          <td class="common">{{ prop.available_date|default:prop.created_at|date:"m/d/Y" }}</td>
+
+          <!-- Price -->
+          <td><strong class="fw-bold">{{ prop.prop_price }}</strong></td>
+
+          <!-- Featured -->
+          <td class="common">{% if prop.featured %}Yes{% else %}No{% endif %}</td>
+
+          <!-- Actions -->
+          <td class="text-end">
+            <div class="dropdown">
+              <button class="btn btn-dashboardAction dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
+              <ul class="dropdown-menu dropdown-menu-end actionDropdown">
+                <li><a class="dropdown-item" href="{% url 'property_stats' prop.id%}">View Stats</a></li>
+                <li><a class="dropdown-item" href="{% url 'update_property' prop.id %}">Edit</a></li>
+                <li><a class="dropdown-item text-danger delete-property" href="{% url 'delete_property' prop.id %}" data-id="{{ prop.id }}">Delete</a></li>
+                <!-- <li><a class="dropdown-item clone-property" href="#" data-property="{{ prop.id }}">Duplicate</a></li> -->
+                <!-- <li><a class="dropdown-item expire-property" href="#" data-id="{{ prop.id }}">Expire</a></li>
+               -->
+                <li>
+  <a class="dropdown-item toggle-property"
+     href="#"
+     data-id="{{ prop.id }}">
+     {% if prop.status == 'expire' %}
+        Go Live
+     {% else %}
+        Expire
+     {% endif %}
+  </a>
+</li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="9" class="text-center">No properties found.</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% if page_obj.has_other_pages %}
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center mt-3">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+<script>
+document.querySelectorAll('.toggle-property').forEach(btn => {
+    btn&&btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const propId = this.dataset.id;
+        const row = this.closest('tr');
+        const badge = row.querySelector('.badge');
+
+        fetch(`/property/${propId}/expire/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'expire') {
+                badge.textContent = 'Expire';
+                badge.className = 'badge bg-success';
+                this.textContent = 'Go Live';
+            } else {
+                badge.textContent = 'Approved';
+                badge.className = 'badge bg-warning';
+                this.textContent = 'Expire';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+</script>
+
+  
+
+  </div>
+</div>
+{% endblock %}

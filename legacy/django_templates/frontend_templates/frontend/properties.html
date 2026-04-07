@@ -1,0 +1,405 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Properties{% endblock %}
+{% block content %}
+<section>
+  <div class="allProperties">
+    <div class="inner">
+      <div class="top"></div>
+
+      <div class="propertiesList">
+        <div
+          class="d-flex topHeader ph-home-shell propertyShows align-items-center justify-content-between"
+        >
+          <div class="left">
+            <p class="m-0 titleProperty">All Properties</p>
+          </div>
+          <div class="right">
+            <button class="btn btn-list"><i class="fa fa-list"></i></button>
+            <button class="btn btn-grid"><i class="fa fa-table"></i></button>
+          </div>
+        </div>
+
+        <div class="ph-home-shell">
+          <p class="m-0 aprtmentTag py-3">
+            Apartments and Houses for Rent near TCU
+          </p>
+          <p class="m-0 findTag">
+            Find the best Apartments and Houses for Rent close to TCU. This is
+            all our rental listing in Fort Worth, TX. Let’s choose a perfect
+            place with Purple Housing.
+          </p>
+        </div>
+
+        {% comment %}
+        {% include 'frontend/includes/property_filter_bar.html' with variant='page' %}
+        {% endcomment %}
+
+        <div
+          class="ph-home-shell propertySort d-flex justify-content-between align-items-center pt-3"
+        >
+          <div class="left d-flex align-items-center gap-3">
+            <img
+              src="{% static 'images/builder-icon.png' %}"
+              class="img-fluid"
+              alt="icon"
+              width="25"
+            />
+            <p class="m-0 propertyTag">{{ property_total }} Properties</p>
+          </div>
+          <div class="right d-none">
+            <div class="sort-by">
+              <div class="d-flex align-items-center gap-2">
+                <div class="sort-by-title">Sort by:</div>
+
+                <select
+                  id="sort_properties"
+                  class="form-select"
+                  aria-label="Sort by"
+                >
+                  <option value="">Default Order</option>
+                  <option value="a_price">Price - Low to High</option>
+                  <option value="d_price">Price - High to Low</option>
+                  <option value="featured_first">
+                    Featured Listings First
+                  </option>
+                  <option value="a_date">Date - Old to New</option>
+                  <option value="d_date">Date - New to Old</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="container grid-container mt-2">
+          <div class="row">
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card border-0">
+                <p class="m-0 topCardTitle">Available 06/01/2027</p>
+                <img
+                  class="card-img-top rounded-0"
+                  src="https://picsum.photos/362/180"
+                  alt="Card image cap"
+                />
+                <div
+                  class="cardBottomText d-flex alig-items-center justify-content-between w-100 position-absolute"
+                >
+                  <div class="left">
+                    <p class="m-0">Rent</p>
+                    <p class="m-0">$6,000</p>
+                  </div>
+                  <div class="right pt-3">
+                    <i class="fa fa-heart"></i>
+                    <i class="fa fa-plus"></i>
+                  </div>
+                </div>
+                <div class="card-body px-2 m-0">
+                  <h5 class="card-title">2301 W Cantey St</h5>
+                  <p class="card-text mb-2">
+                    2301 West Cantey Street, Fort Worth, TX, USA
+                  </p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <div
+                    class="cardToAction d-flex align-items-center justify-content-between mt-4"
+                  >
+                    <button class="btn btn-detail">Details</button>
+                    <button class="btn btn-apply">Apply Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card border-0">
+                <p class="m-0 topCardTitle">Available 06/01/2027</p>
+                <img
+                  class="card-img-top rounded-0"
+                  src="https://picsum.photos/362/180"
+                  alt="Card image cap"
+                />
+                <div
+                  class="cardBottomText d-flex alig-items-center justify-content-between w-100 position-absolute"
+                >
+                  <div class="left">
+                    <p class="m-0">Rent</p>
+                    <p class="m-0">$6,000</p>
+                  </div>
+                  <div class="right pt-3">
+                    <i class="fa fa-heart"></i>
+                    <i class="fa fa-plus"></i>
+                  </div>
+                </div>
+                <div class="card-body px-2 m-0">
+                  <h5 class="card-title">2301 W Cantey St</h5>
+                  <p class="card-text mb-2">
+                    2301 West Cantey Street, Fort Worth, TX, USA
+                  </p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <div
+                    class="cardToAction d-flex align-items-center justify-content-between mt-4"
+                  >
+                    <button class="btn btn-detail">Details</button>
+                    <button class="btn btn-apply">Apply Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card border-0">
+                <p class="m-0 topCardTitle">Available 06/01/2027</p>
+                <img
+                  class="card-img-top rounded-0"
+                  src="https://picsum.photos/362/180"
+                  alt="Card image cap"
+                />
+                <div
+                  class="cardBottomText d-flex alig-items-center justify-content-between w-100 position-absolute"
+                >
+                  <div class="left">
+                    <p class="m-0">Rent</p>
+                    <p class="m-0">$6,000</p>
+                  </div>
+                  <div class="right pt-3">
+                    <i class="fa fa-heart"></i>
+                    <i class="fa fa-plus"></i>
+                  </div>
+                </div>
+                <div class="card-body px-2 m-0">
+                  <h5 class="card-title">2301 W Cantey St</h5>
+                  <p class="card-text mb-2">
+                    2301 West Cantey Street, Fort Worth, TX, USA
+                  </p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <div
+                    class="cardToAction d-flex align-items-center justify-content-between mt-4"
+                  >
+                    <button class="btn btn-detail">Details</button>
+                    <button class="btn btn-apply">Apply Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card border-0">
+                <p class="m-0 topCardTitle">Available 06/01/2027</p>
+                <img
+                  class="card-img-top rounded-0"
+                  src="https://picsum.photos/362/180"
+                  alt="Card image cap"
+                />
+                <div
+                  class="cardBottomText d-flex alig-items-center justify-content-between w-100 position-absolute"
+                >
+                  <div class="left">
+                    <p class="m-0">Rent</p>
+                    <p class="m-0">$6,000</p>
+                  </div>
+                  <div class="right pt-3">
+                    <i class="fa fa-heart"></i>
+                    <i class="fa fa-plus"></i>
+                  </div>
+                </div>
+                <div class="card-body px-2 m-0">
+                  <h5 class="card-title">2301 W Cantey St</h5>
+                  <p class="card-text mb-2">
+                    2301 West Cantey Street, Fort Worth, TX, USA
+                  </p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <div
+                    class="cardToAction d-flex align-items-center justify-content-between mt-4"
+                  >
+                    <button class="btn btn-detail">Details</button>
+                    <button class="btn btn-apply">Apply Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card border-0">
+                <p class="m-0 topCardTitle">Available 06/01/2027</p>
+                <img
+                  class="card-img-top rounded-0"
+                  src="https://picsum.photos/362/180"
+                  alt="Card image cap"
+                />
+                <div
+                  class="cardBottomText d-flex alig-items-center justify-content-between w-100 position-absolute"
+                >
+                  <div class="left">
+                    <p class="m-0">Rent</p>
+                    <p class="m-0">$6,000</p>
+                  </div>
+                  <div class="right pt-3">
+                    <i class="fa fa-heart"></i>
+                    <i class="fa fa-plus"></i>
+                  </div>
+                </div>
+                <div class="card-body px-2 m-0">
+                  <h5 class="card-title">2301 W Cantey St</h5>
+                  <p class="card-text mb-2">
+                    2301 West Cantey Street, Fort Worth, TX, USA
+                  </p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <div
+                    class="cardToAction d-flex align-items-center justify-content-between mt-4"
+                  >
+                    <button class="btn btn-detail">Details</button>
+                    <button class="btn btn-apply">Apply Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card border-0">
+                <p class="m-0 topCardTitle">Available 06/01/2027</p>
+                <img
+                  class="card-img-top rounded-0"
+                  src="https://picsum.photos/362/180"
+                  alt="Card image cap"
+                />
+                <div
+                  class="cardBottomText d-flex alig-items-center justify-content-between w-100 position-absolute"
+                >
+                  <div class="left">
+                    <p class="m-0">Rent</p>
+                    <p class="m-0">$6,000</p>
+                  </div>
+                  <div class="right pt-3">
+                    <i class="fa fa-heart"></i>
+                    <i class="fa fa-plus"></i>
+                  </div>
+                </div>
+                <div class="card-body px-2 m-0">
+                  <h5 class="card-title">2301 W Cantey St</h5>
+                  <p class="card-text mb-2">
+                    2301 West Cantey Street, Fort Worth, TX, USA
+                  </p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <div
+                    class="cardToAction d-flex align-items-center justify-content-between mt-4"
+                  >
+                    <button class="btn btn-detail">Details</button>
+                    <button class="btn btn-apply">Apply Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="ph-home-shell grid-container mt-2">
+          <div class="row">
+    {% for property in properties %}
+    <div class="col-12 col-md-6 col-xl-4 property-card-shell">
+      <div class="card border-0 property-list-card">
+        <div class="property-list-card__media">
+          <p class="m-0 topCardTitle">Available {{ property.available_date|default:property.created_at|date:"m/d/Y" }}</p>
+
+          {% if property.gallery_images %}
+          <div class="slick-slider-carousel slider-1 card-slider">
+            {% for image in property.gallery_images %}
+            <div>
+              <img
+                class="card-img-top rounded-0 img-fluid"
+                src="{{ MEDIA_URL }}{{ image }}"
+                alt="{{ property.prop_title }}"
+              >
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <img
+            class="card-img-top rounded-0"
+            src="{% static 'images/default-property.jpg' %}"
+            alt="{{ property.prop_title }}"
+          >
+          {% endif %}
+
+          <div class="cardBottomText d-flex align-items-center justify-content-between w-100 position-absolute">
+            <div class="left">
+              <p class="m-0">Rent</p>
+              <p class="m-0">${{ property.prop_price }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body property-list-card__body m-0">
+          <h5 class="card-title">{{ property.prop_title }}</h5>
+          <p class="card-text mb-2">{{ property.property_map_address }}</p>
+          <p class="m-0 sliderIcon">
+            <i class="fa fa-bed me-2"></i>{{ property.prop_beds|default:"-" }}
+            <i class="fa fa-shower mx-2"></i>{{ property.prop_baths|default:"-" }}
+            <i class="fas fa-ruler-combined mx-2"></i>{{ property.prop_size|default:"-" }}
+          </p>
+          <div class="cardToAction d-flex align-items-center justify-content-between mt-4">
+            <!-- <button class="btn btn-detail">Details</button>
+            <button class="btn btn-apply">Apply Now</button> -->
+	            {% if property.id %}
+	      <a href="{% url 'property_details' property.id %}" class="btn btn-detail">Details</a>
+	    {% endif %}
+              
+              
+              <a href="{% url 'add_application'%}" class="btn btn-apply">Apply Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+        <div class="my-pagination d-flex justify-content-center gap-2 mt-4">
+  {% if properties.has_previous %}
+	    <a href="?page={{ properties.previous_page_number }}{% if pagination_query %}&{{ pagination_query }}{% endif %}" class="btn btn-primary border-0" style="background-color: #400866;">Prev</a>
+  {% endif %}
+
+  {% for num in properties.paginator.page_range %}
+    {% if properties.number == num %}
+      <span class="btn btn-secondary active">{{ num }}</span>
+    {% else %}
+	      <a href="?page={{ num }}{% if pagination_query %}&{{ pagination_query }}{% endif %}" class="btn btn-primary border-0" style="background-color: #400866;">{{ num }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if properties.has_next %}
+	    <a href="?page={{ properties.next_page_number }}{% if pagination_query %}&{{ pagination_query }}{% endif %}" class="btn btn-primary border-0" style="background-color: #400866;">Next</a>
+  {% endif %}
+</div>
+
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

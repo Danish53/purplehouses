@@ -1,0 +1,285 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = []
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Property {
+  id                          BigInt    @id @default(autoincrement())
+  prop_title                  String    @db.VarChar(255)
+  prop_des                    String?   @db.LongText
+  category                    String?   @db.VarChar(255)
+  purpose                     String?   @db.VarChar(255)
+  prop_price                  String    @db.VarChar(50)
+  prop_beds                   Int?
+  prop_baths                  Int?
+  prop_size                   String    @db.VarChar(50)
+  prop_year_built             String?   @db.VarChar(10)
+  prop_features               String    @db.LongText
+  property_map_address        String    @db.VarChar(255)
+  country                     String    @db.VarChar(100)
+  administrative_area_level_1 String    @db.VarChar(100)
+  city                        String    @db.VarChar(100)
+  zip_code                    String    @db.VarChar(20)
+  lat                         String    @db.VarChar(100)
+  lng                         String    @db.VarChar(100)
+  prop_google_street_view     String    @db.VarChar(10)
+  gallery_images              String    @db.LongText
+  featured_image              Int       @default(0)
+  featured                    Boolean
+  login_required              Boolean
+  disclaimer                  String?   @db.LongText
+  status                      String    @db.VarChar(20)
+  created_at                  DateTime  @db.DateTime(6)
+  updated_at                  DateTime  @db.DateTime(6)
+  attachments                 String    @default("[]") @db.LongText
+  video_file                  String?   @db.VarChar(255)
+  youtube_url                 String?   @db.VarChar(200)
+  available_date              DateTime? @db.Date
+}
+
+model auth_group {
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @unique(map: "name") @db.VarChar(150)
+  auth_group_permissions auth_group_permissions[]
+  auth_user_groups       auth_user_groups[]
+}
+
+model auth_group_permissions {
+  id              BigInt          @id @default(autoincrement())
+  group_id        Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onUpdate: Restrict, map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+  auth_group      auth_group      @relation(fields: [group_id], references: [id], onUpdate: Restrict, map: "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id")
+
+  @@unique([group_id, permission_id], map: "auth_group_permissions_group_id_permission_id_0cd325b0_uniq")
+  @@index([permission_id], map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+}
+
+model auth_permission {
+  id                         Int                          @id @default(autoincrement())
+  name                       String                       @db.VarChar(255)
+  content_type_id            Int
+  codename                   String                       @db.VarChar(100)
+  auth_group_permissions     auth_group_permissions[]
+  django_content_type        django_content_type          @relation(fields: [content_type_id], references: [id], onUpdate: Restrict, map: "auth_permission_content_type_id_2f476e4b_fk_django_co")
+  auth_user_user_permissions auth_user_user_permissions[]
+
+  @@unique([content_type_id, codename], map: "auth_permission_content_type_id_codename_01ab375a_uniq")
+}
+
+model auth_user {
+  id                         Int                          @id @default(autoincrement())
+  password                   String                       @db.VarChar(128)
+  last_login                 DateTime?                    @db.DateTime(6)
+  is_superuser               Boolean
+  username                   String                       @unique(map: "username") @db.VarChar(150)
+  first_name                 String                       @db.VarChar(150)
+  last_name                  String                       @db.VarChar(150)
+  email                      String                       @db.VarChar(254)
+  is_staff                   Boolean
+  is_active                  Boolean
+  date_joined                DateTime                     @db.DateTime(6)
+  auth_user_groups           auth_user_groups[]
+  auth_user_user_permissions auth_user_user_permissions[]
+  django_admin_log           django_admin_log[]
+}
+
+model auth_user_groups {
+  id         BigInt     @id @default(autoincrement())
+  user_id    Int
+  group_id   Int
+  auth_group auth_group @relation(fields: [group_id], references: [id], onUpdate: Restrict, map: "auth_user_groups_group_id_97559544_fk_auth_group_id")
+  auth_user  auth_user  @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "auth_user_groups_user_id_6a12ed8b_fk_auth_user_id")
+
+  @@unique([user_id, group_id], map: "auth_user_groups_user_id_group_id_94350c0c_uniq")
+  @@index([group_id], map: "auth_user_groups_group_id_97559544_fk_auth_group_id")
+}
+
+model auth_user_user_permissions {
+  id              BigInt          @id @default(autoincrement())
+  user_id         Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onUpdate: Restrict, map: "auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm")
+  auth_user       auth_user       @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id")
+
+  @@unique([user_id, permission_id], map: "auth_user_user_permissions_user_id_permission_id_14a6b632_uniq")
+  @@index([permission_id], map: "auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm")
+}
+
+model blogs {
+  id          BigInt @id @default(autoincrement())
+  image       String @db.VarChar(100)
+  title       String @db.VarChar(200)
+  description String @db.LongText
+  keywords    String @db.VarChar(255)
+}
+
+model booking {
+  id            BigInt   @id @default(autoincrement())
+  property_name String   @db.VarChar(255)
+  date          DateTime @db.Date
+  time          String   @db.VarChar(50)
+  first_name    String   @db.VarChar(50)
+  last_name     String   @db.VarChar(50)
+  email         String   @db.VarChar(254)
+  phone         String   @db.VarChar(20)
+  status        String   @db.VarChar(20)
+  created_at    DateTime @db.DateTime(6)
+  reason        String?  @db.LongText
+}
+
+model django_admin_log {
+  id                  Int                  @id @default(autoincrement())
+  action_time         DateTime             @db.DateTime(6)
+  object_id           String?              @db.LongText
+  object_repr         String               @db.VarChar(200)
+  action_flag         Int                  @db.UnsignedSmallInt
+  change_message      String               @db.LongText
+  content_type_id     Int?
+  user_id             Int
+  django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  auth_user           auth_user            @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "django_admin_log_user_id_c564eba6_fk_auth_user_id")
+
+  @@index([content_type_id], map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  @@index([user_id], map: "django_admin_log_user_id_c564eba6_fk_auth_user_id")
+}
+
+model django_content_type {
+  id               Int                @id @default(autoincrement())
+  app_label        String             @db.VarChar(100)
+  model            String             @db.VarChar(100)
+  auth_permission  auth_permission[]
+  django_admin_log django_admin_log[]
+
+  @@unique([app_label, model], map: "django_content_type_app_label_model_76bd3d3b_uniq")
+}
+
+model django_migrations {
+  id      BigInt   @id @default(autoincrement())
+  app     String   @db.VarChar(255)
+  name    String   @db.VarChar(255)
+  applied DateTime @db.DateTime(6)
+}
+
+model django_session {
+  session_key  String   @id @db.VarChar(40)
+  session_data String   @db.LongText
+  expire_date  DateTime @db.DateTime(6)
+
+  @@index([expire_date], map: "django_session_expire_date_a5c62663")
+}
+
+model frontend_applying {
+  id                    BigInt    @id @default(autoincrement())
+  property_id           String    @db.VarChar(10)
+  move_in_date          DateTime  @db.Date
+  applicant_type        String    @db.VarChar(10)
+  first_name            String    @db.VarChar(50)
+  last_name             String    @db.VarChar(50)
+  email                 String    @db.VarChar(254)
+  confirm_email         String    @db.VarChar(254)
+  phone                 String    @db.VarChar(20)
+  hear_about            String    @db.VarChar(50)
+  address1              String?   @db.VarChar(200)
+  address2              String?   @db.VarChar(200)
+  city                  String?   @db.VarChar(50)
+  state                 String?   @db.VarChar(2)
+  zipcode               String?   @db.VarChar(10)
+  reside_from_month     String?   @db.VarChar(2)
+  reside_from_year      String?   @db.VarChar(4)
+  monthly_rent          Decimal?  @db.Decimal(10, 2)
+  monthly_mortgage      Decimal?  @db.Decimal(10, 2)
+  landlord_name         String?   @db.VarChar(100)
+  landlord_phone        String?   @db.VarChar(20)
+  landlord_email        String?   @db.VarChar(254)
+  home_email            String?   @db.VarChar(254)
+  reason_for_leaving    String?   @db.LongText
+  other_adults          Boolean
+  adult_count           Int?      @db.UnsignedSmallInt
+  adult_names           String?   @db.LongText
+  adult_emails          String?   @db.LongText
+  adult_phones          String?   @db.LongText
+  dependents_under_18   Boolean
+  dependent_first_name  String?   @db.VarChar(50)
+  dependent_last_name   String?   @db.VarChar(50)
+  dependent_relation    String?   @db.VarChar(50)
+  dependent_dob         DateTime? @db.Date
+  has_pets              Boolean
+  pet_count             Int?      @db.UnsignedSmallInt
+  pet_details           String?   @db.LongText
+  dob                   DateTime? @db.Date
+  license_number        String?   @db.VarChar(50)
+  license_state         String?   @db.VarChar(20)
+  personal_email        String?   @db.VarChar(254)
+  personal_phone        String?   @db.VarChar(20)
+  emergency_name        String?   @db.VarChar(100)
+  emergency_phone       String?   @db.VarChar(20)
+  emergency_relation    String?   @db.VarChar(50)
+  ssn                   String    @db.VarChar(100)
+  has_vehicle           Boolean
+  vehicle_make          String?   @db.VarChar(50)
+  vehicle_color         String?   @db.VarChar(20)
+  vehicle_license       String?   @db.VarChar(20)
+  vehicle_modal         String?   @db.VarChar(50)
+  vehicle_year          String?   @db.VarChar(4)
+  employer_name         String?   @db.VarChar(100)
+  employer_address1     String?   @db.VarChar(200)
+  employer_address2     String?   @db.VarChar(200)
+  employer_city         String?   @db.VarChar(50)
+  employer_state        String?   @db.VarChar(2)
+  employer_zip          String?   @db.VarChar(10)
+  employer_phone        String?   @db.VarChar(20)
+  monthly_salary        Decimal?  @db.Decimal(10, 2)
+  position              String?   @db.VarChar(50)
+  years_worked          Int?      @db.UnsignedSmallInt
+  supervisor_name       String?   @db.VarChar(100)
+  eviction_history      String    @db.VarChar(3)
+  eviction_explain      String?   @db.LongText
+  criminal_history      String    @db.VarChar(3)
+  criminal_explain      String?   @db.LongText
+  income_3x_rent        String    @db.VarChar(3)
+  income_explain        String?   @db.LongText
+  employment_history    String    @db.VarChar(3)
+  employment_explain    String?   @db.LongText
+  residency_history     String    @db.VarChar(3)
+  residency_explain     String?   @db.LongText
+  photo_id              String    @db.VarChar(100)
+  billing_first_name    String    @db.VarChar(50)
+  billing_last_name     String    @db.VarChar(50)
+  billing_address1      String    @db.VarChar(200)
+  billing_address2      String?   @db.VarChar(200)
+  billing_city          String    @db.VarChar(50)
+  billing_state         String    @db.VarChar(2)
+  billing_zip           String    @db.VarChar(10)
+  agree_terms           Boolean
+  authorized_name       String    @db.VarChar(100)
+  submitted_at          DateTime  @db.DateTime(6)
+  payment_method        String?   @db.VarChar(20)
+  payment_status        String    @db.VarChar(10)
+  stripe_charge_id      String?   @db.VarChar(100)
+  stripe_payment_intent String?   @db.VarChar(100)
+  amount                Decimal   @db.Decimal(10, 2)
+}
+
+model frontend_contact {
+  id         BigInt   @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  email      String   @db.VarChar(254)
+  work_phone String   @db.VarChar(20)
+  subject    String   @db.VarChar(200)
+  message    String   @db.LongText
+  created_at DateTime @db.DateTime(6)
+}
+
+model frontend_customuser {
+  id         BigInt   @id @default(autoincrement())
+  username   String   @unique(map: "username") @db.VarChar(150)
+  password   String   @db.VarChar(255)
+  is_active  Boolean
+  created_at DateTime @db.DateTime(6)
+}

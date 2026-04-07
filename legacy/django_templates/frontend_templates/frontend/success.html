@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Success</title>
+    <style>
+        body {
+            background: #f4f6f8;
+            font-family: Arial, sans-serif;
+        }
+        .box {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #43086b;
+        }
+        .message {
+            color: #2a5f37;
+            font-weight: 600;
+        }
+        .warning {
+            color: #8a5a00;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>Payment Successful</h1>
+    {% if payment_message %}
+    <p class="message">{{ payment_message }}</p>
+    {% elif payment_warning %}
+    <p class="warning">{{ payment_warning }}</p>
+    {% else %}
+    <p>Thank you, your payment was successfully charged.</p>
+    {% endif %}
+    <a href="{% url 'home' %}" style="text-decoration:none;color:#43086b;">Go to Home</a>
+</div>
+
+</body>
+</html>

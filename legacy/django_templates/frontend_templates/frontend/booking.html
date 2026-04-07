@@ -1,0 +1,169 @@
+{% extends 'base.html' %} {% block title %}Booking{% endblock %} 
+{% block content %}
+<section>
+  <div class="aboutUsPage">
+    <div class="inner">
+      <div class="top">
+        <p class="text-center title">Schedule a Showing</p>
+
+        <div class="bredcrumbs">
+          <p class="m-0">
+            Home
+            <span><i class="fas fa-angle-right fs-5 mx-2"></i></span> Schedule a
+            Showing
+          </p>
+        </div>
+      </div>
+
+      <div class="container booking-shell-wrap">
+        <div class="row booking-shell">
+          <!-- Sidebar -->
+          <div class="col-12 col-lg-4 booking-sidebar-col">
+            <ul class="list-group step-sidebar position-relative rounded-0">
+              <li class="list-group-item active" data-step="1">
+                Select Property
+                <div class="summary mt-1">
+                  <span id="summary-property"></span>
+                </div>
+              </li>
+              <li class="list-group-item" data-step="2">
+                Date & Time
+                <div class="summary mt-1">
+                  <span id="summary-date"></span>
+                  <span id="summary-time"></span>
+                </div>
+              </li>
+              <li class="list-group-item rounded-0" data-step="3">
+                Your Information
+                <div class="summary mt-1">
+                  <span id="summary-name"></span>
+                  <span id="summary-email"></span>
+                  <span id="summary-phone"></span>
+                </div>
+              </li>
+			  <li class="booking-sidebar__contact rounded-0 border-0 text-center w-100">
+				Get in Touch<br/>
+				admin@purplehousing.com
+			  </li>
+            </ul>
+          </div>
+          <!-- Main Form -->
+          <div class="col-12 col-lg-8 booking-form-col">
+            <form id="bookingForm" method="POST" action="{% url 'create_booking' %}">
+				{% csrf_token %}
+              <!-- Step 1 -->
+              <div class="step-content booking-step-content" data-step="1">
+                <div class="mb-3">
+                  <label for="property" class="form-label">Property</label>
+                  <select class="form-select" id="property" name="property" required>
+                    <option value="">Select Property</option>
+                    {% for prop in properties %}
+      <option value="{{ prop.prop_title }}">{{ prop.prop_title }}</option>
+    {% endfor %}
+                    <!-- <option value="Property 2">Property 2</option>
+                    <option value="Property 3">Property 3</option> -->
+                  </select>
+                </div>
+              </div>
+              <!-- Step 2 -->
+              <div class="step-content booking-step-content d-none" data-step="2">
+                <div class="mb-3">
+                  <label for="date" class="form-label">Select Date</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    placeholder="Please Select Date"
+                    id="date"
+                    name="date"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3" id="time-wrapper" style="display: none">
+                  <label class="form-label">Select Time</label>
+
+                  <!-- Amelia-style groups -->
+                  <div class="slot-group">
+                    <h6>Morning</h6>
+                    <div id="slots-morning" class="slots"></div>
+                  </div>
+
+                  <div class="slot-group">
+                    <h6>Afternoon</h6>
+                    <div id="slots-afternoon" class="slots"></div>
+                  </div>
+
+                  <div class="slot-group">
+                    <h6>Evening</h6>
+                    <div id="slots-evening" class="slots"></div>
+                  </div>
+
+                  <input type="hidden" id="time" name="time" required />
+                </div>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="step-content booking-step-content d-none" data-step="3">
+                <div class="mb-3">
+                  <label for="name" class="form-label">First Name</label>
+                  <input type="text" class="form-control" id="fname" name="fname" placeholder="Enter Your First Name" required />
+                </div>
+                <div class="mb-3">
+                  <label for="name" class="form-label">Last Name</label>
+                  <input type="text" class="form-control" id="lname" name="lname" placeholder="Enter Your Last Name" required />
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+					name="email"
+					placeholder="Enter Your Email"
+                    required
+                  />
+                </div>
+                <div class="mb-3 d-flex flex-column">
+                  <label for="phone" class="form-label">Phone</label>
+                  <input type="tel" class="form-control" id="phone" name="phone" required />
+                </div>
+              </div>
+              <!-- Navigation Buttons -->
+              <!-- <div class="step-footer d-flex justify-content-between mt-3" style="position: absolute; width: 100%; top: 333px;">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  id="prevBtn"
+                  disabled
+                >
+                  Back
+                </button>
+                <button type="submit" class="btn btn-next-booking" id="nextBtn">
+                  Next
+                </button>
+              </div> -->
+
+			  <div class="step-footer booking-step-footer d-flex justify-content-between mt-3">
+
+    <button type="button" class="btn btn-secondary" id="prevBtn">Back</button>
+
+    <button type="button" class="btn btn-next-booking" id="nextBtn">Next</button>
+
+    <button type="submit" class="btn btn-primary d-none" id="submitBtn">
+        Submit
+    </button>
+
+</div>
+
+			 
+			  
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

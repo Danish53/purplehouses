@@ -1,0 +1,36 @@
+{
+  "name": "purplehousing",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed:admin": "node scripts/seed-admin.js",
+    "check:db": "node scripts/check-db.js"
+  },
+  "dependencies": {
+    "@prisma/client": "5.14",
+    "bcryptjs": "^2.4.3",
+    "flatpickr": "^4.6.13",
+    "formidable": "^3.5.2",
+    "iron-session": "^8.0.4",
+    "leaflet": "^1.9.4",
+    "mysql2": "^3.14.1",
+    "next": "^15.3.1",
+    "nodemailer": "^6.10.0",
+    "prisma": "5.14",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0",
+    "react-slick": "^0.30.3",
+    "sharp": "^0.34.1",
+    "slick-carousel": "^1.8.1",
+    "stripe": "^17.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.3.1"
+  }
+}

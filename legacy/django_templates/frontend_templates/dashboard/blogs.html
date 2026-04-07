@@ -1,0 +1,54 @@
+{% extends "dashboard/layout.html" %}
+{% block content %}
+<div class="dashboardHome">
+  <div class="inner">
+    <div class="top d-flex align-items-center justify-content-between">
+      <p class="m-0 title">All Blogs List</p>
+      <a href="{% url 'blog_create' %}">
+        <button class="btn btn-createList rounded-1">Create New Blog Post</button>
+      </a>
+    </div>
+   
+    <hr>
+
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Keywords</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for blog in blogs %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>
+            {% if blog.image %}
+            <img src="{{ blog.image.url }}" width="100" alt="{{ blog.title }}">
+            {% else %}
+            No Image
+            {% endif %}
+          </td>
+          <td>{{ blog.title }}</td>
+          <td>{{ blog.description|striptags|truncatewords:20 }}</td>
+          <td>{{ blog.keywords }}</td>
+          <td>
+            <a href="{% url 'blog_update' blog.id %}" class="btn btn-sm btn_blog_edit">Edit</a>
+            <a href="{% url 'blog_delete' blog.id %}" class="btn btn-sm btn_blog_delete">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center">No blogs found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends "dashboard/layout.html" %}
+{% block content %}
+<div class="dashboardHome">
+  <div class="inner">
+
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for booking in bookings %}
+        <tr id="booking-{{ booking.id }}">
+          <td>{{ booking.property_name }}</td>
+          <td>{{ booking.date }}</td>
+          <td>{{ booking.time }}</td>
+          <td>{{ booking.first_name }} {{ booking.last_name }}</td>
+          <td>{{ booking.email }}</td>
+          <td>{{ booking.phone }}</td>
+          <td class="status">
+            {% if booking.status == "Approved" %}
+              <span class="badge bg-success">{{ booking.status }}</span>
+            {% elif booking.status == "Disapproved" %}
+              <span class="badge bg-danger">{{ booking.status }}</span>
+            {% else %}
+              <span class="badge bg-warning">{{ booking.status }}</span>
+            {% endif %}
+          </td>
+          <td class="text-end actions" data-current-status="{{ booking.status }}">
+            {% if booking.status == "Approved" %}
+              <button class="btn btn-danger btn-sm update-status" data-id="{{ booking.id }}" data-status="Disapproved">Disapprove</button>
+            {% elif booking.status == "Disapproved" %}
+              <button class="btn btn-success btn-sm update-status" data-id="{{ booking.id }}" data-status="Approved">Approve</button>
+            {% else %}
+              <button class="btn btn-success btn-sm update-status" data-id="{{ booking.id }}" data-status="Approved">Approve</button>
+              <button class="btn btn-danger btn-sm update-status" data-id="{{ booking.id }}" data-status="Disapproved">Disapprove</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if bookings.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ bookings.previous_page_number }}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+        </li>
+        {% endif %}
+
+        {% for num in bookings.paginator.page_range %}
+            {% if bookings.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > bookings.number|add:'-3' and num < bookings.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if bookings.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ bookings.next_page_number }}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Next</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+ <script>
+document&&document.addEventListener('DOMContentLoaded', function() {
+    function renderActionButtons(bookingId, status) {
+        if (status === 'Approved') {
+            return `<button class="btn btn-danger btn-sm update-status" data-id="${bookingId}" data-status="Disapproved">Disapprove</button>`;
+        }
+        if (status === 'Disapproved') {
+            return `<button class="btn btn-success btn-sm update-status" data-id="${bookingId}" data-status="Approved">Approve</button>`;
+        }
+        return `
+            <button class="btn btn-success btn-sm update-status" data-id="${bookingId}" data-status="Approved">Approve</button>
+            <button class="btn btn-danger btn-sm update-status" data-id="${bookingId}" data-status="Disapproved">Disapprove</button>
+        `;
+    }
+
+    document.addEventListener('click', function(event) {
+        const button = event.target.closest('.update-status');
+        if (!button) {
+            return;
+        }
+        const bookingId = button.dataset.id;
+        const status = button.dataset.status;
+
+        let reason = '';
+        if(status === 'Disapproved'){
+            reason = prompt("Enter reason for disapproval:");
+            if(reason === null) return; // Cancelled
+        }
+
+        fetch("{% url 'update_booking_status' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                id: bookingId,
+                status: status,
+                reason: reason
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                const statusCell = document.querySelector(`#booking-${bookingId} .status`);
+                const actionsCell = document.querySelector(`#booking-${bookingId} .actions`);
+                statusCell.innerHTML = '';
+
+                let badge = document.createElement('span');
+                badge.classList.add('badge');
+                badge.classList.add(status === 'Approved' ? 'bg-success' : 'bg-danger');
+                badge.textContent = data.status;
+                statusCell.appendChild(badge);
+
+                if (actionsCell) {
+                    actionsCell.dataset.currentStatus = data.status;
+                    actionsCell.innerHTML = renderActionButtons(bookingId, data.status);
+                }
+
+                if (data.email_sent && (!data.email_sent.customer || !data.email_sent.admin)) {
+                    alert('Status updated, but one or more email notifications could not be delivered from the server.');
+                }
+            }
+        })
+        .catch(error => console.error(error));
+    });
+});
+</script>
+
+
+
+
+  </div>
+</div>
+{% endblock %}

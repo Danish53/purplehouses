@@ -1,0 +1,282 @@
+{% extends "dashboard/layout.html" %}
+{% block content %}
+
+<div class="dashboardHome">
+  <div class="inner">
+
+    <div class="top d-flex align-items-center justify-content-between">
+      <p class="m-0 title">Application Details</p>
+      <a href="{% url 'applyingListDashboard' %}" class="btn btn-secondary btn-sm">Back</a>
+    </div>
+
+    <hr>
+
+    <!-- ================= STEP 1 ================= -->
+    <h5 class="mb-3">Step 1: Property Info</h5>
+    <table class="table table-bordered">
+      <tr>
+        <th>Property ID</th>
+        <td>{{ app.property_id }}</td>
+      </tr>
+      <tr>
+        <th>Move In Date</th>
+        <td>{{ app.move_in_date }}</td>
+      </tr>
+      <tr>
+        <th>Applicant Type</th>
+        <td>{{ app.applicant_type|title }}</td>
+      </tr>
+    </table>
+
+    <!-- ================= STEP 2 ================= -->
+    <h5 class="mb-3 mt-4">Step 2: Contact Info</h5>
+    <table class="table table-bordered">
+      <tr>
+        <th>Name</th>
+        <td>{{ app.first_name }} {{ app.last_name }}</td>
+      </tr>
+      <tr>
+        <th>Email</th>
+        <td>{{ app.email }}</td>
+      </tr>
+      <tr>
+        <th>Phone</th>
+        <td>{{ app.phone }}</td>
+      </tr>
+      <tr>
+        <th>Hear About</th>
+        <td>{{ app.hear_about }}</td>
+      </tr>
+    </table>
+
+    <!-- ================= STEP 3 ================= -->
+    <h5 class="mb-3 mt-4">Step 3: Previous Residence</h5>
+    <table class="table table-bordered">
+      <tr><th>Address</th><td>{{ app.address1 }} {{ app.address2 }}</td></tr>
+      <tr><th>City</th><td>{{ app.city }}</td></tr>
+      <tr><th>State</th><td>{{ app.state }}</td></tr>
+      <tr><th>Zipcode</th><td>{{ app.zipcode }}</td></tr>
+      <tr><th>Reside From</th><td>{{ app.reside_from_month }}/{{ app.reside_from_year }}</td></tr>
+      <tr><th>Monthly Rent</th><td>{{ app.monthly_rent }}</td></tr>
+      <tr><th>Mortgage</th><td>{{ app.monthly_mortgage }}</td></tr>
+      <tr><th>Landlord</th><td>{{ app.landlord_name }}</td></tr>
+      <tr><th>Landlord Phone</th><td>{{ app.landlord_phone }}</td></tr>
+      <tr><th>Reason For Leaving</th><td>{{ app.reason_for_leaving }}</td></tr>
+    </table>
+
+    <!-- ================= STEP 4 ================= -->
+    <h5 class="mb-3 mt-4">Step 4: Housemates</h5>
+    <table class="table table-bordered">
+      <tr><th>Other Adults</th><td>{{ app.other_adults|yesno:"Yes,No" }}</td></tr>
+      <tr><th>Adult Count</th><td>{{ app.adult_count }}</td></tr>
+
+      {% if app.adult_names %}
+      <tr>
+        <th>Adult Names</th>
+        <td>
+          <ul>
+            {% for name in app.adult_names %}
+              <li>{{ name }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+
+      <tr><th>Dependents Under 18</th><td>{{ app.dependents_under_18|yesno:"Yes,No" }}</td></tr>
+      <tr><th>Dependent Name</th><td>{{ app.dependent_first_name }} {{ app.dependent_last_name }}</td></tr>
+      <tr><th>Relation</th><td>{{ app.dependent_relation }}</td></tr>
+      <tr><th>DOB</th><td>{{ app.dependent_dob }}</td></tr>
+
+      <tr><th>Has Pets</th><td>{{ app.has_pets|yesno:"Yes,No" }}</td></tr>
+      <tr><th>Pet Count</th><td>{{ app.pet_count }}</td></tr>
+
+      {% if app.pet_details %}
+      <tr>
+        <th>Pet Details</th>
+        <td>
+          <ul>
+            {% for pet in app.pet_details %}
+              <li>{{ pet.name }} - {{ pet.breed }} ({{ pet.age }} yrs)</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+    </table>
+
+    <!-- ================= STEP 5 ================= -->
+    <h5 class="mb-3 mt-4">Step 5: Personal Info</h5>
+    <table class="table table-bordered">
+      <tr><th>DOB</th><td>{{ app.dob }}</td></tr>
+      <tr><th>SSN</th><td>{{ app.ssn }}</td></tr>
+      <tr><th>License</th><td>{{ app.license_number }}</td></tr>
+      <tr><th>Emergency Contact</th><td>{{ app.emergency_name }} ({{ app.emergency_phone }})</td></tr>
+    </table>
+
+    <!-- ================= STEP 6 ================= -->
+    <h5 class="mb-3 mt-4">Step 6: Employment</h5>
+    <table class="table table-bordered">
+      <tr><th>Employer</th><td>{{ app.employer_name }}</td></tr>
+      <tr><th>Position</th><td>{{ app.position }}</td></tr>
+      <tr><th>Monthly Salary</th><td>{{ app.monthly_salary }}</td></tr>
+      <tr><th>Years Worked</th><td>{{ app.years_worked }}</td></tr>
+    </table>
+
+    <!-- ================= STEP 7 ================= -->
+    <h5 class="mb-3 mt-4">Step 7: Background Questions</h5>
+    <table class="table table-bordered">
+      <tr><th>Eviction History</th><td>{{ app.eviction_history }}</td></tr>
+      <tr><th>Criminal History</th><td>{{ app.criminal_history }}</td></tr>
+      <tr><th>Income 3x Rent</th><td>{{ app.income_3x_rent }}</td></tr>
+    </table>
+
+    <!-- ================= STEP 8 ================= -->
+    <!-- <h5 class="mb-3 mt-4">Step 8: Photo ID</h5>
+    {% if app.photo_id %}
+      <a href="{{ app.photo_id.name }}" target="_blank">
+        <img src="{{ app.photo_id.name }}" style="width:150px;border:1px solid #ccc;">
+      </a>
+    {% else %}
+      <p>No document uploaded</p>
+    {% endif %} -->
+    <h5 class="mb-3 mt-4">Step 8: Photo ID</h5>
+    {% if app.photo_id %}
+  <button class="btn btn-danger btn-sm" onclick="openPasswordModal('{{ app.id }}')">
+    View Secure Document
+</button>
+
+{% else %}
+  <p>No document uploaded</p>
+{% endif %}
+
+<!-- Password Modal -->
+<div id="passwordModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:9999;">
+  <div style="background:#fff; padding:20px; max-width:400px; margin:10% auto; border-radius:5px; position:relative;">
+    <h5>Security Check</h5>
+    <p>Please enter your account password</p>
+
+    <div class="position-relative mb-2">
+      <input type="password" id="docPassword" class="form-control pe-5">
+      <button type="button" id="docPasswordToggle" class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-decoration-none">
+        <i class="fa fa-eye"></i>
+      </button>
+    </div>
+    <button class="btn btn-verifyPasswordPopup" onclick="verifyPassword()" 
+    style="background-color: #43086b; color: white;">Verify</button>
+    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+
+    <p id="errorMsg" style="color:red; display:none;">Wrong password</p>
+  </div>
+</div>
+
+<!-- Viewer Modal -->
+<div id="photoViewerModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:10000;">
+  <div style="position:relative; max-width:90%; max-height:90%; margin:5% auto; background:#fff; padding:10px; border-radius:5px;">
+    <span style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;" onclick="closeViewer()">&times;</span>
+    <div id="photoContent" style="text-align:center; max-height:80vh; overflow:auto;">
+      <!-- Image or PDF will be injected here -->
+    </div>
+  </div>
+</div>
+
+
+    <!-- ================= STEP 9 ================= -->
+    <h5 class="mb-3 mt-4">Billing Info</h5>
+    <table class="table table-bordered">
+      <tr><th>Name</th><td>{{ app.billing_first_name }} {{ app.billing_last_name }}</td></tr>
+      <tr><th>Address</th><td>{{ app.billing_address1 }}</td></tr>
+      <tr><th>City</th><td>{{ app.billing_city }}</td></tr>
+      <tr><th>State</th><td>{{ app.billing_state }}</td></tr>
+      <tr><th>Zip</th><td>{{ app.billing_zip }}</td></tr>
+    </table>
+
+    <!-- ================= STEP 10 ================= -->
+    <h5 class="mb-3 mt-4">Authorization</h5>
+    <table class="table table-bordered">
+      <tr><th>Agreed to Terms</th><td>{{ app.agree_terms|yesno:"Yes,No" }}</td></tr>
+      <tr><th>Authorized Name</th><td>{{ app.authorized_name }}</td></tr>
+      <tr><th>Submitted At</th><td>{{ app.submitted_at }}</td></tr>
+    </table>
+
+  </div>
+</div>
+<script>
+let currentAppId = null;
+window.photoIdAccessVerified = {{ request.session.photo_id_verified_global|yesno:"true,false" }};
+
+document.addEventListener("DOMContentLoaded", function() {
+    window.openPasswordModal = function(appId) {
+        currentAppId = appId;
+        if (window.photoIdAccessVerified) {
+            showSecureFile(appId);
+            return;
+        }
+        document.getElementById("passwordModal").style.display = "block";
+        document.getElementById("errorMsg").style.display = "none";
+        document.getElementById("docPassword").value = "";
+    }
+
+    window.closeModal = function() {
+        document.getElementById("passwordModal").style.display = "none";
+    }
+
+    window.closeViewer = function() {
+        document.getElementById("photoViewerModal").style.display = "none";
+        document.getElementById("photoContent").innerHTML = "";
+    }
+
+    function showSecureFile(appId) {
+        const fileUrl = `/secure/photo-id/file/${appId}/`;
+        const ext = "{{ app.photo_id.name|lower|default:'' }}";
+        const isImage = ext.endsWith(".png") || ext.endsWith(".jpg") || ext.endsWith(".jpeg") || ext.endsWith(".webp");
+
+        let html = "";
+        if (isImage) {
+            html = `<img src="${fileUrl}" style="max-width:100%; max-height:80vh;" />`;
+        } else {
+            html = `<iframe src="${fileUrl}" style="width:100%; height:80vh;" frameborder="0"></iframe>`;
+        }
+
+        document.getElementById("photoContent").innerHTML = html;
+        document.getElementById("photoViewerModal").style.display = "block";
+    }
+
+    const docPasswordToggle = document.getElementById("docPasswordToggle");
+    docPasswordToggle && docPasswordToggle.addEventListener("click", function () {
+        const input = document.getElementById("docPassword");
+        const reveal = input.type === "password";
+        input.type = reveal ? "text" : "password";
+        this.innerHTML = reveal ? '<i class="fa fa-eye-slash"></i>' : '<i class="fa fa-eye"></i>';
+    });
+
+    window.verifyPassword = function() {
+        fetch(`/secure/photo-id/verify/${currentAppId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                password: document.getElementById("docPassword").value
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.photoIdAccessVerified = true;
+                // Close password modal
+                closeModal();
+                showSecureFile(currentAppId);
+
+            } else {
+                document.getElementById("errorMsg").style.display = "block";
+            }
+        });
+    }
+});
+</script>
+
+
+{% endblock %}
+

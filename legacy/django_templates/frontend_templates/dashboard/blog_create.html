@@ -1,0 +1,22 @@
+{% extends "dashboard/layout.html" %} {% block content %}
+<div class="dashboardHome">
+  <div class="inner">
+  <h4 class="mb-4">Create Blog</h4>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input type="file" name="image" required><br><br>
+    <input type="text" name="title" placeholder="Title" class="bc_title border w-100 p-2" required><br><br>
+    <!-- <textarea name="description" placeholder="Description" class="bc_text border w-100 p-2"></textarea> -->
+    <textarea name="description" id="editor" placeholder="Description" class="bc_text border w-100 p-2"></textarea>
+    <br><br>
+    <input type="text" name="keywords" placeholder="Keywords" class="bc_keywords border w-100 p-2"><br><br>
+
+    <button type="submit" class="btn btn-bc_save">Save</button>
+</form>
+   
+
+  </div>
+</div>
+{% endblock %}

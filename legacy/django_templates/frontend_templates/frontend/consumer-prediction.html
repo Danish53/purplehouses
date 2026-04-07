@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Consumer Prediction{% endblock %}
+
+{% block content %}
+<section>
+  <div class="aboutUsPage">
+    <div class="inner">
+
+      <div class="top">
+        <p class="text-center title">Consumer Protection Notice</p>
+
+        <div class="bredcrumbs">
+          <p class="m-0">
+            Home <span><i class="fas fa-angle-right fs-5 mx-2"></i></span> Consumer</p>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="container" style="position: relative; top: -100px;">
+          <img src="{% static 'images/cp.png' %}" class="img-fluid" alt="">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

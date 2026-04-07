@@ -1,0 +1,555 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block extra_head %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+{% endblock %}
+{% block content %}
+<!-- <h1>Home Page</h1>
+<p>Welcome to our website! This content is from home.html.</p> -->
+<!-- <div class="slick-slider">
+  <div><img src="{% static 'images/1.jpg' %}" alt="Slide 1"></div>
+  <div><img src="{% static 'images/2.jpg' %}" alt="Slide 2"></div>
+  <div><img src="{% static 'images/3.jpg' %}" alt="Slide 3"></div>
+</div> -->
+<div class="slider-head">
+  <div class="slick-slider">
+    <div class="slide-item">
+      <img src="{% static 'images/1.jpg' %}" alt="Slide 1" />
+      <div class="overlay"></div>
+      <div class="slide-text">
+        <h2>2709 Merida Ave</h2>
+        <p>2709 Merida Ave, Fort Worth, TX 76109, USA</p>
+      </div>
+    </div>
+
+    <div class="slide-item">
+      <img src="{% static 'images/2.jpg' %}" alt="Slide 2" />
+      <div class="overlay"></div>
+      <div class="slide-text">
+        <h2>4024 Winfield Ave</h2>
+        <p>4024 Winfield Ave, Fort Worth, TX, USA</p>
+      </div>
+    </div>
+
+    <div class="slide-item">
+      <img src="{% static 'images/1.jpg' %}" alt="Slide 3" />
+      <div class="overlay"></div>
+      <div class="slide-text">
+        <h2>3204 Forest Park Blvd</h2>
+        <p>3204 Forest Park Blvd, Fort Worth, TX, USA</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %}
+{% include 'frontend/includes/property_filter_bar.html' with variant='home' %}
+{% endcomment %}
+
+<!-- Property Show -->
+<!-- <section>
+  <div class="propertyShowWrapper">
+    <div class="inner">
+      <p class="m-0 title text-center">Our Featured Properties</p>
+      <div class="divider"></div>
+
+      <div class="ph-home-shell my-5">
+        <div class="row g-4">
+          
+          <div class="col-md-6">
+            <div class="featured-image position-relative">
+              <div class="contentSec">
+                <img
+                  src="{% static 'images/feature.png'%}"
+                  class="img-fluid w-25"
+                  alt="feature"
+                />
+                <p class="m-0">Available 08/01/2026</p>
+              </div>
+            </div>
+            <div class="slick-slider-carousel slider-1">
+              <div>
+                <img
+                  src="{% static 'images/1.jpg' %}"
+                  class="img-fluid"
+                  alt="Slide 1"
+                />
+              </div>
+              <div>
+                <img
+                  src="{% static 'images/2.jpg' %}"
+                  class="img-fluid"
+                  alt="Slide 2"
+                />
+              </div>
+              <div>
+                <img
+                  src="{% static 'images/3.jpg' %}"
+                  class="img-fluid"
+                  alt="Slide 3"
+                />
+              </div>
+            </div>
+            <div class="bottomSliderText position-relative">
+              <div
+                class="textArea d-flex justify-content-between align-items-center"
+              >
+                <div class="left">
+                  <p class="m-0 sliderTitle">3143 McCart Ave</p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <p class="m-0 sliderText">
+                    3312 South University Drive, Fort Worth, TX, USA
+                  </p>
+                </div>
+                <div class="right">
+                  <p class="m-0 sliderTitle">Rent</p>
+                  <p class="m-0 sliderTitle">$5,600</p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-heart fs-5"></i
+                    ><i class="fa fa-plus fs-5 mx-3"></i>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="sliderCTA d-flex align-items-center justify-content-between mt-4"
+            >
+              <button class="btn btn-details">Details</button>
+              <button class="btn btn-apply">Apply Now</button>
+            </div>
+          </div>
+
+         
+
+          <div class="col-md-6">
+            <div class="featured-image position-relative">
+              <div class="contentSec">
+                <img
+                  src="{% static 'images/feature.png'%}"
+                  class="img-fluid w-25"
+                  alt="feature"
+                />
+                <p class="m-0">Available 08/01/2026</p>
+              </div>
+            </div>
+            <div class="slick-slider-carousel slider-1">
+              <div>
+                <img
+                  src="{% static 'images/1.jpg' %}"
+                  class="img-fluid"
+                  alt="Slide 1"
+                />
+              </div>
+              <div>
+                <img
+                  src="{% static 'images/2.jpg' %}"
+                  class="img-fluid"
+                  alt="Slide 2"
+                />
+              </div>
+              <div>
+                <img
+                  src="{% static 'images/3.jpg' %}"
+                  class="img-fluid"
+                  alt="Slide 3"
+                />
+              </div>
+            </div>
+            <div class="bottomSliderText position-relative">
+              <div
+                class="textArea d-flex justify-content-between align-items-center"
+              >
+                <div class="left">
+                  <p class="m-0 sliderTitle">3143 McCart Ave</p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>4<i
+                      class="fa fa-shower mx-2"
+                    ></i
+                    >4.5<i class="fas fa-ruler-combined mx-2"></i>2
+                  </p>
+                  <p class="m-0 sliderText">
+                    3312 South University Drive, Fort Worth, TX, USA
+                  </p>
+                </div>
+                <div class="right">
+                  <p class="m-0 sliderTitle">Rent</p>
+                  <p class="m-0 sliderTitle">$5,600</p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-heart fs-5"></i
+                    ><i class="fa fa-plus fs-5 mx-3"></i>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="sliderCTA d-flex align-items-center justify-content-between mt-4"
+            >
+              <button class="btn btn-details">Details</button>
+              <button class="btn btn-apply">Apply Now</button>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<section>
+  <div class="propertyShowWrapper">
+    <div class="inner">
+      <p class="m-0 title text-center">Our Featured Properties</p>
+      <div class="divider"></div>
+
+      <div class="ph-home-shell ph-home-shell--featured my-5">
+        <div class="row g-4">
+          {% for property in properties %}
+          <div class="col-md-6">
+            <div class="propertyShowWrapper__card-media position-relative">
+              <div class="featured-image position-relative">
+                <div class="contentSec">
+                  <img src="{% static 'images/feature.png'%}" class="img-fluid w-25" alt="feature" />
+                </div>
+              </div>
+
+              <p class="m-0 propertyShowWrapper__availability">Available {{ property.available_date|default:property.created_at|date:"m/d/Y" }}</p>
+
+              <div class="slick-slider-carousel slider-1">
+                {% for image in property.gallery_images %}
+                <div>
+                  <img src="{{ MEDIA_URL }}{{ image }}" class="img-fluid" alt="{{ property.prop_title }}">
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="bottomSliderText position-relative">
+              <div class="textArea d-flex justify-content-between align-items-center">
+                <div class="left">
+                  <p class="m-0 sliderTitle">{{ property.prop_title }}</p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-bed me-2"></i>{{ property.prop_beds }}
+                    <i class="fa fa-shower mx-2"></i>{{ property.prop_baths }}
+                    <i class="fas fa-ruler-combined mx-2"></i>{{ property.prop_size }}
+                  </p>
+                  <p class="m-0 sliderText">
+                    {{ property.property_map_address }}
+                  </p>
+                </div>
+                <div class="right">
+                  <p class="m-0 sliderTitle">Rent</p>
+                  <p class="m-0 sliderTitle">${{ property.prop_price }}</p>
+                  <p class="m-0 sliderIcon">
+                    <i class="fa fa-heart fs-5"></i>
+                    <i class="fa fa-plus fs-5 mx-3"></i>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="sliderCTA d-flex align-items-center justify-content-between mt-4">
+              {% if property.id %}
+              <a href="{% url 'property_details' property.id %}" class="btn btn-details">Details</a>
+              {% endif %}
+              <a href="{% url 'add_application' %}" class="btn btn-apply">Apply Now</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- About us info -->
+<div class="aboutHome">
+  <div class="ph-home-shell py-5">
+  <div class="row align-items-stretch g-4">
+    <!-- LEFT COLUMN -->
+    <div class="col-md-7">
+      <h1 class="fw-bold aboutTitle">TCU Area Rentals | Homes For Rent Near TCU</h1>
+
+      <!-- Divider -->
+      <hr class="my-3 custom-hr" />
+
+      <p class="m-0 aboutPara">
+        Purple Housing was created to make finding off-campus housing easier for
+        TCU students. The creator of purple housing, a TCU student himself,
+        recognized that TCU students didn’t have an easy or efficient way to
+        find <strong>Off-Campus Housing</strong>. It either involved driving
+        around and calling off of rent signs or looking on Zillow and finding
+        out that the house was available now, not for the June-August lease
+        start dates that students start looking for as early as September.
+      </p>
+
+      <p class="m-0 aboutPara">
+        Purple Housing has the most options for
+        <em><strong>TCU Area Rental Properties</strong></em> because we work
+        with local landlords, property management companies, and apartments to
+        notify the students of their properties’ availability. We have helped
+        hundreds of TCU students find the perfect house and we look forward to
+        doing the same for you.
+      </p>
+
+      <p class="m-0 aboutPara">
+        Look through the available options in the PROPERTIES tab and see if
+        there are any you and your group would like to see. Our website has a
+        “Schedule a Showing” feature which allows you to schedule a time to see
+        the specified house you and your group would like to see. Feel free to
+        CONTACT US with any questions you may have.
+      </p>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+	    <div class="col-md-5 d-flex">
+	      <div class="aboutHome__visual">
+          <img
+            src="{% static 'images/1.jpg' %}"
+            alt="Purple Housing about"
+            class="aboutHome__image"
+          />
+        </div>
+	    </div>
+  </div>
+</div>
+</div>
+
+<!-- Blog section -->
+ <!-- <section>
+  <div class="homeBlog">
+    <div class="inner">
+       <p class="m-0 title text-center">Our Blog</p>
+      <div class="divider"></div>
+
+      <div class="ph-home-shell">
+
+        
+        <div class="homeBlog__controls d-flex justify-content-end mb-3">
+          <button class="btn btn-prev-carousal custom-prev me-2">Prev</button>
+          <button class="btn btn-next-carousal custom-next">Next</button>
+        </div>
+
+      
+        <div class="custom-slider">
+
+            <div class="blog-card position-relative">
+                <div class="blog-thumb">
+                    <img src="{% static 'images/1.jpg' %}" alt="">
+                </div>
+                <div class="blog-content">
+                    <div class="tags d-flex align-items-center">
+                      <span class="date"><i class="far fa-calendar me-2"></i> June 24, 2025</span>
+                    <span class="date ms-3"><i class="fa fa-tags me-2"></i> Fort Worth Rental</span>
+                    </div>
+                    <h4>Fort Worth Housing Properties: How to Find Affordable Options?</h4>
+                </div>
+            </div>
+
+            <div class="blog-card position-relative">
+                <div class="blog-thumb">
+                    <img src="{% static 'images/2.jpg' %}" alt="">
+                </div>
+                <div class="blog-content">
+                    <div class="tags d-flex align-items-center">
+                      <span class="date"><i class="far fa-calendar me-2"></i> June 24, 2025</span>
+                    <span class="date ms-3"><i class="fa fa-tags me-2"></i> Fort Worth Rental</span>
+                    </div>
+                    <h4>Fort Worth Housing Properties: How to Find Affordable Options?</h4>
+                </div>
+            </div>
+
+            <div class="blog-card position-relative">
+                <div class="blog-thumb">
+                    <img src="{% static 'images/3.jpg' %}" alt="">
+                </div>
+                <div class="blog-content">
+                    <div class="tags d-flex align-items-center">
+                      <span class="date"><i class="far fa-calendar me-2"></i> June 24, 2025</span>
+                    <span class="date ms-3"><i class="fa fa-tags me-2"></i> Fort Worth Rental</span>
+                    </div>
+                    <h4>Fort Worth Housing Properties: How to Find Affordable Options?</h4>
+                </div>
+            </div>
+
+            <div class="blog-card position-relative">
+                <div class="blog-thumb">
+                    <img src="{% static 'images/1.jpg' %}" alt="">
+                </div>
+                <div class="blog-content">
+                    <div class="tags d-flex align-items-center">
+                      <span class="date"><i class="far fa-calendar me-2"></i> June 24, 2025</span>
+                    <span class="date ms-3"><i class="fa fa-tags me-2"></i> Fort Worth Rental</span>
+                    </div>
+                    <h4>Fort Worth Housing Properties: How to Find Affordable Options?</h4>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+  </div>
+ </section> -->
+
+<section>
+  <div class="homeBlog">
+    <div class="inner">
+      <p class="m-0 title text-center">Our Blog</p>
+      <div class="divider"></div>
+
+      <div class="ph-home-shell">
+
+        <!-- top buttons -->
+        <div class="homeBlog__controls d-flex justify-content-end mb-3">
+          <button class="btn btn-prev-carousal custom-prev me-2">Prev</button>
+          <button class="btn btn-next-carousal custom-next">Next</button>
+        </div>
+
+        <!-- slider -->
+        <div class="custom-slider">
+          {% for blog in blogs %}
+          <a href="{% url 'blogDetails' blog.id %}" class="blog-card-link">
+          <div class="blog-card position-relative">
+            <div class="blog-thumb">
+              {% if blog.safe_image_url %}
+                <img src="{{ blog.safe_image_url }}" alt="{{ blog.title }}">
+              {% elif blog.image %}
+                <img src="{{ blog.image.url }}" alt="{{ blog.title }}">
+              {% else %}
+                <img src="{% static 'images/default-blog.jpg' %}" alt="{{ blog.title }}">
+              {% endif %}
+            </div>
+            <div class="blog-content">
+              <!-- <div class="tags d-flex align-items-center">
+                <span class="date">
+                  <i class="far fa-calendar me-2"></i> {{ blog.created_at|date:"F d, Y" }}
+                </span>
+                {% if blog.category %}
+                <span class="date ms-3">
+                  <i class="fa fa-tags me-2"></i> {{ blog.category }}
+                </span>
+                {% endif %}
+              </div> -->
+              <h4>{{ blog.title|truncatechars:20 }}</h4>
+              <p>{{ blog.description|striptags|truncatechars:20 }}</p>
+            </div>
+          </div>
+          </a>
+          {% empty %}
+          <p>No blogs available.</p>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+ <!-- Home Map -->
+<section>
+    <div class="homeMap">
+      <div class="inner">
+        <p class="m-0 title text-center pt-5">Map & Directions</p>
+        <div class="divider"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+<section class="my-5">
+  <div class="homeMap__shell">
+    <div class="homeMap__frame">
+      <div id="home-property-map" class="homeMap__canvas"></div>
+      <noscript>
+        <div class="homeMap__empty">Enable JavaScript to view the property map.</div>
+      </noscript>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_js %}
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+{{ map_properties|json_script:"home-map-data" }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const mapElement = document.getElementById("home-property-map");
+  const markerDataElement = document.getElementById("home-map-data");
+
+  if (!mapElement || !markerDataElement || typeof L === "undefined") {
+    return;
+  }
+
+  const mapProperties = JSON.parse(markerDataElement.textContent || "[]");
+  const fallbackCenter = [32.753177, -97.3327459];
+  const firstPoint = mapProperties.length ? [mapProperties[0].lat, mapProperties[0].lng] : fallbackCenter;
+
+  const map = L.map(mapElement, {
+    scrollWheelZoom: false,
+  }).setView(firstPoint, mapProperties.length > 1 ? 13 : 14);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map);
+
+  const bounds = [];
+
+  mapProperties.forEach(function (property) {
+    const marker = L.marker([property.lat, property.lng], {
+      icon: L.divIcon({
+        className: "homeMap__marker-wrap",
+        html: '<span class="homeMap__marker"><i class="fa fa-house"></i></span>',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -14],
+      }),
+    }).addTo(map);
+
+    const popupHtml = `
+      <div class="homeMap__popup">
+        <strong>${property.title}</strong>
+        <span>${property.address || ""}</span>
+        <span>$${property.price || ""}</span>
+        <a href="${property.url}">View Property</a>
+      </div>
+    `;
+
+    marker.bindPopup(popupHtml);
+    marker.on("click", function () {
+      marker.openPopup();
+    });
+    bounds.push([property.lat, property.lng]);
+  });
+
+  if (bounds.length > 1) {
+    map.fitBounds(bounds, { padding: [40, 40] });
+  }
+
+  window.addEventListener("resize", function () {
+    map.invalidateSize();
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,2074 @@
+{% extends 'base.html' %} {% block title %}Applying{% endblock %} 
+{% block content %}
+<section>
+  <div class="aboutUsPage">
+    <div class="inner">
+      <div class="top">
+        <p class="text-center title">Applying</p>
+
+        <div class="bredcrumbs">
+          <p class="m-0">
+            Home
+            <span><i class="fas fa-angle-right fs-5 mx-2"></i></span> Applying
+          </p>
+        </div>
+      </div>
+
+      <div class="container mt-5" style="position: relative; bottom: 120px">
+        <!-- Progress Bar -->
+        <div class="d-flex justify-content-between mb-4">
+          <div class="progress-step progress-step-active" style="border-radius: 5px 0px 0px 5px;"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step rounded-0"></div>
+          <div class="progress-step" style="border-radius: 0px 5px 5px 0px;"></div>
+        </div>
+
+        <!-- Form -->
+        <form id="multi-step-form" class="p-0" method="POST" action="{% url 'add_application' %}" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          <!-- Step 1 -->
+          <div class="form-step form-step-active">
+            <h5 class="paraHeading">ONLINE APPLICATION PROCESS:</h5>
+            <p class="m-0 paraDetail">
+              Thank you for choosing a property offered by Purple Housing as
+              your new home. In order to make the application process easier,
+              please follow the directions below. WHEN MULTIPLE APPLICANTS APPLY
+              FOR A PROPERTY, EACH APPLICANT IS EVALUATED SEPARATELY AND EACH
+              MUST MEET THE QUALIFYING CRITERIA. The Property Owner(s) have the
+              right of final approval of applications. <br /><br />Each
+              prospective tenant and occupant 18 years of age or older must
+              submit a separate application (including each spouse if married).
+              Cosigners and Guarantors must also submit a complete
+              application.<br /><br />
+              The following Application Agreement will be signed by all
+              applicants prior to signing a lease contract. While some of the
+              information below may not yet be applicable to your situation,
+              some provisions may become applicable prior to signing a lease
+              contract. In order to continue with this online application, you
+              will need to review the Application Agreement carefully and
+              acknowledge that you accept its terms.<br /><br />
+              1. Application Fee: With your application, you must submit the
+              nonrefundable application fee listed below for EACH APPLICANT and
+              cosigner except that only one application fee is required for
+              married couples. This fee may be paid WITH A CASHIER’S CHECK,
+              MONEY ORDER, CERTIFIED CHECK, OR CREDIT CARD THROUGH OUR ONLINE
+              APPLICATION. NO PERSONAL CHECKS OR CASH for the nonrefundable
+              application fee. If you pay online with a credit card, $5 service
+              fee per transaction will be assessed. We cannot process any
+              applications until we have the funds in our office.<br /><br />
+              2. Application Deposit: If you want to have the property taken off
+              the market for lease and held exclusively for you after you have
+              been approved, you may do so by submitting an application deposit
+              in CERTIFIED FUNDS in the amount of one month’s lease amount with
+              your application. Otherwise, the property will continue to be
+              marketed until you have executed a lease agreement. The
+              application deposit is not a security deposit. If you are not
+              approved, it will be refunded. If you are approved, it may be
+              retained by us as liquidated damages if you fail to sign the lease
+              within 3 days of application approval or withdraw your
+              application. <br /><br />3. Notification: We will notify you
+              whether you’ve been approved within 7 days after the date we
+              receive a completed Application. Any notice we give you or your
+              co-applicant is considered notice to all co-applicants, and any
+              notice from you or your co-applicant is considered notice from all
+              co-applicants. <br /><br />Our receipt of this application is
+              consent only to this application agreement. It does not bind us to
+              accept the applicant or to sign the proposed Lease Contract.
+              <br /><br />Please see the Terms of Agreement for detailed rental
+              qualifications and automatic application rejections.
+            </p>
+            <p class="m-0 fw-bold my-3">Application fee: $50.00</p>
+            <div class="mb-3">
+              <label class="form-label"
+                >Property <span style="color: red">*</span></label
+              >
+            <select id="property" class="form-select" name="property_id" required>
+    <option value="" disabled selected>Select Property</option>
+    {% for prop in properties %}
+        <option value="{{ prop.id }}">
+            {{ prop.prop_title }}
+        </option>
+    {% empty %}
+        <option value="">No properties available</option>
+    {% endfor %}
+</select>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+            <div class="mb-3">
+              <label for="applyDate" class="form-label"
+                >Desired Move-in <span style="color: red">*</span></label
+              >
+
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="applyDate"
+                  class="form-control"
+                  placeholder="Select Date"
+                  name="move_in_date"
+                  required
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="clearDate"
+                >
+                  <i class="fa fa-close"></i>
+                </button>
+              </div>
+
+              <div class="invalid-feedback">Please select a date.</div>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check"> 
+  <input class="form-check-input" type="radio" name="applicant_type" id="living" value="tenant" checked>
+  <label class="form-check-label" for="living">
+    I am applying as a tenant. (I will be living on the property.)
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="applicant_type" value="cosigner" id="notLiving">
+  <label class="form-check-label" for="notLiving">
+    I am applying as a co-signer/guarantor for another applicant. (I will not be living on the property.)
+  </label>
+</div>
+            </div>
+
+            <button type="button" class="btn btn-next next-btn">Next</button>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="form-step">
+            <p>Your Contact Info</p>
+            <div class="mb-3">
+              <!-- <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" /> -->
+              <div class="mb-3">
+                <label class="form-label"
+                  >Name <span class="text-danger">*</span></label
+                >
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Frank"
+                      name="first_name"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Curtis"
+                      name="last_name"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email + Confirm Email -->
+              <div class="mb-3">
+                <label class="form-label"
+                  >Email <span class="text-danger">*</span></label
+                >
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Email"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="confirmEmail"
+                      placeholder="Confirm Email"
+                      name="confirm_email"
+                      required
+                    />
+                  </div>
+                </div>
+                <div id="emailError" class="text-danger small mt-1 d-none">
+                  Emails do not match.
+                </div>
+              </div>
+
+              <!-- Phone -->
+              <div class="mb-3">
+                <label class="form-label"
+                  >Phone <span class="text-danger">*</span></label
+                >
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="#"
+                  placeholder="Number"
+                  name="phone"
+                  required
+                />
+              </div>
+
+              <!-- Select: How did you hear about us -->
+              <div class="mb-4">
+                <label class="form-label">How did you hear about us?</label>
+                <select class="form-select" name="hear_about" required>
+                  <option selected disabled>Agent/Broker</option>
+                  <option>Drive-By/Walk-In</option>
+                  <option>Friend/Family</option>
+                  <option>Our Company Website</option>
+                  <option>Craigslist</option>
+                  <option>Facebook</option>
+                  <option>Instagram</option>
+                  <option>Snapchat</option>
+                  <option>Twitter</option>
+                  <option>Other</option>
+                  <option>Apartment Guide</option>
+                  <option>Apartment List</option>
+                  <option>Apartment.com</option>
+                  <option>For Rent</option>
+                  <option>FRBO</option>
+                  <option>Homes.com</option>
+                  <option>Hot Pads</option>
+                  <option>Lovely</option>
+                  <option>Move.com</option>
+                  <option>PadMappers</option>
+                  <option>Radpad</option>
+                  <option>Rentalads.com</option>
+                  <option>Rental.com</option>
+                  <option>ShowMeTheRent</option>
+                  <option>Trulia</option>
+                  <option>Walk Score</option>
+                  <option>Zillow</option>
+                  <option>Zumper</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="form-step">
+            <h5 class="mb-3">Where you've lived</h5>
+
+            <div class="mb-3">
+              <label class="form-label">Address Line 1</label>
+              <input type="text" class="form-control" name="address1" placeholder="Address 1" />
+            </div>
+
+            <div class="mb-3">
+              <!-- <label class="form-label">Address Line 2</label> -->
+              <input type="text" class="form-control" name="address2" placeholder="Address 2" />
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <!-- <label class="form-label">City</label> -->
+                <input type="text" class="form-control" name="city" placeholder="City" />
+              </div>
+
+              <div class="col-md-6">
+                <!-- <label class="form-label">State</label> -->
+                <select class="form-select" name="state">
+                  <option value="" selected disabled>Select State</option>
+                  {% for code, name in state_choices %}
+                  <option value="{{ code }}">{{ name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <!-- <label class="form-label">Zip Code</label> -->
+              <input
+                type="text"
+                class="form-control w-50"
+                id="zipcode"
+                placeholder="Zip Code"
+                name="zipcode"
+              />
+            </div>
+
+            <!-- Residency Duration -->
+            <!-- <h5 class="my-3">Residency Duration</h5> -->
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Resided From (Month)</label>
+                <select class="form-select" name="reside_from_month">
+                  <option value="01">January</option>
+                  <option value="02">February</option>
+                  <option value="03">March</option>
+                  <option value="04">April</option>
+                  <option value="05">May</option>
+                  <option value="06">June</option>
+                  <option value="07">July</option>
+                  <option value="08">August</option>
+                  <option value="09">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Select Year</label>
+                <select class="form-select" name="reside_from_year">
+                  <option selected disabled>Year</option>
+                  <option>2026</option>
+  <option>2025</option>
+  <option>2024</option>
+  <option>2023</option>
+  <option>2022</option>
+  <option>2021</option>
+  <option>2020</option>
+  <option>2019</option>
+  <option>2018</option>
+  <option>2017</option>
+  <option>2016</option>
+  <option>2015</option>
+  <option>2014</option>
+  <option>2013</option>
+  <option>2012</option>
+  <option>2011</option>
+  <option>2010</option>
+  <option>2009</option>
+  <option>2008</option>
+  <option>2007</option>
+  <option>2006</option>
+  <option>2005</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Rent / Mortgage -->
+            <div class="mb-3">
+              <label class="form-label">Monthly Mortgage</label>
+              <input
+                type="text"
+                class="form-control"
+                name="monthly_rent"
+                placeholder="Monthly Rent"
+              />
+            </div>
+
+            <div class="mb-3 d-none">
+              <label class="form-label">Monthly Mortgage</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Monthly Mortgage"
+                name="monthly_mortgage"
+              />
+            </div>
+
+            <!-- Landlord / Homeowner Info -->
+            <!-- <h5 class="my-3">Landlord / Homeowner Info</h5> -->
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Homeowner Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Landlord Name"
+                  name="landlord_name"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Homeowner Phone Number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Phone Number"
+                  name="landlord_phone"
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Homeowner Email Address</label>
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Email Address"
+                name="landlord_email"
+              />
+            </div>
+
+            <div class="mb-3 d-none">
+              <label class="form-label">Homeowner Email Address</label>
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Email Address"
+                name="home_email"
+              />
+            </div>
+
+            <!-- Reason for Leaving -->
+            <div class="mb-4">
+              <label class="form-label">Reason For Leaving (if any)</label>
+              <textarea class="form-control" rows="3" name="reason_for_leaving"></textarea>
+            </div>
+
+            <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="form-step">
+            <h5>Your Housemates</h5>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Other Occupants</label>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input toggle-adults"
+                      type="checkbox"
+                      name="other_occupants"
+                      value="adults_18_plus"
+                    />
+                    <label class="form-check-label">
+                      I am applying with other adults 18 and older
+                    </label>
+                  </div>
+
+                  <div class="adults18older d-none">
+                    <div class="mb-3 selectAdults">
+                      <label class="form-label fw-semibold">
+                        No. of Adults <span class="text-danger">*</span>
+                      </label>
+
+	                      <select class="form-select" name="adult_count" id="adultCount">
+	                        <option value="1" selected>1</option>
+	                        <option value="2">2</option>
+	                        <option value="3">3</option>
+	                        <option value="4">4</option>
+	                        <option value="5">5</option>
+	                      </select>
+                    </div>
+
+                    <div id="adultsContainer">
+                      <div class="row g-3 adult-block">
+                        <!-- Adult Name -->
+                        <div class="col-md-4">
+                          <label class="form-label fw-semibold">
+                            Adult Name <span class="text-danger">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="adult_names[]"
+                          />
+                        </div>
+
+                        <!-- Adult Email -->
+                        <div class="col-md-4">
+                          <label class="form-label fw-semibold">
+                            Adult Email <span class="text-danger">*</span>
+                          </label>
+                          <input
+                            type="email"
+                            class="form-control"
+                            name="adult_emails[]"
+                          />
+                        </div>
+
+                        <!-- Adult Phone -->
+                        <div class="col-md-4">
+                          <label class="form-label fw-semibold">
+                            Adult Phone
+                          </label>
+                          <input
+                            type="tel"
+                            class="form-control"
+                            name="adult_phones[]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input toggle-adults2"
+                      type="checkbox"
+                      name="other_occupants"
+                      value="dependents_under_18"
+                    />
+                    <label class="form-check-label">
+                      I will have dependents living with me who are under 18
+                    </label>
+                  </div>
+
+                  <div class="adults18older2 d-none">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Name</label>
+                      <div class="row g-2">
+                        <div class="col">
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="First Name"
+                            name="dependent_first_name"
+                          />
+                        </div>
+                        <div class="col">
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Last Name"
+                            name="dependent_last_name"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Relationship</label>
+                      <input type="text" class="form-control" name="dependent_relation"/>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold"
+                        >Date of Birth</label
+                      >
+                      <div class="row g-2">
+                        <!-- Month -->
+                        <div class="col">
+                          <select class="form-select" name="month">
+                            <option selected disabled>MM</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                          </select>
+                        </div>
+
+                        <!-- Day -->
+                        <div class="col">
+                          <select class="form-select" name="date">
+                            <option selected disabled>DD</option>
+                                <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+    <option value="14">14</option>
+    <option value="15">15</option>
+    <option value="16">16</option>
+    <option value="17">17</option>
+    <option value="18">18</option>
+    <option value="19">19</option>
+    <option value="20">20</option>
+    <option value="21">21</option>
+    <option value="22">22</option>
+    <option value="23">23</option>
+    <option value="24">24</option>
+    <option value="25">25</option>
+    <option value="26">26</option>
+    <option value="27">27</option>
+    <option value="28">28</option>
+    <option value="29">29</option>
+    <option value="30">30</option>
+    <option value="31">31</option>
+                          </select>
+                        </div>
+
+                        <!-- Year -->
+                        <div class="col">
+                          <select class="form-select" name="year">
+                            <option selected disabled>YYYY</option>
+                                <option value="2026">2026</option>
+    <option value="2025">2025</option>
+    <option value="2024">2024</option>
+    <option value="2023">2023</option>
+    <option value="2022">2022</option>
+    <option value="2021">2021</option>
+    <option value="2020">2020</option>
+    <option value="2019">2019</option>
+    <option value="2018">2018</option>
+    <option value="2017">2017</option>
+    <option value="2016">2016</option>
+    <option value="2015">2015</option>
+    <option value="2014">2014</option>
+    <option value="2013">2013</option>
+    <option value="2012">2012</option>
+    <option value="2011">2011</option>
+    <option value="2010">2010</option>
+    <option value="2009">2009</option>
+    <option value="2008">2008</option>
+    <option value="2007">2007</option>
+    <option value="2006">2006</option>
+    <option value="2005">2005</option>
+    <option value="2004">2004</option>
+    <option value="2003">2003</option>
+    <option value="2002">2002</option>
+    <option value="2001">2001</option>
+    <option value="2000">2000</option>
+    <option value="1999">1999</option>
+    <option value="1998">1998</option>
+    <option value="1997">1997</option>
+    <option value="1996">1996</option>
+    <option value="1995">1995</option>
+    <option value="1994">1994</option>
+    <option value="1993">1993</option>
+    <option value="1992">1992</option>
+    <option value="1991">1991</option>
+    <option value="1990">1990</option>
+    <option value="1989">1989</option>
+    <option value="1988">1988</option>
+    <option value="1987">1987</option>
+    <option value="1986">1986</option>
+    <option value="1985">1985</option>
+    <option value="1984">1984</option>
+    <option value="1983">1983</option>
+    <option value="1982">1982</option>
+    <option value="1981">1981</option>
+    <option value="1980">1980</option>
+    <option value="1979">1979</option>
+    <option value="1978">1978</option>
+    <option value="1977">1977</option>
+    <option value="1976">1976</option>
+    <option value="1975">1975</option>
+    <option value="1974">1974</option>
+    <option value="1973">1973</option>
+    <option value="1972">1972</option>
+    <option value="1971">1971</option>
+    <option value="1970">1970</option>
+    <option value="1969">1969</option>
+    <option value="1968">1968</option>
+    <option value="1967">1967</option>
+    <option value="1966">1966</option>
+    <option value="1965">1965</option>
+    <option value="1964">1964</option>
+    <option value="1963">1963</option>
+    <option value="1962">1962</option>
+    <option value="1961">1961</option>
+    <option value="1960">1960</option>
+    <option value="1959">1959</option>
+    <option value="1958">1958</option>
+    <option value="1957">1957</option>
+    <option value="1956">1956</option>
+    <option value="1955">1955</option>
+    <option value="1954">1954</option>
+    <option value="1953">1953</option>
+    <option value="1952">1952</option>
+    <option value="1951">1951</option>
+    <option value="1950">1950</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row my-4">
+                <h5>PETS</h5>
+                <div class="form-check my-3 mx-2">
+                  <input
+                    class="form-check-input toggle-adults3"
+                    type="checkbox"
+                    name="other_occupants"
+                    value="adults_18_plus"
+                  />
+                  <label class="form-check-label"> I have pets. </label>
+                </div>
+
+                <div class="adults18older3 d-none">
+	                  <div class="mb-3 selectPets">
+	                    <label class="form-label fw-semibold">
+	                      No. of Pets <span class="text-danger">*</span>
+	                    </label>
+
+                    <select class="form-select" name="pet_count" id="noOfPets">
+                      <option value="1" selected>1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+
+                  <div id="petsContainer">
+                    <div class="row g-3 pets-block">
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">Pet's Name</label>
+                        <input type="text" class="form-control" name="pet_name[]"/>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">Type/Breed</label>
+                        <input type="text" class="form-control" name="pet_breed[]"/>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold"
+                          >Weight (lbs)</label
+                        >
+                        <input type="text" class="form-control" name="pet_weight[]"/>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">Age</label>
+                        <input type="text" class="form-control" name="pet_age[]"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="form-step">
+            <div class="p-0">
+              <div class="row g-3">
+                <h5>Personal Information</h5>
+                <!-- Date of Birth -->
+
+                <div class="col-md-12">
+                  <label class="form-label fw-semibold">Date of Birth</label>
+                  <div class="d-flex gap-2">
+                    <select class="form-select" name="dob_month">
+                      <option selected disabled>MM</option>
+                      <option>1</option>
+  <option>2</option>
+  <option>3</option>
+  <option>4</option>
+  <option>5</option>
+  <option>6</option>
+  <option>7</option>
+  <option>8</option>
+  <option>9</option>
+  <option>10</option>
+  <option>11</option>
+  <option>12</option>
+                    </select>
+                    <select class="form-select" name="dob_day">
+                      <option selected disabled>DD</option>
+                       <option>1</option>
+  <option>2</option>
+  <option>3</option>
+  <option>4</option>
+  <option>5</option>
+  <option>6</option>
+  <option>7</option>
+  <option>8</option>
+  <option>9</option>
+  <option>10</option>
+  <option>11</option>
+  <option>12</option>
+  <option>13</option>
+  <option>14</option>
+  <option>15</option>
+  <option>16</option>
+  <option>17</option>
+  <option>18</option>
+  <option>19</option>
+  <option>20</option>
+  <option>21</option>
+  <option>22</option>
+  <option>23</option>
+  <option>24</option>
+  <option>25</option>
+  <option>26</option>
+  <option>27</option>
+  <option>28</option>
+  <option>29</option>
+  <option>30</option>
+  <option>31</option>
+</select>
+                    </select>
+                    <select class="form-select" name="dob_year">
+                      <option selected disabled>YYYY</option>
+                      <option>2026</option>
+  <option>2025</option>
+  <option>2024</option>
+  <option>2023</option>
+  <option>2022</option>
+  <option>2021</option>
+  <option>2020</option>
+  <option>2019</option>
+  <option>2018</option>
+  <option>2017</option>
+  <option>2016</option>
+  <option>2015</option>
+  <option>2014</option>
+  <option>2013</option>
+  <option>2012</option>
+  <option>2011</option>
+  <option>2010</option>
+  <option>2009</option>
+  <option>2008</option>
+  <option>2007</option>
+  <option>2006</option>
+  <option>2005</option>
+  <option>2004</option>
+  <option>2003</option>
+  <option>2002</option>
+  <option>2001</option>
+  <option>2000</option>
+  <option>1999</option>
+  <option>1998</option>
+  <option>1997</option>
+  <option>1996</option>
+  <option>1995</option>
+  <option>1994</option>
+  <option>1993</option>
+  <option>1992</option>
+  <option>1991</option>
+  <option>1990</option>
+  <option>1989</option>
+  <option>1988</option>
+  <option>1987</option>
+  <option>1986</option>
+  <option>1985</option>
+  <option>1984</option>
+  <option>1983</option>
+  <option>1982</option>
+  <option>1981</option>
+  <option>1980</option>
+  <option>1979</option>
+  <option>1978</option>
+  <option>1977</option>
+  <option>1976</option>
+  <option>1975</option>
+  <option>1974</option>
+  <option>1973</option>
+  <option>1972</option>
+  <option>1971</option>
+  <option>1970</option>
+  <option>1969</option>
+  <option>1968</option>
+  <option>1967</option>
+  <option>1966</option>
+  <option>1965</option>
+  <option>1964</option>
+  <option>1963</option>
+  <option>1962</option>
+  <option>1961</option>
+  <option>1960</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <!-- Drivers License -->
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Drivers License</label
+                    >
+                    <input type="text" class="form-control" name="license_number"/>
+                  </div>
+
+                  <!-- Emergency Contact -->
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Drivers License State</label
+                    >
+                    <input type="text" class="form-control" name="license_state"/>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Email</label>
+                    <input type="email" class="form-control" name="personal_email"/>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Emergency Phone</label>
+                    <input type="tel" class="form-control" name="personal_phone"/>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Emergency Contact</label
+                    >
+                    <input type="text" class="form-control" name="emergency_name"/>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Emergency Phone</label
+                    >
+                    <input type="tel" class="form-control" name="emergency_phone"/>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Your Relation</label>
+                    <input type="text" class="form-control" name="emergency_relation"/>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Social Security Number (SSN)
+                      <span class="text-danger">*</span></label
+                    >
+                    <input type="text" class="form-control" name="ssn" required />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <h5>Vehicles</h5>
+                  <div class="col-md-12">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input toggle-adults4"
+                        type="checkbox"
+                        name="other_occupants"
+                        value="adults_18_plus"
+                      />
+                      <label class="form-check-label">
+                        I have one or more vehicle
+                      </label>
+                    </div>
+
+                    <div class="adults18older4 d-none">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label fw-semibold">Make</label>
+                            <input type="text" class="form-control" name="vehicle_make"/>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label fw-semibold">Color</label>
+                            <input type="text" class="form-control" name="vehicle_color"/>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label fw-semibold"
+                              >License Number</label
+                            >
+                            <input type="text" class="form-control" name="vehicle_license"/>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="mb-3">
+	                            <label class="form-label fw-semibold">Model</label>
+	                            <input type="text" class="form-control" name="vehicle_modal"/>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label fw-semibold">Year</label>
+                            <input type="text" class="form-control" name="vehicle_year"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+          </div>
+
+          <!-- Step 6 -->
+           <div class="form-step">
+            <div class="row">
+              <h5>Personal Income</h5>
+
+              <div class="col-md-12">
+  <label class="form-label fw-semibold">Employer Name</label>
+  <input type="text" class="form-control" name="employer_name">
+</div>
+              <div class="col-12">
+  <label class="form-label fw-semibold">Employer Address</label>
+  
+  <!-- Address Line 1 -->
+  <div class="mb-2">
+    <input type="text" class="form-control" name="employer_address1" placeholder="Address 1">
+  </div>
+
+  <!-- Address Line 2 -->
+  <div class="mb-2">
+    <input type="text" class="form-control" name="employer_address2" placeholder="Address 2">
+  </div>
+
+  <div class="row g-3">
+    <!-- City -->
+    <div class="col-md-6">
+      <input type="text" class="form-control" placeholder="City" name="employer_city">
+    </div>
+
+	    <!-- State -->
+	    <div class="col-md-6">
+	      <select class="form-select" name="employer_state">
+	        <option value="" selected disabled>Select State</option>
+	        {% for code, name in state_choices %}
+	        <option value="{{ code }}">{{ name }}</option>
+	        {% endfor %}
+	      </select>
+	    </div>
+
+    <!-- Zip Code -->
+    <div class="col-md-6">
+      <input type="text" class="form-control" name="employer_zip" placeholder="Zip Code">
+    </div>
+
+    
+  </div>
+
+  <div class="row g-3 my-3">
+    <div class="col-md-6">
+  <label class="form-label fw-semibold">Employer Phone Number</label>
+  <input type="tel" class="form-control" name="employer_phone">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold">Monthly Salary</label>
+  <input type="text" class="form-control" name="monthly_salary">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold">Position Held</label>
+  <input type="text" class="form-control" name="position">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold">Years Worked</label>
+  <input type="text" class="form-control" name="years_worked">
+</div>
+
+<div class="col-md-12">
+  <label class="form-label fw-semibold">Supervisor Name</label>
+  <input type="text" class="form-control" name="supervisor_name">
+</div>
+
+  </div>
+</div>
+
+
+            </div>
+            <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+           </div>
+
+           <!-- Step 7 -->
+            <div class="form-step">
+              <div class="row">
+                <h5>Questions</h5>
+
+                <div class="col-12 mb-3">
+      <label class="form-label fw-semibold">Have you ever been a defendant in an unlawful detainer (eviction) lawsuit or defaulted (failed to perform) any obligation of a rental agreement or lease? <span class="text-danger">*</span></label>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="eviction_history_no" type="checkbox" checked>
+            <label class="form-check-label">No</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="eviction_history_yes" type="checkbox">
+            <label class="form-check-label">Yes</label>
+          </div>
+        </div>
+      </div>
+      <h6>Please explain:</h6>
+      <textarea class="form-control mt-2" name="eviction_explain"></textarea>
+    </div>
+
+     <div class="col-12 mb-3">
+      <label class="form-label fw-semibold">Have you ever been convicted of a crime? * <span class="text-danger">*</span></label>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="criminal_history_no" type="checkbox" checked>
+            <label class="form-check-label">No</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="criminal_history_yes" type="checkbox">
+            <label class="form-check-label">Yes</label>
+          </div>
+        </div>
+      </div>
+      <h6>Please explain:</h6>
+      <textarea class="form-control mt-2" name="criminal_explain"></textarea>
+    </div>
+
+    <div class="col-12 mb-3">
+      <label class="form-label fw-semibold">Can you provide verifiable monthly income of at least 3 times the amount of monthly rent? <span class="text-danger">*</span></label>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="income_3x_no" type="checkbox">
+            <label class="form-check-label">No</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="income_3x_yes" type="checkbox" checked>
+            <label class="form-check-label">Yes</label>
+          </div>
+        </div>
+      </div>
+      <h6>Please explain:</h6>
+      <textarea class="form-control mt-2" name="income_explain"></textarea>
+    </div>
+
+     <div class="col-12 mb-3">
+      <label class="form-label fw-semibold">Can you provide current, verifiable employment and two years' employment history unless self employed? <span class="text-danger">*</span></label>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="employment_history_no" type="checkbox">
+            <label class="form-check-label">No</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="employment_history_yes" type="checkbox" checked>
+            <label class="form-check-label">Yes</label>
+          </div>
+        </div>
+      </div>
+      <h6>Please explain:</h6>
+      <textarea class="form-control mt-2" name="employment_explain"></textarea>
+    </div>
+
+      <div class="col-12 mb-3">
+      <label class="form-label fw-semibold">Can you provide three years of verifiable residency history? <span class="text-danger">*</span></label>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="residency_history_no" type="checkbox">
+            <label class="form-check-label">No</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check">
+            <input class="form-check-input" name="residency_history_yes" type="checkbox" checked>
+            <label class="form-check-label">Yes</label>
+          </div>
+        </div>
+      </div>
+      <h6>Please explain:</h6>
+      <textarea class="form-control mt-2" name="residency_explain"></textarea>
+    </div>
+              </div>
+            <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+            </div>
+
+            <!-- Step 8 -->
+             <div class="form-step">
+              <div class="row">
+                <h5>Attach Documents</h5>
+                <div class="col-12">
+      <label class="form-label fw-semibold" for="photoID">Attach Photo ID <span class="text-danger">*</span></label>
+      <div class="mb-2">
+        <input class="form-control" type="file" id="photoID" name="photo_id" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.ppt" required>
+      </div>
+      <div class="form-text">Please upload your photo ID. Allowed formats: jpg, jpeg, png, pdf, doc, docx, ppt. Maximum size: 10 MB.</div>
+      <div id="photoIdError" class="text-danger small mt-2 d-none">Please upload a file that is 10 MB or smaller.</div>
+    </div>
+              </div>
+
+               <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+             </div>
+
+             <!-- Step 9 -->
+              <div class="form-step">
+                <div class="row">
+                  <h5>Pay Application Fee</h5>
+                    <div class="col-12">
+      <label class="form-label fw-semibold" for="firstName">Name <span class="text-danger">*</span></label>
+      <div class="row g-2">
+        <div class="col-md-6">
+          <input type="text" class="form-control" id="firstName" name="billing_first_name" placeholder="First" required>
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control" id="lastName" name="billing_last_name" placeholder="Last" required>
+        </div>
+      </div>
+      <div class="form-text">Your Billing Information</div>
+    </div>
+
+     <div class="row g-3 mb-3">
+    <div class="col-12">
+      <label class="form-label fw-semibold" for="billingAddress1">Billing Address <span class="text-danger">*</span></label>
+      <input type="text" class="form-control mb-2" id="billingAddress1" name="billing_address1" placeholder="Address Line 1" required>
+      <input type="text" class="form-control mb-2" id="billingAddress2" name="billing_address2" placeholder="Address Line 2">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <input type="text" class="form-control" id="billingCity" name="billing_city" placeholder="City" required>
+        </div>
+	        <div class="col-md-3">
+	          <select class="form-select" id="billingState" name="billing_state" required>
+	            <option value="" disabled selected>Select State</option>
+	            {% for code, name in state_choices %}
+	            <option value="{{ code }}">{{ name }}</option>
+	            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="billingZip" name="billing_zip" placeholder="Zip Code" required>
+        </div>
+      </div>
+    </div>
+  </div>
+
+                  
+                </div>
+                <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button>
+            <button type="button" class="btn btn-next next-btn">Next</button>
+              </div>
+
+              <!-- Step 10 -->
+               <div class="form-step">
+                <div class="row">
+                  <h6>Purple Housing</h6>
+                  <p>LEASING QUALIFICATIONS</p>
+                  <p>The following items are the leasing qualifications which each applicant must meet:</p>
+                  <p>1. Income: You must verify that you have monthly income of at least three times the amount of monthly rent by</p>
+                  <p>providing one of the following:</p>
+                  <p>a) A copy of your two previous year’s tax returns;<br/>
+                    b) Copies of your previous year's W-2 and verification of your current year's income;<br/>
+                    c) Copies of your previous six months’ bank statements indicating a stable income source; or<br/>
+                    d) A letter from your attorney or CPA stating the following: “I/We certify that [applicant’s name] meets the income</p>
+                    <p>qualifications for this property".</p>
+                    <p>
+                      2. Employment: You must have current, verifiable employment and two years’ employment history unless self
+                      employed. An applicant who does not meet all requirements (such as a full time student) will require a cosigner or
+                      guarantor who meets all requirements.
+                    </p>
+
+                    <p>
+                      3. Credit History: We will process a credit report for each applicant. Your credit history must meet our predetermined
+                      credit rating. Exceptions for medical reasons or prior bankruptcy will be considered.
+                    </p>
+
+                    <p>
+                      4. Rental History: You must provide three years of verifiable residency indicating no outstanding debt to the previous
+                      landlord(s). If you are breaking a lease with a current landlord, you must provide a written release.
+                    </p>
+                    <p>
+                      5. Application Rejection: Your application may be rejected for any of the following;<br/>
+                      a) Eviction by a prior landlord;<br/>
+                      b) Outstanding debt or unpaid damages to a previous landlord;<br/>
+                      c) Undisclosed criminal record, felony or misdemeanor; including currently pending charges;<br/>
+                      d) Being registered as a sex offender;<br/>
+                      e) Conviction of a crime of a violent or abusive nature;<br/>
+                      f) Bankruptcy in the past 2 years that has not been discharged/released;<br/>
+                      g) Invalid social security number;<br/>
+                      h) Outstanding federal tax lien, the repayments terms for which are not current;<br/>
+                      i) False or incomplete information on your application;<br/>
+                      j) Incomplete application, including applicant signature;<br/>
+                      k) Failure to pay the application fee at the time of application submittal.
+                    </p>
+
+                    <p>
+                      Pet Policy: If the owner permits a pet, a Pet Deposit is required. The Pet Deposit is a minimum of $200.00 per pet, depending on the Landlord’s requirements. This deposit is paid in addition to the security deposit in the Lease Contract. The deposit is made part of the security deposit for all purposes. More than one pet, or pets weighing over 30 pounds, are approved on an individual basis and with the owner’s permission only.
+                    </p>
+                    <p>
+                      NOTICE TO APPLICANTS
+                    </p>
+                    <p>
+                      1) Applicants should satisfy any concerns regarding sex offenders in any area where they might consider residing. This information is available free of charge at www.records.txdps.state.tx.us Sex Offender Listings.
+                      2) Applicants are responsible for verifying schools and square footage.
+                      3) Our Privacy Policy is available on our website, www.bridgelease.com, and at our office.
+                    </p>
+                    <p>
+                      Disclosure: Real estate brokers and sales agents are required by law to make properties available without regard to race, color, religion, national origin, sex, or familial status.
+                    </p>
+
+                    <hr>
+
+                    <h6>Applicant Authorization</h6>
+
+                    <p>
+                      By checking the box and electronically signing your full name below, you declare that all your statements in this application are true and complete. If you fail to answer any question or give false information, the property may reject your application, retain all application fees and deposits as liquidated damages for its time and expense, and terminate your right of occupancy. <br/>
+
+By submitting this electronic application, you are directing and authorizing Bridge Residential Property Services, LLC to verify the information you’ve provided and obtain additional background information about you through any means, including (i) using a third party consumer reporting agency such as AppFolio, Inc., 50 Castilian Dr. Goleta, CA 93117, 866.648.1536, to prepare a consumer report or an investigative consumer report and/or (ii) verifying information by contacting personal and professional references, employers and other rental housing owners. You further direct and authorize Bridge Residential Property Services, LLC to obtain from any law enforcement agency, present or past employer or supervisor, landlord, finance bureau/office, credit bureau, collection agency, college, university or other institute of learning or certification, private business, military branch or the national personnel records center, personal reference and/or other persons, and authorize the same to give records or information that any such entities may have concerning your status as a registered sex offender (as allowed by law), criminal history (as allowed by law), motor vehicle/driving history, earnings history, credit history, character, general reputation, personal characteristics, mode of living, employment records, record of attendance and earned degrees or certificates, or any other information requested, whether the said records are private or public, and including those which may be deemed to be privileged or confidential in nature. Preparation of all consumer reports and investigative consumer reports will follow federal, state and local laws and regulations.<br/>
+
+You have the right, upon written request made within a reasonable time after receipt of this notice, to request disclosure of the nature and scope of any consumer report or investigative consumer report. Please be advised that the nature and scope of the most common form of investigative consumer report obtained with regard to tenants is an investigation into your prior rental history, education, and employment. You also acknowledge that our Privacy Policy is available to you.<br/>
+
+I understand that if I want a paper copy of this Applicant Authorization, I may print it out or I may request a copy by contacting Bridge Residential Property Services, LLC. I understand that typing my name in the “Authorized/Acknowledged by” section, checking the box next to the words “I have received..”, and clicking on the Submit Application button below, constitutes my electronic signature, dated as of when I click on the Submit Application button, and that by doing so:<br/>
+
+I am authorizing Bridge Residential Property Services, LLC to conduct the background check(s) described above.<br/>
+I am consenting to use electronic means to (i) sign this form, (ii) receive the Applicant Authorization appearing above, and (iii) receive any legal notices electronically.
+                    </p>
+                    <hr>
+                    <h6>Federal and State Disclosures</h6>
+                    <p>
+                      A Summary of Your Rights Under the Fair Credit Reporting Act, can be found by clicking here.
+                    </p>
+                    <p>
+                      <strong>Washington State applicants only:</strong> You also have the right to request from the relevant consumer reporting agency a written summary of your rights and remedies under the Washington Fair Credit Reporting Act.
+                    </p>
+                    <p>
+                      <strong>New York/Maine applicants only:</strong> You have the right to inspect and receive a copy of any investigative consumer report requested by the Landlord by contacting the relevant consumer reporting agency identified directly. You may also contact the Company to request the name, address and telephone number of the nearest unit of the consumer reporting agency designated to handle inquiries, which the Company shall provide within 5 days.
+                    </p>
+                    <p>
+                      <strong>California applicants or residents only: </strong> By signing this application, you also acknowledge receipt of the NOTICE REGARDING BACKGROUND INVESTIGATION PURSUANT TO CALIFORNIA LAW.
+                    </p>
+
+                    <div class="mb-3 form-check">
+  <input class="form-check-input" type="checkbox" id="agreeTermsFCRA" name="agree_terms" checked required>
+  <label class="form-check-label" for="agreeTermsFCRA">
+    I have received and read a copy of the Terms of Agreement shown above. I have also received and read a copy of the Summary of Your Rights Under The Fair Credit Reporting Act.
+  </label>
+</div>
+
+  <div class="mb-3">
+    <label class="form-label">Payment Method:</label>
+    <input type="hidden" name="payment_method" id="payment_method" value="card">
+    <div class="payment-method-buttons payment-method-buttons--sdk">
+      <div id="paymentSdkStatus" class="payment-sdk-status d-none"></div>
+      <button type="button" id="paypal-redirect-btn" class="payment-method-btn payment-method-btn--paypal">
+        <span class="payment-method-btn__icon" aria-hidden="true"><i class="fab fa-paypal"></i></span>
+        <span class="payment-method-btn__label">PayPal</span>
+      </button>
+      <div class="payment-sdk-group">
+        <p class="payment-sdk-group__label">Venmo</p>
+        <div id="venmo-button-shell" class="payment-native-shell">
+          <div id="venmo-button-container"></div>
+        </div>
+      </div>
+      <div class="payment-divider"><span>Or pay by card</span></div>
+      <div class="payment-card-heading">
+        <span class="payment-method-btn__icon" aria-hidden="true"><i class="fa fa-credit-card"></i></span>
+        <span class="payment-method-btn__label">Card</span>
+      </div>
+    </div>
+  </div>
+
+    <!-- Stripe Card Container -->
+    <div id="stripe-card-container" class="mb-3">
+        <div class="card-row" style="display:flex; gap:10px;">
+            <div class="card-col" style="flex:1;">
+                <label>Card Number</label>
+                <div id="card-number-element" class="stripe-input" style="border:1px solid #ccc; padding:10px; border-radius:5px;"></div>
+            </div>
+            <div class="card-col" style="flex:1;">
+                <label>Expiry Date</label>
+                <div id="card-expiry-element" class="stripe-input" style="border:1px solid #ccc; padding:10px; border-radius:5px;"></div>
+            </div>
+            <div class="card-col" style="flex:1;">
+                <label>CVC</label>
+                <div id="card-cvc-element" class="stripe-input" style="border:1px solid #ccc; padding:10px; border-radius:5px;"></div>
+            </div>
+        </div>
+        <div class="card-country" style="margin-top:10px;">
+            <label>Country</label>
+            <select name="billing_country" class="form-select" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                <option value="US" selected>United States</option>
+<option value="CA">Canada</option>
+<option value="GB">United Kingdom</option>
+<option value="AU">Australia</option>
+<option value="NZ">New Zealand</option>
+<option value="IE">Ireland</option>
+<option value="IN">India</option>
+<option value="PK">Pakistan</option>
+<option value="BD">Bangladesh</option>
+<option value="LK">Sri Lanka</option>
+<option value="NP">Nepal</option>
+
+<option value="AE">United Arab Emirates</option>
+<option value="SA">Saudi Arabia</option>
+<option value="QA">Qatar</option>
+<option value="KW">Kuwait</option>
+<option value="OM">Oman</option>
+<option value="BH">Bahrain</option>
+
+<option value="DE">Germany</option>
+<option value="FR">France</option>
+<option value="IT">Italy</option>
+<option value="ES">Spain</option>
+<option value="NL">Netherlands</option>
+<option value="BE">Belgium</option>
+<option value="CH">Switzerland</option>
+<option value="AT">Austria</option>
+<option value="SE">Sweden</option>
+<option value="NO">Norway</option>
+<option value="DK">Denmark</option>
+<option value="FI">Finland</option>
+
+<option value="CN">China</option>
+<option value="JP">Japan</option>
+<option value="KR">South Korea</option>
+<option value="SG">Singapore</option>
+<option value="MY">Malaysia</option>
+<option value="TH">Thailand</option>
+<option value="PH">Philippines</option>
+<option value="ID">Indonesia</option>
+<option value="VN">Vietnam</option>
+
+<option value="BR">Brazil</option>
+<option value="AR">Argentina</option>
+<option value="CL">Chile</option>
+<option value="CO">Colombia</option>
+<option value="PE">Peru</option>
+<option value="MX">Mexico</option>
+
+<option value="ZA">South Africa</option>
+<option value="NG">Nigeria</option>
+<option value="KE">Kenya</option>
+<option value="EG">Egypt</option>
+<option value="MA">Morocco</option>
+
+<option value="RU">Russia</option>
+<option value="UA">Ukraine</option>
+<option value="PL">Poland</option>
+<option value="CZ">Czech Republic</option>
+<option value="HU">Hungary</option>
+<option value="RO">Romania</option>
+<option value="BG">Bulgaria</option>
+<option value="GR">Greece</option>
+<option value="TR">Turkey</option>
+<option value="IL">Israel</option>
+
+            </select>
+        </div>
+    </div>
+
+<div class="mb-3">
+  <label class="form-label">Authorized/Acknowledged by (Type your Full Name below):</label>
+  <input type="text" class="form-control" name="authorized_name" placeholder="Type your full name here...">
+  <p class="payment-authorization-note mb-0">
+    This full name acts as your electronic signature. If you leave it blank, we will use the applicant name you entered earlier before continuing to payment.
+  </p>
+</div>
+
+
+                </div>
+                <!-- <button type="button" class="btn btn-prev prev-btn">
+              Previous
+            </button> -->
+            <button type="button" class="btn btn-next" id="submit-btn">Submit with Card</button>
+               </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://js.stripe.com/v3/"></script>
+{% if PAYPAL_CLIENT_ID %}
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID|urlencode }}&currency=USD&intent=capture&components=buttons&enable-funding=venmo" data-sdk-integration-source="button-factory"></script>
+{% endif %}
+<script>
+const stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+const elements = stripe.elements();
+const style = { base: { fontSize: '16px', color: '#32325d' } };
+const applicationForm = document.getElementById('multi-step-form');
+
+const cardNumber = elements.create('cardNumber', { style });
+cardNumber.mount('#card-number-element');
+const cardExpiry = elements.create('cardExpiry', { style });
+cardExpiry.mount('#card-expiry-element');
+const cardCvc = elements.create('cardCvc', { style });
+cardCvc.mount('#card-cvc-element');
+const paymentMethodInput = document.getElementById('payment_method');
+const stripeCardContainer = document.getElementById('stripe-card-container');
+const paymentSdkStatus = document.getElementById('paymentSdkStatus');
+const paypalRedirectButton = document.getElementById('paypal-redirect-btn');
+const cardSubmitButton = document.getElementById('submit-btn');
+const venmoButtonShell = document.getElementById('venmo-button-shell');
+let pendingPaypalApplicationId = null;
+let pendingPaypalMethod = 'venmo';
+let paymentRequestInFlight = false;
+
+applicationForm && applicationForm.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+        event.preventDefault();
+    }
+});
+
+applicationForm && applicationForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+});
+
+function showPaymentSdkStatus(message, tone) {
+    if (!paymentSdkStatus) {
+        return;
+    }
+    paymentSdkStatus.textContent = message || '';
+    paymentSdkStatus.className = 'payment-sdk-status';
+    if (!message) {
+        paymentSdkStatus.classList.add('d-none');
+        return;
+    }
+    paymentSdkStatus.classList.add(`payment-sdk-status--${tone || 'info'}`);
+}
+
+function setPaymentRequestState(isBusy, method) {
+    paymentRequestInFlight = isBusy;
+
+    if (paypalRedirectButton) {
+        paypalRedirectButton.disabled = isBusy;
+        paypalRedirectButton.classList.toggle('is-loading', isBusy && method === 'paypal');
+        paypalRedirectButton.innerHTML = isBusy && method === 'paypal'
+            ? '<span class="payment-method-btn__icon" aria-hidden="true"><i class="fa fa-spinner fa-spin"></i></span><span class="payment-method-btn__label">Redirecting to PayPal...</span>'
+            : '<span class="payment-method-btn__icon" aria-hidden="true"><i class="fab fa-paypal"></i></span><span class="payment-method-btn__label">PayPal</span>';
+    }
+
+    if (cardSubmitButton) {
+        cardSubmitButton.disabled = isBusy;
+        cardSubmitButton.classList.toggle('is-loading', isBusy && method === 'card');
+        cardSubmitButton.textContent = isBusy && method === 'card' ? 'Processing Card...' : 'Submit with Card';
+    }
+
+    if (venmoButtonShell) {
+        const disableVenmo = isBusy && method !== 'venmo';
+        venmoButtonShell.classList.toggle('is-disabled', disableVenmo);
+        venmoButtonShell.classList.toggle('is-loading', isBusy && method === 'venmo');
+    }
+}
+
+function humanizeFieldName(name) {
+    return (name || 'required field')
+        .replace(/\[\]/g, '')
+        .replace(/_/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function labelForField(field) {
+    if (!field) {
+        return 'required field';
+    }
+
+    const explicitLabel = field.id ? document.querySelector(`label[for="${field.id}"]`) : null;
+    const nearbyLabel = explicitLabel || field.closest('.mb-3, .col-md-6, .col-md-4, .col-md-3, .col-12')?.querySelector('.form-label');
+    const rawLabel = nearbyLabel?.textContent?.replace(/\*/g, '').trim();
+
+    if (rawLabel) {
+        return rawLabel;
+    }
+
+    if (field.placeholder) {
+        return field.placeholder.trim();
+    }
+
+    return humanizeFieldName(field.name);
+}
+
+function clearStripePaymentMethodInput(form) {
+    const existingInput = form.querySelector('input[name="stripe_payment_method_id"]');
+    if (existingInput) {
+        existingInput.remove();
+    }
+}
+
+function invalidFieldMessage(field) {
+    const label = labelForField(field);
+    if (field && field.validity && !field.validity.valueMissing && field.validationMessage) {
+        return field.validationMessage;
+    }
+    return `Please complete "${label}" before continuing.`;
+}
+
+function focusFieldStep(field) {
+    if (!field || typeof formSteps === 'undefined' || typeof updateSteps !== 'function') {
+        return;
+    }
+
+    const targetStep = field.closest('.form-step');
+    if (!targetStep) {
+        return;
+    }
+
+    const targetIndex = Array.from(formSteps).indexOf(targetStep);
+    if (targetIndex === -1) {
+        return;
+    }
+
+    if (typeof currentStep !== 'undefined') {
+        currentStep = targetIndex;
+    }
+    updateSteps();
+    if (typeof updateProgressbar === 'function') {
+        updateProgressbar();
+    }
+}
+
+function validateApplicationSubmission(options) {
+    const config = options || {};
+    const requireCard = Boolean(config.requireCard);
+    const form = applicationForm;
+    const photoInput = document.getElementById('photoID');
+    const photoError = document.getElementById('photoIdError');
+
+    if (!form.checkValidity()) {
+        const invalidField = form.querySelector(':invalid');
+        focusFieldStep(invalidField);
+        invalidField && invalidField.reportValidity();
+        invalidField && invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        invalidField && invalidField.focus({ preventScroll: true });
+        return invalidFieldMessage(invalidField);
+    }
+
+    if (photoInput && photoInput.files.length && photoInput.files[0].size > 10 * 1024 * 1024) {
+        photoError && photoError.classList.remove('d-none');
+        photoInput.focus();
+        return 'Please upload a file that is 10 MB or smaller.';
+    }
+
+    photoError && photoError.classList.add('d-none');
+
+    if (requireCard) {
+        paymentMethodInput.value = 'card';
+    }
+
+    return null;
+}
+
+async function submitApplicationWithMethod(paymentMethod, extraOptions) {
+    if (paymentRequestInFlight) {
+        return;
+    }
+
+    const form = applicationForm;
+    const options = extraOptions || {};
+    const validationError = validateApplicationSubmission({ requireCard: paymentMethod === 'card' });
+    if (validationError) {
+        showPaymentSdkStatus(validationError, 'error');
+        alert(validationError);
+        return;
+    }
+
+    setPaymentRequestState(true, paymentMethod);
+    showPaymentSdkStatus(
+        paymentMethod === 'card'
+            ? 'Submitting your application and preparing card payment...'
+            : 'Submitting your application and preparing checkout...',
+        'info'
+    );
+
+    try {
+        if (paymentMethod === 'card') {
+            const authorizedName = document.querySelector('input[name="authorized_name"]').value.trim();
+            const applicantName = [
+                document.querySelector('input[name="first_name"]').value.trim(),
+                document.querySelector('input[name="last_name"]').value.trim()
+            ].filter(Boolean).join(' ');
+            const stripePaymentResult = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardNumber,
+                billing_details: {
+                    name: authorizedName || applicantName,
+                    email: document.querySelector('input[name="email"]').value
+                }
+            });
+
+            if(stripePaymentResult.error){
+                setPaymentRequestState(false);
+                showPaymentSdkStatus(stripePaymentResult.error.message, 'error');
+                alert(stripePaymentResult.error.message);
+                return;
+            }
+
+            clearStripePaymentMethodInput(form);
+
+            const stripeInput = document.createElement('input');
+            stripeInput.type = 'hidden';
+            stripeInput.name = 'stripe_payment_method_id';
+            stripeInput.value = stripePaymentResult.paymentMethod.id;
+            form.appendChild(stripeInput);
+        } else {
+            clearStripePaymentMethodInput(form);
+        }
+
+        const formData = new FormData(form);
+        formData.set('payment_method', paymentMethod);
+        if (options.redirectOnly) {
+            formData.delete('stripe_payment_method_id');
+        }
+        const response = await fetch("{% url 'add_application' %}", {
+            method: "POST",
+            body: formData,
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if(result.status === 'requires_action'){
+            showPaymentSdkStatus('Please complete the card verification to continue.', 'info');
+            const confirmResult = await stripe.confirmCardPayment(result.payment_intent_client_secret);
+            if(confirmResult.error){
+                setPaymentRequestState(false);
+                showPaymentSdkStatus(confirmResult.error.message, 'error');
+                alert(confirmResult.error.message);
+                return;
+            }
+            const confirmedIntent = confirmResult.paymentIntent;
+            if (confirmedIntent && confirmedIntent.id) {
+                window.location.href = `/success/?payment_intent=${encodeURIComponent(confirmedIntent.id)}`;
+                return;
+            }
+            setPaymentRequestState(false);
+            showPaymentSdkStatus('Card authentication completed, but the payment confirmation response was incomplete.', 'error');
+            alert('Card authentication completed, but the payment confirmation response was incomplete.');
+        } else if(result.status === 'paypal_redirect'){
+            showPaymentSdkStatus('Redirecting you to checkout. Please wait...', 'info');
+            window.location.href = result.redirect_url;
+        } else if(result.status === 'succeeded' || result.status === 'saved'){
+            window.location.href = result.redirect_url;
+        } else {
+            setPaymentRequestState(false);
+            showPaymentSdkStatus(result.error || 'Payment failed', 'error');
+            alert(result.error || 'Payment failed');
+        }
+    } catch (error) {
+        setPaymentRequestState(false);
+        showPaymentSdkStatus('Something went wrong while starting the payment. Please try again.', 'error');
+        alert(error?.message || 'Something went wrong while starting the payment.');
+    }
+}
+
+document.getElementById('submit-btn').addEventListener('click', async function(e){
+    e.preventDefault();
+    await submitApplicationWithMethod('card');
+});
+
+paypalRedirectButton && paypalRedirectButton.addEventListener('click', async function (event) {
+    event.preventDefault();
+    await submitApplicationWithMethod('paypal', { redirectOnly: true });
+});
+
+function buildPaypalSdkButtonConfig(method) {
+    return {
+        fundingSource: paypal.FUNDING.VENMO,
+        style: {
+            layout: 'vertical',
+            shape: 'pill',
+            height: 50,
+        },
+        onClick(data, actions) {
+            if (paymentRequestInFlight) {
+                return actions.reject();
+            }
+            const validationError = validateApplicationSubmission({ requireCard: false });
+            if (validationError) {
+                showPaymentSdkStatus(validationError, 'error');
+                return actions.reject();
+            }
+            paymentMethodInput.value = method;
+            setPaymentRequestState(true, 'venmo');
+            showPaymentSdkStatus('Submitting your application and opening Venmo...', 'info');
+            return actions.resolve();
+        },
+        async createOrder() {
+            const formData = new FormData(applicationForm);
+            formData.set('payment_method', method);
+
+            const response = await fetch("{% url 'create_paypal_sdk_application_order' %}", {
+                method: "POST",
+                body: formData,
+            });
+            const result = await response.json();
+
+            if (!response.ok || result.status !== 'created') {
+                setPaymentRequestState(false);
+                showPaymentSdkStatus(result.error || 'Unable to initialize Venmo checkout.', 'error');
+                throw new Error(result.error || 'Unable to initialize PayPal checkout.');
+            }
+
+            pendingPaypalApplicationId = result.application_id;
+            pendingPaypalMethod = method;
+            showPaymentSdkStatus('Venmo checkout is ready. Finish approval in the popup.', 'info');
+            return result.order_id;
+        },
+        async onApprove(data) {
+            const response = await fetch("{% url 'capture_paypal_sdk_application_order' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    order_id: data.orderID,
+                    application_id: pendingPaypalApplicationId,
+                    payment_method: pendingPaypalMethod,
+                }),
+            });
+            const result = await response.json();
+
+            if (!response.ok || result.status !== 'succeeded') {
+                setPaymentRequestState(false);
+                showPaymentSdkStatus(result.error || 'Unable to confirm the Venmo payment.', 'error');
+                return;
+            }
+
+            window.location.href = result.redirect_url;
+        },
+        onCancel() {
+            setPaymentRequestState(false);
+            showPaymentSdkStatus('Venmo checkout was canceled. Your application is still saved as pending.', 'info');
+        },
+        onError() {
+            setPaymentRequestState(false);
+            showPaymentSdkStatus('Venmo checkout failed. Please try again or use the PayPal or card option.', 'error');
+        },
+    };
+}
+
+function renderPaypalSdkButton(containerId, shellId, method) {
+    if (!window.paypal || !document.getElementById(containerId)) {
+        return;
+    }
+
+    const button = paypal.Buttons(buildPaypalSdkButtonConfig(method));
+    if (!button.isEligible()) {
+        const shell = document.getElementById(shellId);
+        shell && shell.remove();
+        return;
+    }
+
+    button.render(`#${containerId}`);
+}
+
+if (window.paypal) {
+    renderPaypalSdkButton('venmo-button-container', 'venmo-button-shell', 'venmo');
+}
+
+const photoInput = document.getElementById('photoID');
+const photoError = document.getElementById('photoIdError');
+
+photoInput && photoInput.addEventListener('change', function () {
+    if (this.files.length && this.files[0].size > 10 * 1024 * 1024) {
+        photoError && photoError.classList.remove('d-none');
+    } else {
+        photoError && photoError.classList.add('d-none');
+    }
+});
+</script>
+
+
+
+
+
+<style>
+.payment-method-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+    width: min(100%, 360px);
+}
+
+.payment-method-buttons--sdk {
+    width: min(100%, 420px);
+}
+
+.payment-sdk-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-sdk-group__label,
+.payment-card-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #251231;
+}
+
+.payment-native-shell {
+    width: 100%;
+    min-height: 50px;
+}
+
+.payment-method-btn {
+    width: 100%;
+    border: 0;
+    border-radius: 999px;
+    min-height: 58px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.payment-method-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 26px rgba(37, 18, 49, 0.12);
+}
+
+.payment-method-btn:disabled,
+.payment-method-btn.is-loading {
+    opacity: 0.72;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.payment-method-btn--paypal {
+    background: linear-gradient(135deg, #ffc439, #ffb703);
+    color: #043263;
+}
+
+.payment-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #7b6885;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.payment-divider::before,
+.payment-divider::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: rgba(37, 18, 49, 0.14);
+}
+
+.payment-sdk-status {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.payment-sdk-status--info {
+    background: rgba(18, 89, 186, 0.08);
+    color: #1259ba;
+}
+
+.payment-sdk-status--error {
+    background: rgba(189, 35, 61, 0.08);
+    color: #bd233d;
+}
+
+.payment-native-shell.is-disabled,
+.payment-native-shell.is-loading {
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+.payment-method-btn__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    font-size: 24px;
+    flex: 0 0 28px;
+}
+
+.payment-method-btn__label {
+    display: inline-flex;
+    align-items: center;
+}
+
+.card-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.card-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.stripe-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Country dropdown full width */
+.card-country {
+    margin-top: 10px;
+}
+.card-country .stripe-input {
+    width: 100%;
+}
+
+.payment-authorization-note {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #6b5c74;
+}
+
+@media (max-width: 768px) {
+    .card-row {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-method-buttons {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

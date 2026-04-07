@@ -1,0 +1,395 @@
+{% extends "dashboard/layout.html" %}
+{% block title %}Edit Application{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Edit Application</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Step 1 – Property Details -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Step 1: Property Details</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Property ID:</th>
+                    <td><input type="text" name="property_id" value="{{ applying.property_id }}" class="form-control" required></td>
+                    <th>Move-in Date:</th>
+                    <td><input type="date" name="move_in_date" value="{{ applying.move_in_date|date:'Y-m-d' }}" class="form-control" required></td>
+                </tr>
+                <tr>
+                    <th>Applicant Type:</th>
+                    <td colspan="3">
+                        <select name="applicant_type" class="form-control" required>
+                            <option value="tenant" {% if applying.applicant_type == 'tenant' %}selected{% endif %}>Tenant</option>
+                            <option value="cosigner" {% if applying.applicant_type == 'cosigner' %}selected{% endif %}>Co-signer/Guarantor</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 2 – Personal Info -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">Step 2: Personal Information</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>First Name:</th>
+                    <td><input type="text" name="first_name" value="{{ applying.first_name }}" class="form-control" required></td>
+                    <th>Last Name:</th>
+                    <td><input type="text" name="last_name" value="{{ applying.last_name }}" class="form-control" required></td>
+                </tr>
+                <tr>
+                    <th>Email:</th>
+                    <td><input type="email" name="email" value="{{ applying.email }}" class="form-control" required></td>
+                    <th>Confirm Email:</th>
+                    <td><input type="email" name="confirm_email" value="{{ applying.confirm_email }}" class="form-control" required></td>
+                </tr>
+                <tr>
+                    <th>Phone:</th>
+                    <td><input type="text" name="phone" value="{{ applying.phone }}" class="form-control"></td>
+                    <th>Hear About:</th>
+                    <td><input type="text" name="hear_about" value="{{ applying.hear_about }}" class="form-control"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 3 – Previous Residence -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">Step 3: Previous Residence</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Address 1:</th>
+                    <td><input type="text" name="address1" value="{{ applying.address1 }}" class="form-control"></td>
+                    <th>Address 2:</th>
+                    <td><input type="text" name="address2" value="{{ applying.address2 }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>City:</th>
+                    <td><input type="text" name="city" value="{{ applying.city }}" class="form-control"></td>
+                    <th>State:</th>
+                    <td>
+                        <select name="state" class="form-control">
+                            {% for code, name in STATE_CHOICES %}
+                                <option value="{{ code }}" {% if applying.state == code %}selected{% endif %}>{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Zipcode:</th>
+                    <td><input type="text" name="zipcode" value="{{ applying.zipcode }}" class="form-control"></td>
+                    <th>Reside From Month/Year:</th>
+                    <td>
+                        <select name="reside_from_month" class="form-control d-inline w-auto">
+                            {% for m, _ in MONTH_CHOICES %}
+                                <option value="{{ m }}" {% if applying.reside_from_month == m %}selected{% endif %}>{{ m }}</option>
+                            {% endfor %}
+                        </select>
+                        /
+                        <select name="reside_from_year" class="form-control d-inline w-auto">
+                            {% for y, _ in YEAR_CHOICES %}
+                                <option value="{{ y }}" {% if applying.reside_from_year == y %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Monthly Rent:</th>
+                    <td><input type="number" step="0.01" name="monthly_rent" value="{{ applying.monthly_rent }}" class="form-control"></td>
+                    <th>Monthly Mortgage:</th>
+                    <td><input type="number" step="0.01" name="monthly_mortgage" value="{{ applying.monthly_mortgage }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Landlord Name:</th>
+                    <td><input type="text" name="landlord_name" value="{{ applying.landlord_name }}" class="form-control"></td>
+                    <th>Landlord Phone:</th>
+                    <td><input type="text" name="landlord_phone" value="{{ applying.landlord_phone }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Landlord Email:</th>
+                    <td><input type="email" name="landlord_email" value="{{ applying.landlord_email }}" class="form-control"></td>
+                    <th>Home Email:</th>
+                    <td><input type="email" name="home_email" value="{{ applying.home_email }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Reason for Leaving:</th>
+                    <td colspan="3"><textarea name="reason_for_leaving" class="form-control">{{ applying.reason_for_leaving }}</textarea></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 4 – Housemates & Pets -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">Step 4: Housemates & Pets</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Other Adults:</th>
+                    <td><input type="checkbox" name="other_adults" {% if applying.other_adults %}checked{% endif %}></td>
+                    <th>Adult Count:</th>
+                    <td><input type="number" name="adult_count" value="{{ applying.adult_count }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Dependents Under 18:</th>
+                    <td><input type="checkbox" name="dependents_under_18" {% if applying.dependents_under_18 %}checked{% endif %}></td>
+                    <th>Dependent Name:</th>
+                    <td><input type="text" name="dependent_first_name" value="{{ applying.dependent_first_name }}" class="form-control"> / 
+                        <input type="text" name="dependent_last_name" value="{{ applying.dependent_last_name }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Dependent Relation:</th>
+                    <td><input type="text" name="dependent_relation" value="{{ applying.dependent_relation }}" class="form-control"></td>
+                    <th>Dependent DOB:</th>
+                    <td><input type="date" name="dependent_dob" value="{{ applying.dependent_dob|date:'Y-m-d' }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Pets:</th>
+                    <td><input type="checkbox" name="has_pets" {% if applying.has_pets %}checked{% endif %}></td>
+                    <th>Pet Details:</th>
+                    <td><textarea name="pet_details" class="form-control">{{ applying.pet_details }}</textarea></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 5 – Personal Info & Vehicles -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">Step 5: Personal Info & Vehicles</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Date of Birth:</th>
+                    <td><input type="date" name="dob" value="{{ applying.dob|date:'Y-m-d' }}" class="form-control"></td>
+                    <th>SSN:</th>
+                    <td><input type="text" name="ssn" value="{{ applying.ssn }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>License Number:</th>
+                    <td><input type="text" name="license_number" value="{{ applying.license_number }}" class="form-control"></td>
+                    <th>License State:</th>
+                    <td><input type="text" name="license_state" value="{{ applying.license_state }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Personal Email:</th>
+                    <td><input type="email" name="personal_email" value="{{ applying.personal_email }}" class="form-control"></td>
+                    <th>Personal Phone:</th>
+                    <td><input type="text" name="personal_phone" value="{{ applying.personal_phone }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Emergency Contact:</th>
+                    <td colspan="3">
+                        <input type="text" name="emergency_name" value="{{ applying.emergency_name }}" placeholder="Name" class="form-control mb-1">
+                        <input type="text" name="emergency_phone" value="{{ applying.emergency_phone }}" placeholder="Phone" class="form-control mb-1">
+                        <input type="text" name="emergency_relation" value="{{ applying.emergency_relation }}" placeholder="Relation" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Vehicle:</th>
+                    <td><input type="checkbox" name="has_vehicle" {% if applying.has_vehicle %}checked{% endif %}></td>
+                    <th>Vehicle Details:</th>
+                    <td>
+                        <input type="text" name="vehicle_make" value="{{ applying.vehicle_make }}" placeholder="Make" class="form-control mb-1">
+                        <input type="text" name="vehicle_modal" value="{{ applying.vehicle_modal }}" placeholder="Model" class="form-control mb-1">
+                        <input type="text" name="vehicle_year" value="{{ applying.vehicle_year }}" placeholder="Year" class="form-control mb-1">
+                        <input type="text" name="vehicle_color" value="{{ applying.vehicle_color }}" placeholder="Color" class="form-control mb-1">
+                        <input type="text" name="vehicle_license" value="{{ applying.vehicle_license }}" placeholder="License" class="form-control">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 6 – Employment/Income -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">Step 6: Employment & Income</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Employer Name:</th>
+                    <td><input type="text" name="employer_name" value="{{ applying.employer_name }}" class="form-control"></td>
+                    <th>Position:</th>
+                    <td><input type="text" name="position" value="{{ applying.position }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Employer Address 1:</th>
+                    <td><input type="text" name="employer_address1" value="{{ applying.employer_address1 }}" class="form-control"></td>
+                    <th>Address 2:</th>
+                    <td><input type="text" name="employer_address2" value="{{ applying.employer_address2 }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>City/State/Zip:</th>
+                    <td colspan="3">
+                        <input type="text" name="employer_city" value="{{ applying.employer_city }}" placeholder="City" class="form-control mb-1 d-inline w-25">
+                        <select name="employer_state" class="form-control d-inline w-25 mb-1">
+                            {% for code, name in STATE_CHOICES %}
+                                <option value="{{ code }}" {% if applying.employer_state == code %}selected{% endif %}>{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="employer_zip" value="{{ applying.employer_zip }}" placeholder="Zip" class="form-control d-inline w-25 mb-1">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Employer Phone:</th>
+                    <td><input type="text" name="employer_phone" value="{{ applying.employer_phone }}" class="form-control"></td>
+                    <th>Years Worked:</th>
+                    <td><input type="number" name="years_worked" value="{{ applying.years_worked }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Supervisor Name:</th>
+                    <td colspan="3"><input type="text" name="supervisor_name" value="{{ applying.supervisor_name }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Monthly Salary:</th>
+                    <td><input type="number" step="0.01" name="monthly_salary" value="{{ applying.monthly_salary }}" class="form-control"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 7 – Yes/No Questions -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">Step 7: Questions</div>
+        <div class="card-body">
+            <!-- Step 7 – Yes/No Questions -->
+<table class="table table-bordered">
+    <tr>
+        <th>Eviction History:</th>
+        <td>
+            <select name="eviction_history" class="form-control">
+                <option value="yes" {% if applying.eviction_history == 'yes' %}selected{% endif %}>Yes</option>
+                <option value="no" {% if applying.eviction_history == 'no' %}selected{% endif %}>No</option>
+            </select>
+        </td>
+        <th>Eviction Explain:</th>
+        <td><textarea name="eviction_explain" class="form-control">{{ applying.eviction_explain }}</textarea></td>
+    </tr>
+    <tr>
+        <th>Criminal History:</th>
+        <td>
+            <select name="criminal_history" class="form-control">
+                <option value="yes" {% if applying.criminal_history == 'yes' %}selected{% endif %}>Yes</option>
+                <option value="no" {% if applying.criminal_history == 'no' %}selected{% endif %}>No</option>
+            </select>
+        </td>
+        <th>Criminal Explain:</th>
+        <td><textarea name="criminal_explain" class="form-control">{{ applying.criminal_explain }}</textarea></td>
+    </tr>
+    <tr>
+        <th>Income 3x Rent:</th>
+        <td>
+            <select name="income_3x_rent" class="form-control">
+                <option value="yes" {% if applying.income_3x_rent == 'yes' %}selected{% endif %}>Yes</option>
+                <option value="no" {% if applying.income_3x_rent == 'no' %}selected{% endif %}>No</option>
+            </select>
+        </td>
+        <th>Income Explain:</th>
+        <td><textarea name="income_explain" class="form-control">{{ applying.income_explain }}</textarea></td>
+    </tr>
+    <tr>
+        <th>Employment History:</th>
+        <td>
+            <select name="employment_history" class="form-control">
+                <option value="yes" {% if applying.employment_history == 'yes' %}selected{% endif %}>Yes</option>
+                <option value="no" {% if applying.employment_history == 'no' %}selected{% endif %}>No</option>
+            </select>
+        </td>
+        <th>Employment Explain:</th>
+        <td><textarea name="employment_explain" class="form-control">{{ applying.employment_explain }}</textarea></td>
+    </tr>
+    <tr>
+        <th>Residency History:</th>
+        <td>
+            <select name="residency_history" class="form-control">
+                <option value="yes" {% if applying.residency_history == 'yes' %}selected{% endif %}>Yes</option>
+                <option value="no" {% if applying.residency_history == 'no' %}selected{% endif %}>No</option>
+            </select>
+        </td>
+        <th>Residency Explain:</th>
+        <td><textarea name="residency_explain" class="form-control">{{ applying.residency_explain }}</textarea></td>
+    </tr>
+</table>
+
+        </div>
+    </div>
+
+    <!-- Step 8 – Documents -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Step 8: Documents</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Photo ID:</th>
+                    <td><input type="file" name="photo_id" class="form-control"></td>
+                    <td colspan="2">
+                        {% if applying.photo_id %}
+                            <img src="{{ applying.photo_id.url }}" width="100" class="img-thumbnail">
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 9 – Billing -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">Step 9: Billing Information</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Billing First Name:</th>
+                    <td><input type="text" name="billing_first_name" value="{{ applying.billing_first_name }}" class="form-control"></td>
+                    <th>Billing Last Name:</th>
+                    <td><input type="text" name="billing_last_name" value="{{ applying.billing_last_name }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>Billing Address 1:</th>
+                    <td><input type="text" name="billing_address1" value="{{ applying.billing_address1 }}" class="form-control"></td>
+                    <th>Billing Address 2:</th>
+                    <td><input type="text" name="billing_address2" value="{{ applying.billing_address2 }}" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th>City:</th>
+                    <td><input type="text" name="billing_city" value="{{ applying.billing_city }}" class="form-control"></td>
+                    <th>State:</th>
+                    <td>
+                        <select name="billing_state" class="form-control">
+                            {% for code, name in STATE_CHOICES %}
+                                <option value="{{ code }}" {% if applying.billing_state == code %}selected{% endif %}>{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Zip:</th>
+                    <td><input type="text" name="billing_zip" value="{{ applying.billing_zip }}" class="form-control"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Step 10 – Terms & Authorization -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">Step 10: Terms & Authorization</div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Agree to Terms:</th>
+                    <td><input type="checkbox" name="agree_terms" {% if applying.agree_terms %}checked{% endif %}></td>
+                </tr>
+                <tr>
+                    <th>Authorized Name:</th>
+                    <td colspan="3"><input type="text" name="authorized_name" value="{{ applying.authorized_name }}" class="form-control"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-5">Save Changes</button>
+</form>
+{% endblock %}

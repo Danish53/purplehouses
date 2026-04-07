@@ -1,0 +1,63 @@
+<div class="ph-property-filter {% if variant == 'home' %}ph-property-filter--home{% else %}ph-property-filter--page{% endif %}">
+  <div class="container">
+    <form method="get" action="{% url 'allProperties' %}" class="ph-property-filter__card">
+      <div class="ph-property-filter__row">
+        <div class="ph-property-filter__field ph-property-filter__field--keyword">
+          <input
+            type="text"
+            name="q"
+            class="form-control"
+            placeholder="Enter an address, town, street, zip or property ID"
+            value="{{ filters.q }}"
+          />
+        </div>
+
+        <div class="ph-property-filter__field ph-property-filter__field--select">
+          <select name="city" class="form-select">
+            <option value="">All Cities</option>
+            {% for city_name in cities %}
+            <option value="{{ city_name }}" {% if filters.city == city_name %}selected{% endif %}>{{ city_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="ph-property-filter__field ph-property-filter__field--select">
+          <select name="category" class="form-select">
+            <option value="">All Areas</option>
+            {% for option in property_type_options %}
+            <option value="{{ option.value }}" {% if filters.category == option.value %}selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="btn ph-property-filter__toggle"
+          data-bs-toggle="collapse"
+          data-bs-target="#property-filter-advanced-{{ variant|default:'page' }}"
+          aria-expanded="{% if filters.purpose %}true{% else %}false{% endif %}"
+        >
+          <i class="fa fa-gear" aria-hidden="true"></i>
+          <span>Advanced</span>
+        </button>
+
+        <button type="submit" class="btn ph-property-filter__submit">Search</button>
+      </div>
+
+      <div id="property-filter-advanced-{{ variant|default:'page' }}" class="collapse ph-property-filter__advanced {% if filters.purpose %}show{% endif %}">
+        <div class="ph-property-filter__advanced-grid">
+          <div class="ph-property-filter__field ph-property-filter__field--select">
+            <select name="purpose" class="form-select">
+              <option value="">All Listing Types</option>
+              {% for option in property_purpose_options %}
+              <option value="{{ option.value }}" {% if filters.purpose == option.value %}selected{% endif %}>{{ option.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <a href="{% url 'allProperties' %}" class="btn ph-property-filter__reset">Clear</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

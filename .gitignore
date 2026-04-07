@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next
+**/.next
+out
+
+# Env (never commit secrets)
+.env
+.env.local
+.env.*.local
+
+# Uploaded media (local dev)
+public/media/
+
+# OS
+.DS_Store
+Thumbs.db

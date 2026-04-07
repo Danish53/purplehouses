@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <title>Application Submitted Successfully</title> -->
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.5; }
+        .container { max-width: 700px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9; }
+        h2 { color: #2a2a2a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 6px 10px; border: 1px solid #ddd; }
+        .section-title { margin-top: 20px; font-size: 18px; color: #555; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>New Applying Details</h2>
+        <!-- <p>Dear {{ first_name }} {{ last_name }},</p>
+        <p>Thank you for submitting your application. Here are the details you provided:</p> -->
+
+        <!-- Property & Move-in -->
+        <p class="section-title">Property & Move-in Details</p>
+        <table>
+            <tr><th>Property Name</th><td>{{ property_name }}</td></tr>
+            <tr><th>Move-in Date</th><td>{{ move_in_date }}</td></tr>
+            <tr><th>Applicant Type</th><td>{{ applicant_type }}</td></tr>
+        </table>
+
+        <!-- Personal Info -->
+        <p class="section-title">Personal Information</p>
+        <table>
+            <tr><th>First Name</th><td>{{ first_name }}</td></tr>
+            <tr><th>Last Name</th><td>{{ last_name }}</td></tr>
+            <tr><th>Email</th><td>{{ email }}</td></tr>
+            <tr><th>Phone</th><td>{{ phone }}</td></tr>
+            <tr><th>Hear About Us</th><td>{{ hear_about }}</td></tr>
+        </table>
+
+        <!-- Previous Residence -->
+        <p class="section-title">Previous Residence</p>
+        <table>
+            <tr><th>Address 1</th><td>{{ address1 }}</td></tr>
+            <tr><th>Address 2</th><td>{{ address2 }}</td></tr>
+            <tr><th>City</th><td>{{ city }}</td></tr>
+            <tr><th>State</th><td>{{ state }}</td></tr>
+            <tr><th>Zipcode</th><td>{{ zipcode }}</td></tr>
+            <tr><th>Monthly Rent</th><td>{{ monthly_rent }}</td></tr>
+            <tr><th>Landlord Name</th><td>{{ landlord_name }}</td></tr>
+            <tr><th>Landlord Phone</th><td>{{ landlord_phone }}</td></tr>
+        </table>
+
+        <!-- Housemates & Pets -->
+        <p class="section-title">Housemates & Pets</p>
+        <table>
+            <tr><th>Other Adults</th><td>{{ other_adults }}</td></tr>
+            <tr><th>Adult Count</th><td>{{ adult_count}}</td></tr>
+            <tr><th>Adult Names</th><td>{{ adult_names}}</td></tr>
+            <tr><th>Adult Emails</th><td>{{ adult_emails}}</td></tr>
+            <tr><th>Adult Phones</th><td>{{ adult_phones}}</td></tr>
+            <tr><th>Has Pets</th><td>{{ has_pets }}</td></tr>
+            <tr><th>Pet Count</th><td>{{ pet_count }}</td></tr>
+            <tr><th>Pet Details</th><td>{{ pet_details}}</td></tr>
+        </table>
+
+        <!-- Personal Info & Vehicle -->
+        <p class="section-title">Personal Info & Vehicle</p>
+        <table>
+            <tr><th>Date of Birth</th><td>{{ dob }}</td></tr>
+            <tr><th>License Number</th><td>{{ license_number }}</td></tr>
+            <tr><th>Personal Email</th><td>{{ personal_email }}</td></tr>
+            <tr><th>Personal Phone</th><td>{{ personal_phone }}</td></tr>
+        </table>
+
+        <!-- Employment & Income -->
+        <p class="section-title">Employment & Income</p>
+        <table>
+            <tr><th>Employer Name</th><td>{{ employer_name }}</td></tr>
+            <tr><th>Monthly Salary</th><td>{{ monthly_salary }}</td></tr>
+            <tr><th>Position</th><td>{{ position }}</td></tr>
+        </table>
+
+        <!-- Background Information -->
+        <p class="section-title">Background Information</p>
+        <table>
+            <tr><th>Eviction History</th><td>{{ eviction_history }}</td></tr>
+            <tr><th>Criminal History</th><td>{{ criminal_history }}</td></tr>
+        </table>
+
+        <!-- Billing -->
+        <p class="section-title">Billing Information</p>
+        <table>
+            <tr><th>Billing Name</th><td>{{ billing_first_name }} {{ billing_last_name }}</td></tr>
+            <tr><th>Billing Address</th><td>{{ billing_address1 }}</td></tr>
+            <tr><th>Billing City</th><td>{{ billing_city }}</td></tr>
+            <tr><th>Billing State</th><td>{{ billing_state }}</td></tr>
+            <tr><th>Billing ZIP</th><td>{{ billing_zip }}</td></tr>
+        </table>
+
+        <p class="section-title">Payment Information</p>
+        <table>
+            <tr>
+                <th>Payment Method</th>
+                <td>{{ payment_method|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <th>Payment Status</th>
+                <td>{{ payment_status|default:"Approved" }}</td>
+            </tr>
+            <tr>
+                <th>Amount Paid</th>
+                <td>
+                    {% if amount %}
+                        ${{ amount }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Stripe Charge ID</th>
+                <td>
+                    {% if stripe_charge_id %}
+                        {{ stripe_charge_id }}
+                    {% else %}
+                        Not Available
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+        <!-- Authorization -->
+        <p class="section-title">Authorization</p>
+        <table>
+            <tr><th>Authorized Name</th><td>{{ authorized_name }}</td></tr>
+            <tr><th>Agreed Terms</th><td>{{ agree_terms }}</td></tr>
+        </table>
+
+        <p>Thank you,<br>The Purple Housing Team</p>
+    </div>
+</body>
+</html>

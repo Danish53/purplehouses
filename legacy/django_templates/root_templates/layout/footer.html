@@ -1,0 +1,113 @@
+{% load static %}
+<footer class="footer-section mt-5">
+  <div class="container py-2">
+    <div class="row">
+      <!-- Column 1 -->
+      <div class="col-md-3 col-sm-6 mb-4">
+        <!-- <h5 class="footer-title">Company</h5> -->
+        <a class="navbar-brand" href="/">
+          <img
+            src="{% static 'images/footer-logo.png' %}"
+            alt="MySite Logo"
+            width="200"
+            height="100"
+          />
+        </a>
+        <p class="m-0 footer-para mt-3">
+          “Purple Housing was created to make finding off-campus housing easier
+          for TCU students. The creator of purple housing, a TCU student
+          himself, recognized that TCU students didn’t have an easy or efficient
+          way to find off campus housing
+        </p>
+      </div>
+
+      <!-- Column 2 -->
+      <div class="col-md-3 col-sm-6 mb-4 mt-5">
+        <h5 class="footer-title">Contact Us:</h5>
+        <div class="footer-divider"></div>
+        <ul class="list-unstyled footer-links">
+          <li class="textList">3124 Sandage Ave Fort Worth, TX 76109</li>
+          <li class="textList">
+            <a style="color: white" href="tel:+18175851354">(817) 585-1354</a>
+          </li>
+          <li class="textList">
+            <a
+              style="color: white"
+              href="mailto:admin@purplehousing.com"
+              target="_blank"
+              >admin@purplehousing.com</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Column 3 -->
+      <div class="col-md-3 col-sm-6 mb-4 mt-5">
+        <h5 class="footer-title">Find Us:</h5>
+        <div class="footer-divider2"></div>
+        <div class="footer-map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d429732.53177326475!2d-97.354789!3d32.705043!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864e721f7a43cc3f%3A0x9a5bfd38f89a3edc!2s3124%20Sandage%20Ave%2C%20Fort%20Worth%2C%20TX%2076109!5e0!3m2!1sen!2sus!4v1763726793946!5m2!1sen!2sus"
+            width="100%"
+            height="150"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          >
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Column 4 -->
+      <div class="col-md-3 col-sm-6 mb-4 mt-5">
+        <h5 class="footer-title">Newsletter:</h5>
+        <div class="footer-divider"></div>
+        <ul class="list-unstyled footer-links">
+          <li class="textList">Subscribe newsletter to get updates.</li>
+        </ul>
+
+        <div class="subscribe-box">
+          <input
+            type="email"
+            class="subscribe-input"
+            placeholder="Enter your email"
+          />
+          <button class="subscribe-btn">
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- <hr /> -->
+     <div class="footer-divider-bottom mt-5"></div>
+
+     <div class="copyright-list pt-4">
+        <ul>
+            <li>
+              <a href="{% url 'contact' %}" class="text-decoration-none text-white">Contact Us</a>
+              </li>
+            <li>
+              <a href="{% url 'home' %}" class="text-decoration-none text-white">Home</a>
+              </li>
+            <li>
+              <a href="{% url 'about' %}"  class="text-decoration-none text-white">About Us</a>
+              </li>
+            <li>
+              <a href="{% url 'add_application' %}"  class="text-decoration-none text-white">Applying</a>
+              </li>
+            <li>
+              <a href="{% url 'blogShow' %}"  class="text-decoration-none text-white">Blog</a>
+              </li>
+            <li>
+              <a href="{% url 'create_booking' %}"  class="text-decoration-none text-white">Schedule a Showing</a>
+              </li>
+        </ul>
+     </div>
+
+    <div class="text-center py-2 text-white copyright">
+      Purple Housing - All Rights Reserves | Designed & Developed by: Fauonix
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,187 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <!-- Left: Logo -->
+    <a class="navbar-brand" href="/">
+      <img
+        src="{% static 'images/Logo-1.png' %}"
+        alt="MySite Logo"
+        width="200"
+        height="100"
+      />
+    </a>
+
+    <!-- Toggler for mobile view -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarContent"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar content -->
+    <div
+      class="collapse navbar-collapse justify-content-center"
+      id="navbarContent"
+    >
+      <!-- Center: Navigation links -->
+      <ul class="navbar-nav mx-auto bg-dark">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about/">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/applying/">Applying</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/properties/">All Properties</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/booking/">Schedule a showing</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/contact/">Contact</a>
+        </li>
+      </ul>
+      <!-- Right: Admin login button -->
+      <div class="d-flex ms-auto">
+        <a
+          type="button"
+          class="btn loginBtn"
+          href="/admin-login/"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          >Admin Login</a
+        >
+      </div>
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="tab-content" id="loginTabsContent">
+                
+                <div
+                  class="tab-pane fade show active"
+                  id="login-form-tab"
+                  role="tabpanel"
+                  aria-labelledby="login-tab"
+                >
+                  <div id="hz-login-messages" class="hz-social-messages"></div>
+
+                  <!-- <form>
+                    <div class="login-form-wrap">
+                      <div class="mb-3">
+                        <input
+                          class="form-control"
+                          name="username"
+                          placeholder="Username or Email"
+                          type="text"
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <input
+                          class="form-control"
+                          name="password"
+                          placeholder="Password"
+                          type="password"
+                        />
+                      </div>
+                    </div>
+
+                   
+                    <div
+                      class="d-flex justify-content-between align-items-center mb-3"
+                    >
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          name="remember"
+                          id="rememberMe"
+                        />
+                        <label class="form-check-label rememberMeLogin" for="rememberMe"
+                          >Remember me</label
+                        >
+                      </div>
+
+                      <p class="lostPassword">
+                        Lost your password?
+                      </p>
+                    </div>
+
+                   
+
+                    <button
+                      id="houzez-login-btn"
+                      type="submit"
+                      class="btn houzez-login-btn w-100"
+                    >
+                      <span class="btn-loader houzez-loader-js"></span>
+                      Login
+                    </button>
+                  </form> -->
+
+                  <form method="POST" action="{% url 'custom_login' %}">
+    {% csrf_token %}
+    <div class="login-form-wrap">
+        <div class="mb-3">
+            <input class="form-control" name="username" placeholder="Username or Email" type="text" />
+        </div>
+        <div class="mb-3">
+            <div class="position-relative">
+              <input class="form-control hz-password-input" id="headerPasswordField" name="password" placeholder="Password" type="password" />
+              <button type="button" class="hz-password-toggle" data-target="headerPasswordField" aria-label="Show password">
+                <i class="fa fa-eye"></i>
+              </button>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn houzez-login-btn w-100">Login</button>
+</form>
+
+
+                </div>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</nav>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".hz-password-toggle").forEach(function (button) {
+    button.addEventListener("click", function () {
+      const input = document.getElementById(this.dataset.target);
+      if (!input) return;
+      const reveal = input.type === "password";
+      input.type = reveal ? "text" : "password";
+      this.innerHTML = reveal ? '<i class="fa fa-eye-slash"></i>' : '<i class="fa fa-eye"></i>';
+    });
+  });
+});
+</script>

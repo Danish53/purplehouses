@@ -1,0 +1,1008 @@
+{% extends "dashboard/layout.html" %} {% block content %}
+<div class="dashboardHome">
+  <div class="inner">
+    <h4 class="mb-4">Create a list</h4>
+    <form method="POST" action="{% url 'add_property' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="container">
+        <div
+          id="description-price"
+          class="dashboard-content-block-wrap active p-4 bg-light rounded"
+        >
+          <h2 class="mb-3">Description</h2>
+
+          <div class="dashboard-content-block mb-4">
+            <div class="mb-3">
+              <label for="prop_title" class="form-label"
+                >Property Title *</label
+              >
+              <input type="text" class="form-control" name="prop_title" />
+            </div>
+            <div class="mb-3">
+              <label for="prop_des" class="form-label">Content</label>
+              <textarea
+                class="form-control"
+                name="prop_des"
+                rows="10"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Property Type and Status -->
+          <div class="row mb-4 g-3">
+            <div class="col-md-6">
+              <label class="form-label">Type</label>
+              <select class="form-select mb-3" name="category">
+                <option value="">Select</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Office">Office</option>
+                <option value="Shop">Shop</option>
+                <option value="House">House</option>
+                <option value="Residential">Residential</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Condo">Condo</option>
+                <option value="Multi_Family_Home">Multi Family Home</option>
+                <option value="Single_Family_Home">Single Family Home</option>
+                <option value="Studio">Studio</option>
+                <option value="Villa">Villa</option>
+                <option value="Town_House">Town House</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select class="form-select mb-3" name="purpose">
+                <option value="">Select</option>
+                <option value="For_Rent">For Rent</option>
+                <option value="For_Sale">For Sale</option>
+                <option value="Foreclosures">Foreclosures</option>
+                <option value="New_Construction">New Construction</option>
+                <option value="New_Listing">New Listing</option>
+                <option value="Open_House">Open House</option>
+                <option value="Reduced_Price">Reduced Price</option>
+                <option value="Resale">Resale</option>
+              </select>
+            </div>
+          </div>
+
+          <h2 class="mb-3">Price</h2>
+          <div class="dashboard-content-block mb-4">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Sale or Rent Price *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="prop_price"
+                  placeholder="Enter the price"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Available From</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  name="available_date"
+                  value="{{ today|date:'Y-m-d' }}"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-content-block-wrap active p-4 bg-light rounded">
+          <h2 class="mb-3">Details</h2>
+
+          <div class="dashboard-content-block">
+            <div class="row g-3">
+              <!-- Bedrooms -->
+              <div class="col-md-6">
+                <label class="form-label">Bedrooms</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="prop_beds"
+                  placeholder="Enter number of bedrooms"
+                  min="1"
+                  max="500"
+                />
+                <small class="text-muted">Only digits</small>
+              </div>
+
+              <!-- Bathrooms -->
+              <div class="col-md-6">
+                <label class="form-label">Bathrooms</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="prop_baths"
+                  placeholder="Enter number of bathrooms"
+                  min="1"
+                  max="500"
+                />
+                <small class="text-muted">Only digits</small>
+              </div>
+
+              <!-- Area Size -->
+              <div class="col-md-6">
+                <label class="form-label">Area Size *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="prop_size"
+                  placeholder="Enter property area size"
+                  required
+                />
+                <small class="text-muted">Only digits</small>
+              </div>
+
+              <!-- Year Built -->
+              <div class="col-md-6">
+                <label class="form-label">Year Built</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="prop_year_built"
+                  placeholder="Enter year built"
+                />
+                <small class="text-muted">Only digits</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-content-block-wrap active p-4 bg-light rounded">
+          <h2 class="mb-3">Features</h2>
+
+          <div class="dashboard-content-block">
+            <div class="row g-3">
+              <!-- GENERATED ALL CHECKBOXES -->
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Air_Conditioning"
+                  />
+                  <label class="form-check-label">Air Conditioning</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Alarm_Monitoring_Services"
+                  />
+                  <label class="form-check-label"
+                    >Alarm Monitoring Services</label
+                  >
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Backyard"
+                  />
+                  <label class="form-check-label">Backyard</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Balcony"
+                  />
+                  <label class="form-check-label">Balcony</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Barbeque"
+                  />
+                  <label class="form-check-label">Barbeque</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Car_Port"
+                  />
+                  <label class="form-check-label">Car Port</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Central_A/C"
+                  />
+                  <label class="form-check-label">Central A/C</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Covered_Parking"
+                  />
+                  <label class="form-check-label">Covered Parking</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Dryer"
+                  />
+                  <label class="form-check-label">Dryer</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Fireplace"
+                  />
+                  <label class="form-check-label">Fireplace</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Furnished"
+                  />
+                  <label class="form-check-label">Furnished</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Garage"
+                  />
+                  <label class="form-check-label">Garage</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Gated_Parking"
+                  />
+                  <label class="form-check-label">Gated Parking</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Granite_Countertops"
+                  />
+                  <label class="form-check-label">Granite Countertops</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Gym"
+                  />
+                  <label class="form-check-label">Gym</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="prop_features[]"
+                    value="Laundry"
+                  />
+                  <label class="form-check-label">Laundry</label>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Single_Family_Residence">
+    <label class="form-check-label">Single Family Residence</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Large_Backyard">
+    <label class="form-check-label">Large Backyard</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Private_Backyard">
+    <label class="form-check-label">Private Backyard</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Generous_Patios">
+    <label class="form-check-label">Generous Patios</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="In_Unit_Laundry">
+    <label class="form-check-label">In Unit Laundry</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Separate_Laundry_Room">
+    <label class="form-check-label">Separate Laundry Room</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Walk_In_Closets">
+    <label class="form-check-label">Walk In Closets</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Vaulted_Master_Bedroom">
+    <label class="form-check-label">Vaulted Master Bedroom</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Utility_Room">
+    <label class="form-check-label">Utility Room</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Hardwood_Flooring">
+    <label class="form-check-label">Hardwood Flooring</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Luxury_Vinyl_Tile_Flooring">
+    <label class="form-check-label">Luxury Vinyl Tile Flooring</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Carpet">
+    <label class="form-check-label">Carpet</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Quartz_Countertops">
+    <label class="form-check-label">Quartz Countertops</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Shaker_Style_Cabinets">
+    <label class="form-check-label">Shaker Style Cabinets</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Dishwasher">
+    <label class="form-check-label">Dishwasher</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Refrigerator">
+    <label class="form-check-label">Refrigerator</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Microwave">
+    <label class="form-check-label">Microwave</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Oven">
+    <label class="form-check-label">Oven</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Tankless_Water_Heater">
+    <label class="form-check-label">Tankless Water Heater</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Smart_Door_Locks">
+    <label class="form-check-label">Smart Door Locks</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Smart_Thermostat">
+    <label class="form-check-label">Smart Thermostat</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Attached_Garage_Parking">
+    <label class="form-check-label">Attached Garage Parking</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Off_Street_Parking">
+    <label class="form-check-label">Off Street Parking</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Lawn_Care">
+    <label class="form-check-label">Lawn Care</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="Sprinkler_System">
+    <label class="form-check-label">Sprinkler System</label>
+  </div>
+</div>
+
+<div class="col-md-3 col-6">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="prop_features[]" value="New_Construction">
+    <label class="form-check-label">New Construction</label>
+  </div>
+</div>
+
+
+              <!-- Continue in the same pattern for all remaining checkboxes -->
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-content-block p-4 bg-light rounded">
+          <h2>Location</h2>
+          <div class="row g-3">
+            <!-- Address -->
+            <div class="col-md-6">
+              <label class="form-label">Address *</label>
+              <input
+                type="text"
+                class="form-control pac-target-input"
+                name="property_map_address"
+                required
+                autocomplete="off"
+                placeholder="Enter your property address"
+                id="address"
+              />
+            </div>
+
+            <!-- Country -->
+            <div class="col-md-6">
+              <label class="form-label">Country</label>
+              <input
+                type="text"
+                class="form-control"
+                name="country"
+                placeholder="Enter the country"
+                id="country"
+              />
+            </div>
+
+            <!-- State / County -->
+            <div class="col-md-6">
+              <label class="form-label">State / County</label>
+              <input
+                type="text"
+                class="form-control"
+                name="administrative_area_level_1"
+                placeholder="Enter the State / County"
+                id="state"
+              />
+            </div>
+
+            <!-- City -->
+            <div class="col-md-6">
+              <label class="form-label">City</label>
+              <input
+                type="text"
+                class="form-control"
+                name="locality"
+                placeholder="Enter the city"
+                id="city"
+              />
+            </div>
+
+            <!-- Zip Code -->
+            <div class="col-md-6">
+              <label class="form-label">Zip / Postal Code</label>
+              <input
+                type="text"
+                class="form-control"
+                name="postal_code"
+                placeholder="Enter zip/postal code"
+                id="zip"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-content-block p-4 bg-light rounded">
+          <h2>Map</h2>
+          <div class="row g-4">
+            <!-- Map Section -->
+            <div class="col-md-6 submit-property-map-area">
+              <label class="form-label fw-semibold">
+                Drag and drop the pin on map to find exact location
+              </label>
+
+              <!-- <div
+                class="map-wrap border rounded p-3 bg-white"
+                style="height: 300px"
+                id="map"
+              >
+                
+              </div> -->
+              <div id="map" style="height:400px;"></div>
+
+              <button type="button" class="btn btn-primary w-100 mt-3">
+                Place the pin in address above
+              </button>
+            </div>
+
+            <!-- Latitude & Longitude -->
+            <div class="col-md-6 submit-lat-long">
+              <!-- Latitude -->
+              <div class="mb-3">
+                <label class="form-label">Latitude</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="lat"
+                  placeholder="Enter address latitude"
+                  id="lat"
+                />
+              </div>
+
+              <!-- Longitude -->
+              <div class="mb-3">
+                <label class="form-label">Longitude</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="lng"
+                  placeholder="Enter address longitude"
+                  id="lng"
+                />
+              </div>
+
+              <!-- Street View -->
+              <div class="mb-3">
+                <label class="form-label">Street View</label>
+                <select name="prop_google_street_view" class="form-select">
+                  <option value="hide">Hide</option>
+                  <option value="show">Show</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="dashboard-content-block-wrap active">
+          <h2 class="mb-3">Media</h2>
+
+          <div class="dashboard-content-block p-4 bg-light rounded">
+            <input type="file" name="gallery_images" multiple accept="image/*">
+              </div>
+
+              <div class="text-danger mt-2"></div>
+
+              
+             
+            </div> -->
+        <div class="dashboard-content-block p-4 bg-light rounded">
+    <label>Property Images (Max 50)</label>
+    <input type="hidden" name="featured_image" id="featured_image" value="0">
+    <input type="file" id="gallery_images" name="gallery_images" multiple accept="image/*">
+    <div id="preview_list" class="mt-2" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+
+</div>
+
+
+        </div>
+
+        <div class="dashboard-content-block-wrap active mt-4">
+          <h2 class="mb-3">Property Documents</h2>
+
+          <div class="dashboard-content-block p-4 bg-light rounded">
+             <input type="file" name="attachments" multiple accept=".jpg,.jpeg,.png,.pdf,.zip">
+            </div>
+        </div>
+
+        <div class="videLinkSection">
+          <!-- YouTube link -->
+<input type="url" name="youtube_url" class="form-control"
+       placeholder="YouTube Video Link (optional)">
+
+<!-- Video upload -->
+<input type="file" name="video_file" accept="video/*" class="form-control">
+        </div>
+
+        <div class="dashboard-content-block-wrap active mt-4">
+          <h2 class="mb-3">Property Settings</h2>
+
+          <div class="dashboard-content-block p-4 bg-light rounded">
+            <!-- Featured Property -->
+            <div class="pb-3 mb-3 border-bottom d-flex justify-content-between">
+              <label class="form-label fw-semibold">
+                Mark property as featured?
+              </label>
+
+              <div class="d-flex gap-4 mt-2">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="prop_featured"
+                    value="1"
+                  />
+                  <label class="form-check-label">Yes</label>
+                </div>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="prop_featured"
+                    value="0"
+                    checked
+                  />
+                  <label class="form-check-label">No</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Login Required -->
+            <div class="pb-3 mb-3 border-bottom d-flex justify-content-between">
+              <label class="form-label fw-semibold">
+                Require user login to view property?
+              </label>
+
+              <div class="d-flex gap-4 mt-2">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="login-required"
+                    value="1"
+                  />
+                  <label class="form-check-label">Yes</label>
+                </div>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="login-required"
+                    value="0"
+                    checked
+                  />
+                  <label class="form-check-label">No</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div>
+              <label class="form-label">Disclaimer</label>
+              <textarea
+                name="property_disclaimer"
+                class="form-control"
+                rows="3"
+                placeholder=""
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <!-- Cancel Button -->
+          <a href="#" class="btn btn-outline-primary">Cancel</a>
+
+          <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary">Submit Property</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script>
+document&&document.addEventListener("DOMContentLoaded", function () {
+    const galleryInput = document.getElementById('gallery_images');
+    const previewList = document.getElementById('preview_list');
+    const featuredInput = document.getElementById('featured_image');
+
+    let imageFiles = [];
+    let featuredIndex = 0;
+
+    function updatePreview() {
+        previewList.innerHTML = "";
+
+        imageFiles.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.style.position = "relative";
+            div.style.width = "100px";
+            div.style.height = "100px";
+
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "4px";
+
+            /* ❌ REMOVE BUTTON */
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = "×";
+            removeBtn.style.position = "absolute";
+            removeBtn.style.bottom = "2px";
+            removeBtn.style.right = "2px";
+            removeBtn.style.padding = "0px 6px";
+            removeBtn.style.background = "red";
+            removeBtn.style.color = "white";
+            removeBtn.style.border = "none";
+            removeBtn.style.cursor = "pointer";
+
+            removeBtn&&removeBtn.addEventListener('click', () => {
+                imageFiles.splice(index, 1);
+
+                if (featuredIndex === index) featuredIndex = 0;
+                if (featuredIndex > index) featuredIndex--;
+
+                featuredInput.value = featuredIndex;
+                updatePreview();
+            });
+
+            /* ⭐ FEATURE BUTTON */
+            const starBtn = document.createElement('button');
+            starBtn.innerHTML = (index === featuredIndex) ? "⭐" : "☆";
+            starBtn.style.position = "absolute";
+            starBtn.style.bottom = "2px";
+            starBtn.style.right = "75px";
+            starBtn.style.padding = "0px 1px";
+            starBtn.style.background = "rgba(0,0,0,0.6)";
+            starBtn.style.color = "gold";
+            starBtn.style.border = "none";
+            starBtn.style.cursor = "pointer";
+
+            starBtn&&starBtn.addEventListener('click', () => {
+                featuredIndex = index;
+                featuredInput.value = index;
+                updatePreview();
+            });
+
+            div.appendChild(img);
+            div.appendChild(removeBtn);
+            div.appendChild(starBtn);
+            previewList.appendChild(div);
+        });
+
+        // Sync files to input
+        const dt = new DataTransfer();
+        imageFiles.forEach(f => dt.items.add(f));
+        galleryInput.files = dt.files;
+    }
+
+    galleryInput&&galleryInput.addEventListener('change', function () {
+        const files = Array.from(this.files);
+
+        files.forEach(file => {
+            if (imageFiles.length >= 50) {
+                alert("Max 50 images allowed");
+                return;
+            }
+            imageFiles.push(file);
+        });
+
+        updatePreview();
+    });
+});
+</script>
+
+
+
+<script>
+let leafletMap;
+let marker;
+
+//  Initialize map AFTER page load
+document&&document.addEventListener("DOMContentLoaded", function () {
+
+    leafletMap = L.map("map").setView([31.9686, -99.9018], 6); // Texas by default
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors"
+    }).addTo(leafletMap);
+
+});
+</script>
+
+<script>
+let timeout = null;
+
+const fields = ["address", "country", "state", "city", "zip"];
+
+fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.addEventListener("input", () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(fetchLocation, 900);
+    });
+});
+
+function fetchLocation() {
+
+    if (!leafletMap) return;
+
+    let address = document.getElementById("address")?.value.trim() || "";
+    let country = document.getElementById("country")?.value.trim() || "";
+    let state   = document.getElementById("state")?.value.trim() || "";
+    let city    = document.getElementById("city")?.value.trim() || "";
+    let zip     = document.getElementById("zip")?.value.trim() || "";
+
+    // Minimum required fields
+    if (!city || !country) return;
+
+    // First try FULL address
+    let fullAddress = `${address}, ${city}, ${state}, ${zip}, ${country}`;
+
+    geocode(fullAddress, true);
+}
+
+function geocode(query, allowFallback) {
+
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+
+            if (data && data.length) {
+                updateMap(data[0].lat, data[0].lon);
+                return;
+            }
+
+            // 🔁 Fallback (area-level)
+            if (allowFallback) {
+                let city    = document.getElementById("city")?.value.trim() || "";
+                let state   = document.getElementById("state")?.value.trim() || "";
+                let zip     = document.getElementById("zip")?.value.trim() || "";
+                let country = document.getElementById("country")?.value.trim() || "";
+
+                let fallbackAddress = `${city}, ${state}, ${zip}, ${country}`;
+                geocode(fallbackAddress, false);
+            }
+        })
+        .catch(err => console.error("Geocoding error:", err));
+}
+
+function updateMap(lat, lon) {
+
+    if (!leafletMap) return;
+
+    // STRING → NUMBER (CRITICAL FIX)
+    lat = parseFloat(lat);
+    lon = parseFloat(lon);
+
+    if (isNaN(lat) || isNaN(lon)) return;
+
+    document.getElementById("lat").value = lat;
+    document.getElementById("lng").value = lon;
+
+    if (marker) leafletMap.removeLayer(marker);
+
+    marker = L.marker([lat, lon], {
+        draggable: true
+    }).addTo(leafletMap);
+
+    leafletMap.setView([lat, lon], 17);
+
+    // Drag marker → update lat/lng
+    marker.on("dragend", function (e) {
+        const pos = e.target.getLatLng();
+        document.getElementById("lat").value = pos.lat;
+        document.getElementById("lng").value = pos.lng;
+    });
+
+    // Fix hidden/tab map render issue
+    setTimeout(() => {
+        leafletMap.invalidateSize();
+    }, 200);
+}
+</script>
+
+
+{% endblock %}

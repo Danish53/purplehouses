@@ -1,0 +1,27 @@
+{% load static %}
+
+<div class="sidebar">
+    <!-- Top section -->
+    <div class="sidebar-top">
+        <img src="{% static 'images/Logo-1.png' %}" alt="logo" class="img-fluid mb-3">
+
+        <a href="/home/">Properties</a>
+        <a href="/listning/">Create a List</a>
+        <a href="/applyingListing/">Applying List</a>
+        <a href="/schedule/">Schedual a Showing</a>
+        <a href="/blogs/">Blogs</a>
+    </div>
+
+    <!-- Bottom section -->
+    <div class="sidebar-bottom">
+        {% if request.session.username %}
+            <div class="user-info text-center mb-2">
+                <strong>Welcome</strong><br>
+                {{ request.session.username }}
+            </div>
+        {% endif %}
+
+        <a href="{% url 'custom_logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}IAB{% endblock %}
+
+{% block content %}
+<section>
+  <div class="aboutUsPage">
+    <div class="inner">
+
+      <div class="top">
+        <p class="text-center title">IAB</p>
+
+        <div class="bredcrumbs">
+          <p class="m-0">
+            Home <span><i class="fas fa-angle-right fs-5 mx-2"></i></span> IAB
+          </p>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="container" style="position: relative; top: -100px;">
+          <img src="{% static 'images/iab.png' %}" class="img-fluid" alt="">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

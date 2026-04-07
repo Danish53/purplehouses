@@ -1,0 +1,29 @@
+{% extends "dashboard/layout.html" %} {% block content %}
+<div class="dashboardHome">
+  <div class="inner">
+ 
+<h2>Update Blog</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <img src="{{ blog.image.url }}" width="150"><br><br>
+
+    <input type="file" name="image"><br><br>
+
+    <input type="text" name="title" value="{{ blog.title }}" class="bc_title border w-100 p-2"><br><br>
+
+    <!-- <textarea name="description">{{ blog.description }}</textarea> -->
+     <textarea name="description" id="editor" placeholder="Description" class="bc_text border w-100 p-2">
+      {{ blog.description }}
+     </textarea>
+    <br><br>
+
+    <input type="text" name="keywords" value="{{ blog.keywords }}" class="bc_title border w-100 p-2"><br><br>
+
+    <button type="submit" class="btn btn-bc_save">Update</button>
+</form>
+
+  </div>
+</div>
+{% endblock %}

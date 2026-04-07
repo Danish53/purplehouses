@@ -1,0 +1,110 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="dashboardHome">
+  <div class="inner">
+    <h4 class="mb-4">Property Stats</h4>
+
+    <div class="card p-4 mb-4 bg-light rounded">
+      <h5 class="mb-3">Basic Info</h5>
+      <p><strong>Title:</strong> {{ prop.prop_title }}</p>
+      <p><strong>Description:</strong> {{ prop.prop_des }}</p>
+      <p><strong>Type:</strong> {{ prop.category }}</p>
+      <p><strong>Status:</strong> {{ prop.status|title }}</p>
+      <p><strong>Purpose:</strong> {{ prop.purpose }}</p>
+      <p><strong>Price:</strong> {{ prop.prop_price }}</p>
+      <p><strong>Featured:</strong> {% if prop.featured %}Yes{% else %}No{% endif %}</p>
+    </div>
+
+    <div class="card p-4 mb-4 bg-light rounded">
+      <h5 class="mb-3">Property Details</h5>
+      <p><strong>Bedrooms:</strong> {{ prop.prop_beds }}</p>
+      <p><strong>Bathrooms:</strong> {{ prop.prop_baths }}</p>
+      <p><strong>Area Size:</strong> {{ prop.prop_size }}</p>
+      <p><strong>Year Built:</strong> {{ prop.prop_year_built }}</p>
+    </div>
+
+    <div class="card p-4 mb-4 bg-light rounded">
+      <h5 class="mb-3">Features</h5>
+      {% if prop.prop_features %}
+        <ul>
+          {% for feature in prop.prop_features %}
+            <li>{{ feature }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No features selected.</p>
+      {% endif %}
+    </div>
+
+    <div class="card p-4 mb-4 bg-light rounded">
+      <h5 class="mb-3">Location</h5>
+      <p><strong>Address:</strong> {{ prop.property_map_address }}</p>
+      <p><strong>Country:</strong> {{ prop.country }}</p>
+      <p><strong>State/County:</strong> {{ prop.administrative_area_level_1 }}</p>
+      <p><strong>City:</strong> {{ prop.locality }}</p>
+      <p><strong>Zip/Postal Code:</strong> {{ prop.postal_code }}</p>
+      <p><strong>Latitude:</strong> {{ prop.lat }}</p>
+      <p><strong>Longitude:</strong> {{ prop.lng }}</p>
+      <p><strong>Street View:</strong> {{ prop.prop_google_street_view }}</p>
+    </div>
+
+    <div class="card p-4 mb-4 bg-light rounded">
+      <h5 class="mb-3">Property Images</h5>
+      {% if gallery_images %}
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          {% for img in gallery_images %}
+            <img src="{{ MEDIA_URL }}{{ img }}" width="150" height="100" style="object-fit:cover;"/>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No images uploaded.</p>
+      {% endif %}
+    </div>
+
+    <div class="card p-4 mb-4 bg-light rounded">
+      <h5 class="mb-3">Documents / Attachments</h5>
+      {% if attachments %}
+        <ul>
+          {% for doc in attachments %}
+        <li><a href="{{ doc.url }}" target="_blank">{{ doc.name }}</a></li>
+    {% endfor %}
+        </ul>
+      {% else %}
+        <p>No documents uploaded.</p>
+      {% endif %}
+    </div>
+
+  <div class="card p-4 mb-4 bg-light rounded">
+  <h5 class="mb-3">Property Video</h5>
+
+{% if youtube_embed_url %}
+<iframe width="100%" height="400"
+    src="{{ youtube_embed_url }}"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen>
+</iframe>
+{% endif %}
+
+
+  {% if video_url %}
+    <video width="100%" height="400" controls>
+      <source src="{{ video_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+  {% else %}
+    <p>No video available.</p>
+  {% endif %}
+</div>
+
+
+
+
+    <a href="{% url 'dasboardIndex' %}" class="btn btn-outline-primary">Back to Dashboard</a>
+  </div>
+</div>
+{% endblock %}

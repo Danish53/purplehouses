@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+<section>
+  <div class="aboutUsPage aboutUsPage--wide">
+    <div class="inner">
+
+      <div class="top">
+        <p class="text-center title">About Us</p>
+
+        <div class="bredcrumbs">
+          <p class="m-0">
+            Home <span><i class="fas fa-angle-right fs-5 mx-2"></i></span> About Us
+          </p>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row align-items-center pb-5">
+
+            <!-- Left Image -->
+            <div class="col-12 col-md-4 mb-4 mb-md-0">
+              <img
+                src="{% static 'images/about-us.png' %}"
+                alt="About Purple Housing"
+                class="img-fluid rounded about-page-image"
+              />
+            </div>
+
+            <!-- Right Content -->
+            <div class="col-12 col-md-8">
+
+              <p class="aboutHeading mb-1">About - Purple Housing</p>
+
+              <h2 class="tcuTitle mb-3">TCU Off Campus Housing for Rent You Can Trust</h2>
+
+              <div class="dividerAbout"></div>
+
+              <p class="aboutPara mt-3">
+                Finding reliable <strong>TCU Off Campus Housing for Rent</strong> can be challenging, especially when students need housing that aligns with academic schedules and group living needs. <strong>Purple Housing</strong> was created to simplify this process by offering a dedicated platform focused entirely on <strong>TCU rental homes</strong>, <strong>TCU rental houses</strong>, and <strong>TCU area rental properties</strong>.
+              </p>
+
+              <p class="aboutPara">
+                Founded by a TCU student who personally experienced the difficulty of finding off-campus housing, Purple Housing was built to solve a real problem. Many <strong>TCU students off campus housing</strong> searches lead to outdated listings, incorrect availability dates, or homes that are not close to campus. Purple Housing was designed to eliminate that frustration and provide accurate, student-focused rental options.
+              </p>
+
+              <p class="aboutHeading mt-4 mb-1">Specialized in TCU Area Home Rentals</p>
+
+              <p class="aboutPara">
+                Purple Housing focuses exclusively on <strong>TCU area house rentals</strong> and <strong>TCU area home rentals</strong>, making it easier for students to find housing close to Texas Christian University. Instead of searching multiple websites, students can view <strong>homes for rent near TCU</strong>, <strong>houses for rent near TCU</strong>, and <strong>apartments for rent near TCU</strong> in one centralized location.
+              </p>
+
+              <p class="aboutPara">
+                Our listings are selected specifically for students who want convenience, walkability, and access to campus life. By narrowing our focus to <strong>TCU area rental properties</strong>, we ensure every listing is relevant, timely, and aligned with student lease cycles.
+              </p>
+
+              <p class="aboutHeading mt-4 mb-1">Accurate Listings From Local Landlords and Property Managers</p>
+
+              <p class="aboutPara">
+                One of the key strengths of Purple Housing is our close collaboration with local landlords, property management companies, and apartment communities. These partnerships allow us to maintain accurate and up-to-date listings for <strong>TCU rental homes</strong> and <strong>TCU rental houses</strong>.
+              </p>
+
+              <p class="aboutPara">
+                Because we work directly with property owners, students searching for <strong>TCU Off Campus Housing for Rent</strong> gain access to listings that are often unavailable on large national platforms. This approach helps ensure availability dates reflect the typical June to August lease start periods that TCU students plan for months in advance.
+              </p>
+
+              <p class="aboutHeading mt-4 mb-1">Built Around the Needs of TCU Students</p>
+
+              <p class="aboutPara">
+                Purple Housing is designed specifically for <strong>TCU students off campus housing</strong> needs. We understand group leasing, shared living arrangements, and the importance of finding housing that fits both budget and location preferences. Our platform helps students compare <strong>TCU area home rentals</strong> efficiently while avoiding wasted time and uncertainty.
+              </p>
+
+              <p class="aboutPara">
+                Over the years, Purple Housing has helped hundreds of students secure <strong>homes for rent near TCU</strong>, and our goal is to continue providing dependable housing options for future TCU classes.
+              </p>
+
+              <p class="aboutHeading mt-4 mb-1">Easy Scheduling and Simple Communication</p>
+
+              <p class="aboutPara">
+                To streamline the rental process, Purple Housing offers a Schedule a Showing feature that allows students to request viewings for <strong>houses for rent near TCU</strong>, <strong>apartments for rent near TCU</strong>, and other <strong>TCU area rental properties</strong> directly through the website.
+              </p>
+
+              <p class="aboutPara">
+                This feature reduces delays, simplifies communication, and helps students make informed decisions faster. Our team is always available to answer questions and guide students through each step of the process.
+              </p>
+
+              <p class="aboutHeading mt-4 mb-1">A Trusted Resource for TCU Rental Houses and Homes</p>
+
+              <p class="aboutPara">
+                Purple Housing has become a trusted source for <strong>TCU rental homes</strong>, <strong>TCU rental houses</strong>, and <strong>TCU Off Campus Housing for Rent</strong> by focusing on accuracy, transparency, and student success. Our commitment to providing reliable listings and local insight makes Purple Housing a dependable choice for off-campus living near TCU.
+              </p>
+
+              <p class="aboutPara">
+                We encourage students to explore the Properties section to view available <strong>TCU area house rentals</strong>, schedule showings, and
+                <strong><a href="{% url 'contact' %}" class="text-decoration-none" style="color: #400866;">contact us</a></strong>
+                with any questions. You can also follow
+                <a href="https://www.instagram.com/purplehousing/" target="_blank" class="fw-bold text-decoration-underline" style="color: #400866;">
+                  Purple Housing on Instagram
+                </a>
+                for updates on new listings and availability.
+              </p>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
