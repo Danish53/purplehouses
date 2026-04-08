@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import PropertyMap from "@/components/PropertyMap";
 import PropertyShowcaseCard from "@/components/PropertyShowcaseCard";
+import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
 
 export default function HomeClient({
   properties = [],
@@ -81,7 +82,10 @@ export default function HomeClient({
                 <div className="overlay"></div>
                 <div className="slide-text">
                   <h2>{property.prop_title}</h2>
-                  <p>{property.property_map_address}</p>
+                  <p>
+                    {formatPropertyCardAddress(property) ||
+                      property.property_map_address}
+                  </p>
                 </div>
               </div>
             ))
@@ -230,7 +234,7 @@ export default function HomeClient({
       </section>
 
       {/* Map Section */}
-      <section>
+      {/* <section>
         <div className="homeMap">
           <div className="inner">
             <p className="m-0 title text-center pt-5">Map &amp; Directions</p>
@@ -245,7 +249,7 @@ export default function HomeClient({
             <PropertyMap markers={mapMarkers} />
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 }

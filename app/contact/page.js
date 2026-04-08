@@ -91,7 +91,7 @@ export default function ContactPage() {
         </div>
         <div className="content position-relative">
           <div className="container mt-5">
-            <div className="row align-items-start">
+            <div className="row align-items-start justify-content-center">
               <div className="col-12 col-md-8 mb-4">
                 <h3 className="contactHeading">Request a Call Back</h3>
                 <div className="dividerContact"></div>
@@ -219,7 +219,7 @@ export default function ContactPage() {
                 </form>
               </div>
 
-              <div className="col-12 col-md-4">
+              {/* <div className="col-12 col-md-4">
                 <div className="contact-side-media">
                   <img
                     src="/images/about-us.png"
@@ -227,7 +227,7 @@ export default function ContactPage() {
                     className="img-fluid rounded contact-side-image"
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 

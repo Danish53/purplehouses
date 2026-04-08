@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 function getFileExtension(value = "") {
@@ -308,7 +309,8 @@ export default function PropertyDetailsClient({
               <div className="pd-hero-info__meta">
                 <p className="pd-hero-info__address">
                   <i className="fas fa-map-marker-alt" />
-                  {property.property_map_address}
+                  {formatPropertyCardAddress(property) ||
+                    property.property_map_address}
                 </p>
                 <div className="pd-hero-info__stats">
                   {property.prop_beds && (
@@ -436,9 +438,9 @@ export default function PropertyDetailsClient({
                     {floorPlans.map((plan, i) => (
                       <div key={i} className="pd-floor-plan-item">
                         <div className="pd-floor-plan-item__header">
-                          <div>
-                            <h3>{plan.title}</h3>
-                          </div>
+                          {/* <div>
+                            <h6>Property Document</h6>
+                          </div> */}
                           <div className="pd-floor-plan-item__meta">
                             {property.prop_beds && (
                               <span>

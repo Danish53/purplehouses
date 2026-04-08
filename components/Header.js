@@ -91,7 +91,8 @@ export default function Header() {
                 </Link>
               </li>
             </ul>
-            <div className="d-flex ms-auto">
+            {/* marding top small  5px */}
+            <div className="d-flex ms-auto mt-2 mt-sm-0">
               <button
                 type="button"
                 className="btn loginBtn"

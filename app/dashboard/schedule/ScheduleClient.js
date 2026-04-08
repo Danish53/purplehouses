@@ -1,6 +1,19 @@
 "use client";
 import { useState } from "react";
 
+/** DB often stores calendar date as UTC midnight — format without time / Z noise. */
+function formatBookingDate(value) {
+  if (value == null || value === "") return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
 export default function ScheduleClient({ bookings: initial }) {
   const [bookings, setBookings] = useState(initial);
   const [page, setPage] = useState(1);
@@ -166,7 +179,7 @@ export default function ScheduleClient({ bookings: initial }) {
             {paginated.map((booking) => (
               <tr key={booking.id} id={`booking-${booking.id}`}>
                 <td>{booking.property_name || booking.property_id}</td>
-                <td>{booking.date}</td>
+                <td>{formatBookingDate(booking.date)}</td>
                 <td>{booking.time}</td>
                 <td>
                   {booking.first_name} {booking.last_name}

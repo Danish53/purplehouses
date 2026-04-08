@@ -51,9 +51,9 @@ export default function PropertiesClient({
         </div>
       </div>
       <div className="inner">
-        <div className="propertiesList">
+        <div className="propertiesList mt-5">
           {/* Filter Bar */}
-          <form
+          {/* <form
             onSubmit={handleSearch}
             className="ph-property-filter ph-property-filter--page mb-4"
           >
@@ -118,7 +118,7 @@ export default function PropertiesClient({
                 </button>
               </div>
             </div>
-          </form>
+          </form> */}
 
           {/* Property Sort Bar */}
           <div className="propertySort d-flex justify-content-between align-items-center mb-3">

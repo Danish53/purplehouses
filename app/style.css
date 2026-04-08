@@ -968,7 +968,7 @@
   color: #464646 !important;
   font-weight: 500;
 }
-.contactPage .inner .content .btn-contactSubmit {
+.contactPage .btn-contactSubmit {
   color: white;
   background-color: #43086b;
   font-size: 16px;
@@ -1036,7 +1036,7 @@
 }
 .allProperties .inner .propertiesList {
   position: relative;
-  bottom: 75px;
+  /* bottom: 75px; */
 }
 .allProperties .inner .propertiesList .fa-table:before,
 .allProperties .inner .propertiesList .fa-list:before {
@@ -2146,11 +2146,21 @@ li#h_area {
   background: #fff;
   color: var(--ph-theme);
 }
-.booking-slot-btn:hover,
-.booking-slot-btn--active {
+.booking-slot-btn:hover:not(.booking-slot-btn--active) {
   border-color: var(--ph-theme);
-  background: var(--ph-theme);
-  color: #fff;
+  background: var(--ph-theme-soft);
+  color: var(--ph-theme);
+}
+/* Selected slot: purple bg + white text (override Bootstrap .btn) */
+.booking-slot-btn.booking-slot-btn--active {
+  background-color: var(--ph-theme) !important;
+  border-color: var(--ph-theme) !important;
+  color: #fff !important;
+}
+.booking-slot-btn.booking-slot-btn--active:hover {
+  background-color: var(--ph-theme-dark) !important;
+  border-color: var(--ph-theme-dark) !important;
+  color: #fff !important;
 }
 .list-group-item {
   background-color: #43086b;
@@ -2950,8 +2960,20 @@ li#h_area {
     width: 100%;
     margin: 0;
   }
-  .navbar-toggler {
-    background-color: white;
+  /* Mobile menu: white hamburger bars, visible on purple / transparent navbar */
+  .navbar .navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.92);
+    background-color: rgba(255, 255, 255, 0.14);
+    padding: 0.45rem 0.65rem;
+    border-radius: 8px;
+  }
+  .navbar .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+  }
+  .navbar .navbar-toggler-icon {
+    width: 1.35em;
+    height: 1.35em;
+    filter: brightness(0) invert(1);
   }
   .about-sticky-media,
   .contact-side-media {

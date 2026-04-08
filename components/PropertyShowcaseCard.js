@@ -1,23 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
 
 function formatAvailableDate(d) {
   if (!d) return null;
   const date = new Date(d);
   if (Number.isNaN(date.getTime())) return null;
   return `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}/${date.getFullYear()}`;
-}
-
-function buildFullAddress(p) {
-  const parts = [
-    p.property_map_address,
-    p.city,
-    p.administrative_area_level_1,
-    p.zip_code,
-    p.country,
-  ].filter(Boolean);
-  return parts.join(", ");
 }
 
 function shortPurposeLabel(purpose) {
@@ -59,7 +49,8 @@ export default function PropertyShowcaseCard({
 
   const headline =
     property.prop_title || property.property_map_address || "Property";
-  const subline = buildFullAddress(property) || property.property_map_address;
+  const subline =
+    formatPropertyCardAddress(property) || property.property_map_address;
   const galleryCount = gallery.length;
 
   return (

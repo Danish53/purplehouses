@@ -35,6 +35,7 @@ export default async function PropertyDetailsPage({ params }) {
     category: row.category,
     property_map_address: row.property_map_address,
     city: row.city || "",
+    administrative_area_level_1: row.administrative_area_level_1 || "",
     zip_code: row.zip_code || "",
     country: row.country || "",
     lat: row.latitude || row.lat || "",

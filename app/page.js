@@ -6,6 +6,7 @@ import {
   enrichProperty,
   enrichBlog,
 } from "@/lib/queries";
+import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,11 @@ export default async function HomePage() {
         return {
           id: p.id,
           title: p.prop_title,
-          address: p.property_map_address || p.city,
+          address:
+            formatPropertyCardAddress(p) ||
+            p.property_map_address ||
+            p.city ||
+            "",
           price: p.prop_price,
           lat,
           lng,
