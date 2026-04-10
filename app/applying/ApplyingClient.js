@@ -361,6 +361,11 @@ export default function ApplyingClient({
       fd.set("stripe_payment_method_id", pmResult.paymentMethod.id);
       const res = await fetch("/api/applying", { method: "POST", body: fd });
       const result = await res.json();
+      if (!res.ok) {
+        setSdkStatus(result.error || "Payment failed");
+        setSdkTone("error");
+        return;
+      }
       if (result.status === "requires_action") {
         setSdkStatus("Please complete the card verification to continue.");
         const confirm = await stripeRef.current.confirmCardPayment(
@@ -372,13 +377,27 @@ export default function ApplyingClient({
           setSubmitting(false);
           return;
         }
-        if (confirm.paymentIntent?.id) {
-          router.push(
-            `/success?payment_intent=${encodeURIComponent(confirm.paymentIntent.id)}`,
-          );
+        const piId = confirm.paymentIntent?.id;
+        if (piId) {
+          const fin = await fetch("/api/applying/finalize-stripe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ payment_intent_id: piId }),
+          });
+          const finJson = await fin.json();
+          if (!fin.ok || finJson.status !== "succeeded") {
+            setSdkStatus(
+              finJson.error ||
+                "Payment succeeded but we could not save your application. Please contact support.",
+            );
+            setSdkTone("error");
+            setSubmitting(false);
+            return;
+          }
+          router.push(finJson.redirect_url || "/success");
           return;
         }
-      } else if (result.status === "succeeded" || result.status === "saved") {
+      } else if (result.status === "succeeded") {
         router.push(result.redirect_url || "/success");
       } else {
         setSdkStatus(result.error || "Payment failed");
@@ -403,9 +422,14 @@ export default function ApplyingClient({
       fd.set("payment_method", "paypal");
       const res = await fetch("/api/applying", { method: "POST", body: fd });
       const result = await res.json();
+      if (!res.ok) {
+        setSdkStatus(result.error || "Payment failed");
+        setSdkTone("error");
+        return;
+      }
       if (result.status === "paypal_redirect") {
         window.location.href = result.redirect_url;
-      } else if (result.status === "succeeded" || result.status === "saved") {
+      } else if (result.status === "succeeded") {
         router.push(result.redirect_url || "/success");
       } else {
         setSdkStatus(result.error || "Payment failed");
@@ -457,18 +481,17 @@ export default function ApplyingClient({
           setSdkTone("error");
           throw new Error(result.error || "Unable to initialize Venmo.");
         }
-        venmoContainerRef.current.dataset.appId = result.application_id;
+        venmoContainerRef.current.dataset.draftToken = result.draft_token;
         return result.order_id;
       },
       async onApprove(data) {
-        const applicationId = venmoContainerRef.current?.dataset.appId;
+        const draftToken = venmoContainerRef.current?.dataset.draftToken;
         const res = await fetch("/api/applying/venmo/capture", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             order_id: data.orderID,
-            application_id: applicationId,
-            payment_method: "venmo",
+            draft_token: draftToken,
           }),
         });
         const result = await res.json();
@@ -483,7 +506,7 @@ export default function ApplyingClient({
       onCancel() {
         setSubmitting(false);
         setSdkStatus(
-          "Venmo checkout was canceled. Your application is saved as pending.",
+          "Venmo checkout was canceled. Nothing is saved until payment completes.",
         );
         setSdkTone("info");
       },

@@ -36,7 +36,7 @@ model Property {
   status                      String    @db.VarChar(20)
   created_at                  DateTime  @db.DateTime(6)
   updated_at                  DateTime  @db.DateTime(6)
-  attachments                 String    @default("[]") @db.LongText
+  attachments                 String    @db.LongText
   video_file                  String?   @db.VarChar(255)
   youtube_url                 String?   @db.VarChar(200)
   available_date              DateTime? @db.Date
@@ -273,7 +273,7 @@ model frontend_contact {
   work_phone String   @db.VarChar(20)
   subject    String   @db.VarChar(200)
   message    String   @db.LongText
-  created_at DateTime @db.DateTime(6)
+  created_at DateTime @default(now()) @db.DateTime(6)
 }
 
 model frontend_customuser {

@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
-import { query } from "@/lib/db";
-
-const APPLICATION_FEE = "50.00";
+import {
+  deleteApplyingDraft,
+  deleteOrderDraftLink,
+  loadApplyingDraft,
+  loadDraftTokenByOrderId,
+} from "@/lib/applyingDraft";
+import {
+  insertFullApplication,
+  sendApplyingNotificationEmail,
+} from "@/lib/applyingApplication";
 
 function getPayPalClientId() {
   return (
@@ -46,30 +53,39 @@ export async function POST(request) {
     }
 
     const orderId = body.order_id;
-    const applicationId = body.application_id;
+    const draftToken = body.draft_token;
 
-    if (!orderId || !applicationId) {
+    if (!orderId || !draftToken) {
       return NextResponse.json(
-        { error: "Missing PayPal order details." },
+        { error: "Missing PayPal order or draft details." },
         { status: 400 },
       );
     }
 
-    // Verify application matches order
-    const [app] = await query(
-      "SELECT * FROM frontend_applying WHERE id = ? AND stripe_charge_id = ?",
-      [applicationId, orderId],
-    );
-
-    if (!app) {
+    const linkedFromFile = await loadDraftTokenByOrderId(orderId);
+    if (linkedFromFile !== draftToken) {
       return NextResponse.json(
-        { error: "Application not found for this PayPal order." },
+        { error: "Order does not match this checkout session." },
         { status: 404 },
       );
     }
 
-    // Capture the PayPal order
     const { token, base } = await getPayPalAccessToken();
+
+    const orderGetRes = await fetch(
+      `${base}/v2/checkout/orders/${encodeURIComponent(orderId)}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    const orderBefore = await orderGetRes.json();
+    const customId = orderBefore.purchase_units?.[0]?.custom_id;
+    if (!orderGetRes.ok || customId !== draftToken) {
+      return NextResponse.json(
+        { error: "Invalid or expired PayPal order." },
+        { status: 404 },
+      );
+    }
 
     const captureRes = await fetch(
       `${base}/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`,
@@ -88,24 +104,48 @@ export async function POST(request) {
       (pu.payments?.captures || []).some((c) => c.status === "COMPLETED"),
     );
 
-    if (captureRes.ok && (captureStatus === "COMPLETED" || paymentsCompleted)) {
-      await query(
-        "UPDATE frontend_applying SET payment_method = ?, payment_status = ?, amount = ? WHERE id = ?",
-        ["venmo", "paid", APPLICATION_FEE, applicationId],
+    if (
+      !captureRes.ok ||
+      !(captureStatus === "COMPLETED" || paymentsCompleted)
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            captureData?.message || "PayPal did not mark the payment complete.",
+        },
+        { status: 400 },
       );
-      return NextResponse.json({
-        status: "succeeded",
-        redirect_url: `/success?application_id=${applicationId}`,
-      });
     }
 
-    return NextResponse.json(
-      {
-        error:
-          captureData?.message || "PayPal did not mark the payment complete.",
-      },
-      { status: 400 },
+    const draft = await loadApplyingDraft(draftToken);
+    if (!draft?.fields || !draft.photoPath) {
+      await deleteApplyingDraft(draftToken);
+      await deleteOrderDraftLink(orderId);
+      return NextResponse.json(
+        { error: "Application draft expired. Please contact support if you were charged." },
+        { status: 400 },
+      );
+    }
+
+    const result = await insertFullApplication(
+      draft.fields,
+      draft.photoPath,
+      { paymentMethod: "venmo", paymentStatus: "paid" },
     );
+    await deleteApplyingDraft(draftToken);
+    await deleteOrderDraftLink(orderId);
+    await sendApplyingNotificationEmail(
+      draft.fields,
+      result.insertId,
+      "venmo",
+      "paid",
+      draft.photoPath,
+    );
+
+    return NextResponse.json({
+      status: "succeeded",
+      redirect_url: `/success?application_id=${result.insertId}`,
+    });
   } catch (error) {
     console.error("Venmo capture error:", error);
     return NextResponse.json(

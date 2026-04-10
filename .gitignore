@@ -14,6 +14,9 @@ out
 # Uploaded media (local dev)
 public/media/
 
+# Applying payment drafts (local dev)
+.data/
+
 # OS
 .DS_Store
 Thumbs.db

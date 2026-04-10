@@ -410,22 +410,7 @@ export default function PropertyDetailsClient({
               </div>
             )}
 
-            {/* GET DIRECTION */}
-            <div className="pd-card">
-              <div className="pd-card__header">
-                <h2>Get Direction</h2>
-              </div>
-              <div className="pd-card__body p-0">
-                <iframe
-                  className="pd-map"
-                  src={mapSrc}
-                  title="Property Location"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                />
-              </div>
-            </div>
+            
 
             {/* FLOOR PLANS */}
             {floorPlans.length > 0 && (
@@ -502,6 +487,22 @@ export default function PropertyDetailsClient({
                 </div>
               </div>
             )}
+            {/* GET DIRECTION */}
+            <div className="pd-card">
+              <div className="pd-card__header">
+                <h2>Get Direction</h2>
+              </div>
+              <div className="pd-card__body p-0">
+                <iframe
+                  className="pd-map"
+                  src={mapSrc}
+                  title="Property Location"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+            </div>
           </div>
 
           {/* RIGHT SIDEBAR */}
