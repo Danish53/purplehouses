@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createContact } from "@/lib/queries";
-import { sendEmail } from "@/lib/email";
+import { sendContactNotificationEmail } from "@/lib/email";
 import { contactNotificationEmail } from "@/lib/emailTemplates";
 import { verifyAnswer } from "@/lib/captcha";
 
@@ -50,10 +50,9 @@ export async function POST(request) {
       message,
     });
 
-    // Send notification email
+    // Send notification email (separate admin: CONTACT_* env in lib/email.js)
     try {
-      await sendEmail({
-        to: process.env.DEFAULT_FROM_EMAIL,
+      await sendContactNotificationEmail({
         subject: `Contact Form: ${subject || "No Subject"}`,
         html: contactNotificationEmail({
           name,
