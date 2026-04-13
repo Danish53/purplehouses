@@ -4337,7 +4337,7 @@ li#h_area {
 .pd-gallery-modal__thumb {
   border: 2px solid transparent;
   border-radius: 12px;
-  overflow: hidden;
+  /* overflow: hidden; */
   padding: 0;
   background: #f6f1fb;
   aspect-ratio: 16/11;
