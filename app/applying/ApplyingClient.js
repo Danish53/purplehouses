@@ -194,17 +194,32 @@ export default function ApplyingClient({
   const cardExpiryRef = useRef(null);
   const cardCvcRef = useRef(null);
   const dateRef = useRef(null);
+  const flatpickrRef = useRef(null);
 
   useEffect(() => {
     if (currentStep === 0 && dateRef.current && window.flatpickr) {
-      window.flatpickr(dateRef.current, {
+      
+      // 🔥 Pehle purana destroy karo
+      if (flatpickrRef.current) {
+        flatpickrRef.current.destroy();
+      }
+  
+      // 🔥 Naya instance banao
+      flatpickrRef.current = window.flatpickr(dateRef.current, {
         minDate: "today",
         dateFormat: "Y-m-d",
-        onChange(_, dateStr) {
+        onChange: (_, dateStr) => {
           setForm((p) => ({ ...p, move_in_date: dateStr }));
         },
       });
     }
+  
+    return () => {
+      if (flatpickrRef.current) {
+        flatpickrRef.current.destroy();
+        flatpickrRef.current = null;
+      }
+    };
   }, [currentStep]);
 
   function mountStripe() {
@@ -2143,11 +2158,12 @@ export default function ApplyingClient({
                     {/* Stripe Card */}
                     <div id="stripe-card-container" className="mb-3">
                       <div
-                        style={{
-                          display: "grid",
-                          gridTemplateColumns: "repeat(3, 1fr)",
-                          gap: "12px",
-                        }}
+                        // style={{
+                        //   display: "grid",
+                        //   gridTemplateColumns: "repeat(3, 1fr)",
+                        //   gap: "12px",
+                        // }}
+                        className="stripe_input_grid"
                       >
                         <div
                           style={{ display: "flex", flexDirection: "column" }}

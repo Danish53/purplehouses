@@ -124,7 +124,7 @@ export default function PropertyShowcaseCard({
               </p>
               
             </div>
-            <div className="ph-showcase-card__right">
+            <div className="ph-showcase-card__right ">
               <p className="ph-showcase-card__ptype">
                 {shortPurposeLabel(property.purpose)}
               </p>
