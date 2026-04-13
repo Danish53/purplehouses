@@ -6526,12 +6526,16 @@ li#h_area {
     gap: 12px 8px;
     position: absolute;
     right: 10px;
-    bottom: 10px;
+    bottom: 14px;
   }
 
   .ph-showcase-card__pprice {
     margin-bottom: 0;
     font-size: clamp(16px, 2.4vw, 26px);
+  }
+
+  .ph-showcase-card__left{
+    width: 278px;
   }
 
   .ph-showcase-card__icons {
