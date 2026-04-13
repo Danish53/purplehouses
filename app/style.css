@@ -6520,20 +6520,23 @@ li#h_area {
 
   .ph-showcase-card__right {
     text-align: left;
-    display: flex;
+    /* display: flex; */
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 12px 12px;
+    gap: 12px 8px;
     position: absolute;
     right: 10px;
-    bottom: 30px;
+    bottom: 10px;
   }
 
   .ph-showcase-card__pprice {
     margin-bottom: 0;
+    font-size: clamp(16px, 2.4vw, 26px);
   }
 
   .ph-showcase-card__icons {
     justify-content: flex-start;
+    /* gap: 12px; */
+    margin-top: 5px;
   }
 }

@@ -196,31 +196,41 @@ export default function ApplyingClient({
   const dateRef = useRef(null);
   const flatpickrRef = useRef(null);
 
-  useEffect(() => {
-    if (currentStep === 0 && dateRef.current && window.flatpickr) {
-      
-      // 🔥 Pehle purana destroy karo
-      if (flatpickrRef.current) {
-        flatpickrRef.current.destroy();
-      }
-  
-      // 🔥 Naya instance banao
-      flatpickrRef.current = window.flatpickr(dateRef.current, {
-        minDate: "today",
-        dateFormat: "Y-m-d",
-        onChange: (_, dateStr) => {
-          setForm((p) => ({ ...p, move_in_date: dateStr }));
-        },
-      });
+useEffect(() => {
+  // 🔥 Agar step 0 nahi hai → destroy karo
+  if (currentStep !== 0) {
+    if (flatpickrRef.current) {
+      flatpickrRef.current.destroy();
+      flatpickrRef.current = null;
     }
-  
-    return () => {
-      if (flatpickrRef.current) {
-        flatpickrRef.current.destroy();
-        flatpickrRef.current = null;
-      }
-    };
-  }, [currentStep]);
+    return;
+  }
+
+  // 🔥 Step 0 pe init karo
+  if (dateRef.current && window.flatpickr) {
+    if (flatpickrRef.current) {
+      flatpickrRef.current.destroy();
+    }
+
+    flatpickrRef.current = window.flatpickr(dateRef.current, {
+      minDate: "today",
+      dateFormat: "Y-m-d",
+      clickOpens: true, // 👈 important
+      allowInput: true, // 👈 important
+      onChange: (_, dateStr) => {
+        setForm((p) => ({ ...p, move_in_date: dateStr }));
+      },
+    });
+  }
+
+  // 🔥 Component unmount cleanup
+  return () => {
+    if (flatpickrRef.current) {
+      flatpickrRef.current.destroy();
+      flatpickrRef.current = null;
+    }
+  };
+}, [currentStep]);
 
   function mountStripe() {
     if (stripeRef.current || !window.Stripe) return;
