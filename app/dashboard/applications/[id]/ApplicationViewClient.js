@@ -63,8 +63,8 @@ export default function ApplicationViewClient({ app }) {
         <table className="table table-bordered">
           <tbody>
             <tr>
-              <th>Property ID</th>
-              <td>{app.property_id}</td>
+              <th>Property Name</th>
+              <td>{app.property_name || app.property_id || "—"}</td>
             </tr>
             <tr>
               <th>Move In Date</th>

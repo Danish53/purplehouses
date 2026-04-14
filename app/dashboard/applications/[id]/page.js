@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import { query } from "@/lib/db";
+import { query, queryOne } from "@/lib/db";
 import ApplicationViewClient from "./ApplicationViewClient";
 
 export default async function ApplicationDetailPage({ params }) {
@@ -11,6 +11,13 @@ export default async function ApplicationDetailPage({ params }) {
     return <div className="p-4">Application not found.</div>;
   }
   const app = { ...rows[0] };
+  if (app.property_id) {
+    const prop = await queryOne(
+      "SELECT prop_title FROM Property WHERE id = ? LIMIT 1",
+      [String(app.property_id).trim()],
+    );
+    if (prop?.prop_title) app.property_name = prop.prop_title;
+  }
   // Serialize dates
   const dateFields = [
     "created_at",
