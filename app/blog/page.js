@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { blogSlugFromTitle } from "@/lib/blogSlug";
 import { getAllBlogs, searchBlogs } from "@/lib/queries";
 import Link from "next/link";
 
@@ -8,6 +9,7 @@ export default async function BlogShowPage({ searchParams }) {
   let blogs = [];
   try {
     blogs = query ? await searchBlogs(query) : await getAllBlogs();
+    // console.log(blogs);
   } catch (e) {
     console.error("Blog fetch error:", e);
   }
@@ -66,7 +68,7 @@ export default async function BlogShowPage({ searchParams }) {
                           </div>
                           <div className="card-footer text-end">
                             <Link
-                              href={`/blog_detail/${blog.id}`}
+                              href={`/blog_detail/${blogSlugFromTitle(blog.title)}`}
                               className="btn btn-blogShow btn-sm"
                             >
                               Read More

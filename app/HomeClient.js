@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import PropertyMap from "@/components/PropertyMap";
 import PropertyShowcaseCard from "@/components/PropertyShowcaseCard";
+import { blogSlugFromTitle } from "@/lib/blogSlug";
 import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
 
 export default function HomeClient({
@@ -197,7 +198,7 @@ export default function HomeClient({
               <div className="custom-slider">
                 {blogs.map((blog) => (
                   <Link
-                    href={`/blog_detail/${blog.id}`}
+                    href={`/blog_detail/${blogSlugFromTitle(blog.title)}`}
                     className="blog-card-link"
                     key={blog.id}
                   >

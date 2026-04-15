@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import { getBlogById } from "@/lib/queries";
+import { getBlogBySlug } from "@/lib/queries";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -109,8 +109,8 @@ function sanitizeHtml(html) {
 }
 
 export default async function BlogDetailPage({ params }) {
-  const { id } = await params;
-  const blog = await getBlogById(id);
+  const { slug } = await params;
+  const blog = await getBlogBySlug(slug);
   if (!blog) return notFound();
 
   const imageUrl = blog.safe_image_url || blog.image_url;
