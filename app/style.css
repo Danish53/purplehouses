@@ -105,8 +105,8 @@
 }
 
 .navbar .btn.loginBtn {
-  background-color: #4b0d77;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  /* background-color: #4b0d77; */
+  border: 2px solid rgba(255, 255, 255, 0.22);
   border-radius: 8px;
   min-height: 40px;
   display: inline-flex;
@@ -128,7 +128,7 @@
 }
 
 .navbar .btn.loginBtn:hover {
-  background-color: #5c1990;
+  /* background-color: #5c1990; */
   border-color: rgba(255, 255, 255, 0.35);
   color: #ffffff !important;
   box-shadow: 0 6px 22px rgba(43, 8, 66, 0.38);
@@ -3804,7 +3804,11 @@ li#h_area {
 
   .slider-head .slick-slide img {
     height: 80vh !important;
-    min-height: 500px;
+    min-height: 480px;
+  }
+
+  .slick-initialized .slick-slide{
+    height: 480px !important;
   }
 
   .propertyShowWrapper .inner .slick-slide img {
@@ -3999,6 +4003,11 @@ li#h_area {
 
   .propertDetails .item-price-wrap h4 {
     font-size: 24px;
+  }
+
+  .slide-text {
+    position: absolute;
+    top: 55%;
   }
 
   .slide-text h2 {

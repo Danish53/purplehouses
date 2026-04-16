@@ -271,6 +271,17 @@ export async function PUT(request) {
       galleryPaths.length,
     );
 
+    const latRaw = formData.get("lat") ?? fields.lat ?? fields.latitude;
+    const lngRaw = formData.get("lng") ?? fields.lng ?? fields.longitude;
+    const latStr =
+      latRaw != null && String(latRaw).trim() !== ""
+        ? String(latRaw).trim()
+        : String(existing.lat ?? "");
+    const lngStr =
+      lngRaw != null && String(lngRaw).trim() !== ""
+        ? String(lngRaw).trim()
+        : String(existing.lng ?? "");
+
     await prisma.Property.update({
       where: { id: BigInt(id) },
       data: {
@@ -299,8 +310,8 @@ export async function PUT(request) {
           existing.administrative_area_level_1,
         city: fields.city || fields.locality || existing.city,
         zip_code: fields.zip_code || fields.postal_code || existing.zip_code,
-        lat: fields.lat || fields.latitude || existing.lat,
-        lng: fields.lng || fields.longitude || existing.lng,
+        lat: latStr,
+        lng: lngStr,
         prop_google_street_view:
           fields.prop_google_street_view ?? existing.prop_google_street_view,
         login_required:

@@ -9,6 +9,13 @@ export default async function PropertyEditPage({ params }) {
   if (!rows.length) return <div className="p-4">Property not found.</div>;
 
   const prop = { ...rows[0] };
+  // Align with DB column aliases (some rows use latitude/longitude)
+  if (prop.lat == null || prop.lat === "") {
+    prop.lat = prop.latitude ?? prop.lat ?? "";
+  }
+  if (prop.lng == null || prop.lng === "") {
+    prop.lng = prop.longitude ?? prop.lng ?? "";
+  }
   // Parse JSON fields
   let galleryImages = [];
   try {

@@ -21,10 +21,26 @@ export default function PropertyEditClient({
   const [existingAttachments, setExistingAttachments] = useState(attachments);
   const [removedAttachments, setRemovedAttachments] = useState([]);
   const [featuredIndex, setFeaturedIndex] = useState(prop.featured_image || 0);
-  const [lat, setLat] = useState(prop.lat || "");
-  const [lng, setLng] = useState(prop.lng || "");
+  const initialLat = String(prop.lat ?? prop.latitude ?? "").trim();
+  const initialLng = String(prop.lng ?? prop.longitude ?? "").trim();
+  const [lat, setLat] = useState(initialLat);
+  const [lng, setLng] = useState(initialLng);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+
+  const syncMarkerToLatLng = (latStr, lngStr) => {
+    const la = parseFloat(latStr);
+    const lo = parseFloat(lngStr);
+    if (
+      mapRef.current &&
+      markerRef.current &&
+      !Number.isNaN(la) &&
+      !Number.isNaN(lo)
+    ) {
+      markerRef.current.setLatLng([la, lo]);
+      mapRef.current.setView([la, lo], Math.max(mapRef.current.getZoom(), 14));
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.L && !mapRef.current) {
@@ -534,9 +550,10 @@ export default function PropertyEditClient({
                   <input
                     type="text"
                     className="form-control"
+                    inputMode="decimal"
                     value={lat}
                     onChange={(e) => setLat(e.target.value)}
-                    readOnly
+                    onBlur={() => syncMarkerToLatLng(lat, lng)}
                   />
                 </div>
                 <div className="col-md-3">
@@ -544,9 +561,10 @@ export default function PropertyEditClient({
                   <input
                     type="text"
                     className="form-control"
+                    inputMode="decimal"
                     value={lng}
                     onChange={(e) => setLng(e.target.value)}
-                    readOnly
+                    onBlur={() => syncMarkerToLatLng(lat, lng)}
                   />
                 </div>
               </div>
