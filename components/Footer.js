@@ -119,7 +119,7 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/blog" className="text-decoration-none text-white">
+              <Link href="/blogs" className="text-decoration-none text-white">
                 Blog
               </Link>
             </li>

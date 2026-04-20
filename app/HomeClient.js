@@ -198,7 +198,7 @@ export default function HomeClient({
               <div className="custom-slider">
                 {blogs.map((blog) => (
                   <Link
-                    href={`/blog_detail/${blogSlugFromTitle(blog.title)}`}
+                    href={`/blogs/${blogSlugFromTitle(blog.title)}`}
                     className="blog-card-link"
                     key={blog.id}
                   >

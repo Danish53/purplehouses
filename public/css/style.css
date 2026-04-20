@@ -59,7 +59,7 @@
 }
 .slider-head {
   position: relative;
-  top: -140px;
+  top: -125px;
   z-index: -1;
 }
 /* Slider wrapper */
@@ -1701,9 +1701,9 @@ li#h_area {
   color: #43086b;
   padding: 0;
 }
-.slider-head {
+/* .slider-head {
   margin-bottom: 18px;
-}
+} */
 .slider-head .slick-slide img {
   height: 80vh !important;
   min-height: 620px;
@@ -2576,4 +2576,9 @@ li#h_area {
   .slide-text {
     width: min(calc(100% - 32px), 360px);
   }
+}
+
+
+.slick-dotted.slick-slider{
+  margin-bottom: 0 !important;
 }

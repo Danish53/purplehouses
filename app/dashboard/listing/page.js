@@ -32,6 +32,9 @@ export default function ListingPage() {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const placePinRef = useRef(null);
+  const geocodeTimerRef = useRef(null);
+  const geocodeAbortRef = useRef(null);
+  const lastGeocodeQueryRef = useRef("");
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
 
@@ -132,25 +135,70 @@ export default function ListingPage() {
     };
   }, []);
 
-  const geocodeAddress = () => {
-    const address = document.getElementById("c-address")?.value || "";
-    const city = document.getElementById("c-city")?.value || "";
-    const state = document.getElementById("c-state")?.value || "";
-    const zip = document.getElementById("c-zip")?.value || "";
-    const country = document.getElementById("c-country")?.value || "";
-    if (!city && !address) return;
+  useEffect(() => {
+    return () => {
+      if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+      if (geocodeAbortRef.current) geocodeAbortRef.current.abort();
+    };
+  }, []);
+
+  const getLocationInputValue = (id, fallback = "") =>
+    (document.getElementById(id)?.value || fallback || "").trim();
+
+  const geocodeAddress = async (overrides = {}) => {
+    const address = (overrides.address ?? getLocationInputValue("c-address")).trim();
+    const city = (overrides.city ?? getLocationInputValue("c-city")).trim();
+    const state = (overrides.state ?? getLocationInputValue("c-state")).trim();
+    const zip = (overrides.zip ?? getLocationInputValue("c-zip")).trim();
+    const country = (overrides.country ?? getLocationInputValue("c-country")).trim();
+
+    // Address + city/state/country required for better and more precise results.
+    if (!address || (!city && !state && !country)) return;
+
     const q = [address, city, state, zip, country].filter(Boolean).join(", ");
-    fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
-    )
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.length && placePinRef.current) {
-          const la = parseFloat(data[0].lat);
-          const lo = parseFloat(data[0].lon);
+    if (!q || q === lastGeocodeQueryRef.current) return;
+    lastGeocodeQueryRef.current = q;
+
+    try {
+      if (geocodeAbortRef.current) geocodeAbortRef.current.abort();
+      const controller = new AbortController();
+      geocodeAbortRef.current = controller;
+
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
+        { signal: controller.signal },
+      );
+      const data = await res.json();
+      if (data && data.length && placePinRef.current) {
+        const la = parseFloat(data[0].lat);
+        const lo = parseFloat(data[0].lon);
+        if (!Number.isNaN(la) && !Number.isNaN(lo)) {
           placePinRef.current(la, lo, 17);
         }
-      });
+      }
+    } catch (err) {
+      if (err?.name !== "AbortError") {
+        console.error("Geocoding error:", err);
+      }
+    }
+  };
+
+  const scheduleGeocode = (overrides = {}) => {
+    if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+    geocodeTimerRef.current = setTimeout(() => {
+      geocodeAddress(overrides);
+    }, 700);
+  };
+
+  const handleLocationInputChange = (field, value) => {
+    const map = {
+      address: "address",
+      city: "city",
+      state: "state",
+      zip: "zip",
+      country: "country",
+    };
+    scheduleGeocode({ [map[field]]: value });
   };
 
   const toggleFeature = (f) => {
@@ -391,6 +439,12 @@ export default function ListingPage() {
                     name="property_map_address"
                     id="c-address"
                     required
+                    onChange={(e) =>
+                      handleLocationInputChange("address", e.target.value)
+                    }
+                    onBlur={() =>
+                      geocodeAddress({ address: getLocationInputValue("c-address") })
+                    }
                   />
                 </div>
                 <div className="col-md-6">
@@ -400,6 +454,12 @@ export default function ListingPage() {
                     className="form-control"
                     name="country"
                     id="c-country"
+                    onChange={(e) =>
+                      handleLocationInputChange("country", e.target.value)
+                    }
+                    onBlur={() =>
+                      geocodeAddress({ country: getLocationInputValue("c-country") })
+                    }
                   />
                 </div>
                 <div className="col-md-6">
@@ -409,6 +469,12 @@ export default function ListingPage() {
                     className="form-control"
                     name="administrative_area_level_1"
                     id="c-state"
+                    onChange={(e) =>
+                      handleLocationInputChange("state", e.target.value)
+                    }
+                    onBlur={() =>
+                      geocodeAddress({ state: getLocationInputValue("c-state") })
+                    }
                   />
                 </div>
                 <div className="col-md-6">
@@ -418,6 +484,12 @@ export default function ListingPage() {
                     className="form-control"
                     name="locality"
                     id="c-city"
+                    onChange={(e) =>
+                      handleLocationInputChange("city", e.target.value)
+                    }
+                    onBlur={() =>
+                      geocodeAddress({ city: getLocationInputValue("c-city") })
+                    }
                   />
                 </div>
                 <div className="col-md-6">
@@ -427,6 +499,12 @@ export default function ListingPage() {
                     className="form-control"
                     name="postal_code"
                     id="c-zip"
+                    onChange={(e) =>
+                      handleLocationInputChange("zip", e.target.value)
+                    }
+                    onBlur={() =>
+                      geocodeAddress({ zip: getLocationInputValue("c-zip") })
+                    }
                   />
                 </div>
               </div>

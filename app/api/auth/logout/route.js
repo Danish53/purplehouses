@@ -7,10 +7,9 @@ export async function POST() {
   return NextResponse.json({ success: true, redirect: "/" });
 }
 
-export async function GET() {
+export async function GET(request) {
   const session = await getSession();
   session.destroy();
-  return NextResponse.redirect(
-    new URL("/", process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  );
+  // Redirect using the same origin as the current request (avoids hardcoded localhost in prod).
+  return NextResponse.redirect(new URL("/", request.url));
 }
