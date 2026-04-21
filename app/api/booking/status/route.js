@@ -99,11 +99,28 @@ export async function POST(request) {
         console.error("Customer status email failed:", emailErr);
       }
 
+      const adminEmail =
+        process.env.BOOKING_NOTIFICATION_EMAIL || "admin@purplehousing.com";
+
+      let adminSent = false;
+
+      try {
+        adminSent = await sendEmail({
+          to: adminEmail,
+          subject: customerSubject, // SAME SUBJECT
+          html: customerHtml,       // SAME EMAIL TEMPLATE
+        });
+      } catch (adminErr) {
+        console.error("Admin status email failed:", adminErr);
+      }
+
       return NextResponse.json({
         success: true,
         status,
-        email_sent: { customer: customerSent },
+        email_sent: { customer: customerSent, admin: adminSent },
       });
+
+
     }
 
     return NextResponse.json({ success: true, booking });

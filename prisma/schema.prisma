@@ -192,8 +192,8 @@ model frontend_applying {
   zipcode               String?   @db.VarChar(10)
   reside_from_month     String?   @db.VarChar(2)
   reside_from_year      String?   @db.VarChar(4)
-  monthly_rent          Decimal?  @db.Decimal(10, 2)
-  monthly_mortgage      Decimal?  @db.Decimal(10, 2)
+  monthly_rent          String?   @db.VarChar(50)
+  monthly_mortgage      String?   @db.VarChar(50)
   landlord_name         String?   @db.VarChar(100)
   landlord_phone        String?   @db.VarChar(20)
   landlord_email        String?   @db.VarChar(254)
@@ -234,7 +234,7 @@ model frontend_applying {
   employer_state        String?   @db.VarChar(2)
   employer_zip          String?   @db.VarChar(10)
   employer_phone        String?   @db.VarChar(20)
-  monthly_salary        Decimal?  @db.Decimal(10, 2)
+  monthly_salary        String?   @db.VarChar(50)
   position              String?   @db.VarChar(50)
   years_worked          Int?      @db.UnsignedSmallInt
   supervisor_name       String?   @db.VarChar(100)
@@ -263,7 +263,7 @@ model frontend_applying {
   payment_status        String    @db.VarChar(10)
   stripe_charge_id      String?   @db.VarChar(100)
   stripe_payment_intent String?   @db.VarChar(100)
-  amount                Decimal   @db.Decimal(10, 2)
+  amount                String?   @db.VarChar(50)
 }
 
 model frontend_contact {
