@@ -344,6 +344,14 @@ export default function ApplicationViewClient({ app }) {
               <td>{app.authorized_name}</td>
             </tr>
             <tr>
+              <th>Payment Status</th>
+              <td>{app.payment_status}</td>
+            </tr>
+            <tr>
+              <th>Payment Method</th>
+              <td>{app.payment_method}</td>
+            </tr>
+            <tr>
               <th>Submitted At</th>
               <td>{formatDate(app.submitted_at)}</td>
             </tr>

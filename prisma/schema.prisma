@@ -8,40 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Property {
-  id                          BigInt    @id @default(autoincrement())
-  prop_title                  String    @db.VarChar(255)
-  prop_des                    String?   @db.LongText
-  category                    String?   @db.VarChar(255)
-  purpose                     String?   @db.VarChar(255)
-  prop_price                  String    @db.VarChar(50)
-  prop_beds                   Int?
-  prop_baths                  Int?
-  prop_size                   String    @db.VarChar(50)
-  prop_year_built             String?   @db.VarChar(10)
-  prop_features               String    @db.LongText
-  property_map_address        String    @db.VarChar(255)
-  country                     String    @db.VarChar(100)
-  administrative_area_level_1 String    @db.VarChar(100)
-  city                        String    @db.VarChar(100)
-  zip_code                    String    @db.VarChar(20)
-  lat                         String    @db.VarChar(100)
-  lng                         String    @db.VarChar(100)
-  prop_google_street_view     String    @db.VarChar(10)
-  gallery_images              String    @db.LongText
-  featured_image              Int       @default(0)
-  featured                    Boolean
-  login_required              Boolean
-  disclaimer                  String?   @db.LongText
-  status                      String    @db.VarChar(20)
-  created_at                  DateTime  @db.DateTime(6)
-  updated_at                  DateTime  @db.DateTime(6)
-  attachments                 String    @db.LongText
-  video_file                  String?   @db.VarChar(255)
-  youtube_url                 String?   @db.VarChar(200)
-  available_date              DateTime? @db.Date
-}
-
 model auth_group {
   id                     Int                      @id @default(autoincrement())
   name                   String                   @unique(map: "name") @db.VarChar(150)
@@ -282,4 +248,60 @@ model frontend_customuser {
   password   String   @db.VarChar(255)
   is_active  Boolean
   created_at DateTime @db.DateTime(6)
+}
+
+model property {
+  id                          BigInt    @id @default(autoincrement())
+  prop_title                  String    @db.VarChar(255)
+  prop_des                    String?   @db.LongText
+  category                    String?   @db.VarChar(255)
+  purpose                     String?   @db.VarChar(255)
+  prop_price                  String    @db.VarChar(50)
+  prop_beds                   Int?
+  prop_baths                  Int?
+  prop_size                   String    @db.VarChar(50)
+  prop_year_built             String?   @db.VarChar(10)
+  prop_features               String    @db.LongText
+  property_map_address        String    @db.VarChar(255)
+  country                     String    @db.VarChar(100)
+  administrative_area_level_1 String    @db.VarChar(100)
+  city                        String    @db.VarChar(100)
+  zip_code                    String    @db.VarChar(20)
+  lat                         String    @db.VarChar(100)
+  lng                         String    @db.VarChar(100)
+  prop_google_street_view     String    @db.VarChar(10)
+  gallery_images              String    @db.LongText
+  featured_image              Int       @default(0)
+  featured                    Boolean
+  login_required              Boolean
+  disclaimer                  String?   @db.LongText
+  status                      String    @db.VarChar(20)
+  created_at                  DateTime  @db.DateTime(6)
+  updated_at                  DateTime  @db.DateTime(6)
+  attachments                 String    @db.LongText
+  video_file                  String?   @db.VarChar(255)
+  youtube_url                 String?   @db.VarChar(200)
+  available_date              DateTime? @db.Date
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model stripe_webhook_events {
+  id                 String                       @id @db.VarChar(255)
+  event_type         String                       @db.VarChar(100)
+  stripe_object_id   String                       @db.VarChar(255)
+  stripe_object_type String                       @db.VarChar(100)
+  application_id     BigInt?
+  processed_at       DateTime                     @default(now()) @db.Timestamp(0)
+  status             stripe_webhook_events_status @default(processed)
+  metadata           String?                      @db.LongText
+
+  @@index([application_id], map: "idx_application")
+  @@index([processed_at], map: "idx_processed_at")
+  @@index([stripe_object_id], map: "idx_stripe_object")
+}
+
+enum stripe_webhook_events_status {
+  processed
+  failed
+  duplicate
 }

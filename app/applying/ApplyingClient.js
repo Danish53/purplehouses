@@ -386,6 +386,7 @@ useEffect(() => {
       fd.set("stripe_payment_method_id", pmResult.paymentMethod.id);
       const res = await fetch("/api/applying", { method: "POST", body: fd });
       const result = await res.json();
+      console.log(result, "Payment Result");
       if (!res.ok) {
         setSdkStatus(result.error || "Payment failed");
         setSdkTone("error");

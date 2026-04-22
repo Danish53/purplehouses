@@ -86,19 +86,21 @@ export default function ApplicationsClient({ applications: initial }) {
             </tr>
           </thead>
           <tbody>
+            {/* if payment_status = paid then list display */}
             {paginated.length === 0 ? (
               <tr>
                 <td colSpan="9" className="text-center">
                   No applications found.
                 </td>
               </tr>
-            ) : (
+            ) : ( 
               paginated.map((app, i) => (
-                <tr key={app.id}>
-                  <td>{(page - 1) * perPage + i + 1}</td>
-                  <td>
-                    {app.photo_id ? (
-                      <button
+                app.payment_status === "paid" && (
+                  <tr key={app.id}>
+                    <td>{(page - 1) * perPage + i + 1}</td>
+                    <td>
+                      {app.photo_id ? (
+                        <button
                         type="button"
                         className="btn btn-sm btn-outline-secondary"
                         onClick={() => openPhotoViewer(app.photo_id)}
@@ -137,6 +139,7 @@ export default function ApplicationsClient({ applications: initial }) {
                     </button>
                   </td>
                 </tr>
+                    )
               ))
             )}
           </tbody>
