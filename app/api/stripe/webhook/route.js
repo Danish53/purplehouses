@@ -62,6 +62,8 @@ export async function POST(request) {
   const stripe = getStripe();
   const sig = request.headers.get("stripe-signature");
 
+  console.log("🔥 WEBHOOK HIT: Stripe webhook triggered");
+
   if (!stripe || !process.env.STRIPE_WEBHOOK_SECRET) {
     return NextResponse.json({ ok: true });
   }
@@ -75,6 +77,7 @@ export async function POST(request) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+    console.log("✅ Webhook verified:", event.type);
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
