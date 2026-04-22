@@ -85,7 +85,7 @@ export async function POST(request) {
   const object = event.data.object;
 
   // 🔥 SAVE EVENT FIRST (idempotent protection)
-  await saveEvent(event, object, "received");
+  await saveEvent(event, object, "processed");
 
   try {
     switch (event.type) {
