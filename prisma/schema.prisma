@@ -250,7 +250,7 @@ model frontend_customuser {
   created_at DateTime @db.DateTime(6)
 }
 
-model property {
+model Property {
   id                          BigInt    @id @default(autoincrement())
   prop_title                  String    @db.VarChar(255)
   prop_des                    String?   @db.LongText
