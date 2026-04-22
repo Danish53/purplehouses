@@ -26,13 +26,14 @@ async function saveEvent(event, object, status) {
   try {
     await query(
       `INSERT INTO stripe_webhook_events 
-       (id, event_type, stripe_object_id, application_id, status)
-       VALUES (?, ?, ?, ?, ?)
+       (id, event_type, stripe_object_id, stripe_object_type, application_id, status)
+       VALUES (?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE status = status`,
       [
         event.id,
         event.type,
         object?.id,
+        object?.object,
         applicationId,
         status,
       ]
