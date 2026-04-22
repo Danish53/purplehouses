@@ -196,41 +196,41 @@ export default function ApplyingClient({
   const dateRef = useRef(null);
   const flatpickrRef = useRef(null);
 
-useEffect(() => {
-  // 🔥 Agar step 0 nahi hai → destroy karo
-  if (currentStep !== 0) {
-    if (flatpickrRef.current) {
-      flatpickrRef.current.destroy();
-      flatpickrRef.current = null;
-    }
-    return;
-  }
-
-  // 🔥 Step 0 pe init karo
-  if (dateRef.current && window.flatpickr) {
-    if (flatpickrRef.current) {
-      flatpickrRef.current.destroy();
+  useEffect(() => {
+    // 🔥 Agar step 0 nahi hai → destroy karo
+    if (currentStep !== 0) {
+      if (flatpickrRef.current) {
+        flatpickrRef.current.destroy();
+        flatpickrRef.current = null;
+      }
+      return;
     }
 
-    flatpickrRef.current = window.flatpickr(dateRef.current, {
-      minDate: "today",
-      dateFormat: "Y-m-d",
-      clickOpens: true, // 👈 important
-      allowInput: true, // 👈 important
-      onChange: (_, dateStr) => {
-        setForm((p) => ({ ...p, move_in_date: dateStr }));
-      },
-    });
-  }
+    // 🔥 Step 0 pe init karo
+    if (dateRef.current && window.flatpickr) {
+      if (flatpickrRef.current) {
+        flatpickrRef.current.destroy();
+      }
 
-  // 🔥 Component unmount cleanup
-  return () => {
-    if (flatpickrRef.current) {
-      flatpickrRef.current.destroy();
-      flatpickrRef.current = null;
+      flatpickrRef.current = window.flatpickr(dateRef.current, {
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        clickOpens: true, // 👈 important
+        allowInput: true, // 👈 important
+        onChange: (_, dateStr) => {
+          setForm((p) => ({ ...p, move_in_date: dateStr }));
+        },
+      });
     }
-  };
-}, [currentStep]);
+
+    // 🔥 Component unmount cleanup
+    return () => {
+      if (flatpickrRef.current) {
+        flatpickrRef.current.destroy();
+        flatpickrRef.current = null;
+      }
+    };
+  }, [currentStep]);
 
   function mountStripe() {
     if (stripeRef.current || !window.Stripe) return;
@@ -414,7 +414,7 @@ useEffect(() => {
           if (!fin.ok || finJson.status !== "succeeded") {
             setSdkStatus(
               finJson.error ||
-                "Payment succeeded but we could not save your application. Please contact support.",
+              "Payment succeeded but we could not save your application. Please contact support.",
             );
             setSdkTone("error");
             setSubmitting(false);
@@ -927,9 +927,20 @@ useEffect(() => {
                       type="text"
                       className="form-control"
                       name="monthly_rent"
-                      placeholder="Monthly Rent"
+                      placeholder="e.g. 8000 or 8000.50"
                       value={form.monthly_rent}
-                      onChange={handleChange}
+                     onChange={(e) => {
+    const value = e.target.value;
+
+    const cleaned = value
+      .replace(/[^0-9.]/g, "")
+      .replace(/(\..*)\./g, "$1");
+
+    setForm((p) => ({
+      ...p,
+      monthly_rent: cleaned,
+    }));
+  }}
                     />
                   </div>
                   <div className="row g-3 mb-3">
@@ -1735,7 +1746,19 @@ useEffect(() => {
                             className="form-control"
                             name="monthly_salary"
                             value={form.monthly_salary}
-                            onChange={handleChange}
+                            placeholder="e.g. 5000 or 5000.50"
+                            onChange={(e) => {
+    const value = e.target.value;
+
+    const cleaned = value
+      .replace(/[^0-9.]/g, "")
+      .replace(/(\..*)\./g, "$1");
+
+    setForm((p) => ({
+      ...p,
+      monthly_salary: cleaned,
+    }));
+  }}
                           />
                         </div>
                         <div className="col-md-6">
