@@ -16,6 +16,7 @@ export default function RootLayout({ children }) {
       <head>
         {/* Viewport */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="google-site-verification" content="2yx8lUN3m2VCbOWH266q1gotifav96auBOy1H9jRvfQ" />
         {/* Bootstrap 5 */}
         <link
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
