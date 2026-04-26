@@ -196,41 +196,105 @@ export default function ApplyingClient({
   const dateRef = useRef(null);
   const flatpickrRef = useRef(null);
 
+  const cleanupMoveInPicker = () => {
+    const fp = flatpickrRef.current || dateRef.current?._flatpickr;
+    if (!fp) return;
+
+    const mobileInput = fp.mobileInput;
+    const altInput = fp.altInput;
+    const cal = fp.calendarContainer;
+
+    try {
+      fp.destroy();
+    } catch (e) { }
+
+    // hard cleanup (mobile leftovers)
+    if (mobileInput?.remove) mobileInput.remove();
+    if (altInput?.remove) altInput.remove();
+    if (cal?.remove) cal.remove();
+
+    flatpickrRef.current = null;
+    if (dateRef.current && dateRef.current._flatpickr) {
+      dateRef.current._flatpickr = null;
+    }
+  };
+
+  const initMoveInPicker = () => {
+    if (!dateRef.current) return;
+    if (!window.flatpickr) return; // flatpickr script must be loaded
+
+    cleanupMoveInPicker();
+
+    flatpickrRef.current = window.flatpickr(dateRef.current, {
+      disableMobile: true,     // ✅ important (double input + mobile bug fix)
+      altInput: false,
+      minDate: "today",
+      dateFormat: "Y-m-d",
+      defaultDate: form.move_in_date || undefined,
+      clickOpens: true,
+      allowInput: false,
+      onChange: (_dates, dateStr) => {
+        setForm((p) => ({ ...p, move_in_date: dateStr }));
+      },
+    });
+  };
+
+
   useEffect(() => {
-    // 🔥 Agar step 0 nahi hai → destroy karo
-    if (currentStep !== 0) {
-      if (flatpickrRef.current) {
-        flatpickrRef.current.destroy();
-        flatpickrRef.current = null;
-      }
-      return;
-    }
+    if (currentStep !== 0) return;
 
-    // 🔥 Step 0 pe init karo
-    if (dateRef.current && window.flatpickr) {
-      if (flatpickrRef.current) {
-        flatpickrRef.current.destroy();
-      }
-
-      flatpickrRef.current = window.flatpickr(dateRef.current, {
-        minDate: "today",
-        dateFormat: "Y-m-d",
-        clickOpens: true, // 👈 important
-        allowInput: true, // 👈 important
-        onChange: (_, dateStr) => {
-          setForm((p) => ({ ...p, move_in_date: dateStr }));
-        },
-      });
-    }
-
-    // 🔥 Component unmount cleanup
-    return () => {
-      if (flatpickrRef.current) {
-        flatpickrRef.current.destroy();
-        flatpickrRef.current = null;
-      }
-    };
+    // wait next paint so ref available
+    const id = requestAnimationFrame(() => initMoveInPicker());
+    return () => cancelAnimationFrame(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
+
+  // PayPal/Venmo se wapas aane par (page restore / bfcache) re-init
+  useEffect(() => {
+    const onPageShow = () => {
+      if (currentStep === 0) initMoveInPicker();
+    };
+
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
+
+  // useEffect(() => {
+  //   // 🔥 Agar step 0 nahi hai → destroy karo
+  //   if (currentStep !== 0) {
+  //     if (flatpickrRef.current) {
+  //       flatpickrRef.current.destroy();
+  //       flatpickrRef.current = null;
+  //     }
+  //     return;
+  //   }
+
+  //   // 🔥 Step 0 pe init karo
+  //   if (dateRef.current && window.flatpickr) {
+  //     if (flatpickrRef.current) {
+  //       flatpickrRef.current.destroy();
+  //     }
+
+  //     flatpickrRef.current = window.flatpickr(dateRef.current, {
+  //       minDate: "today",
+  //       dateFormat: "Y-m-d",
+  //       clickOpens: true, // 👈 important
+  //       allowInput: true, // 👈 important
+  //       onChange: (_, dateStr) => {
+  //         setForm((p) => ({ ...p, move_in_date: dateStr }));
+  //       },
+  //     });
+  //   }
+
+  //   // 🔥 Component unmount cleanup
+  //   return () => {
+  //     if (flatpickrRef.current) {
+  //       flatpickrRef.current.destroy();
+  //       flatpickrRef.current = null;
+  //     }
+  //   };
+  // }, [currentStep]);
 
   function mountStripe() {
     if (stripeRef.current || !window.Stripe) return;
@@ -338,6 +402,10 @@ export default function ApplyingClient({
 
   function nextStep() {
     if (!validateStep(currentStep)) return;
+
+    // ✅ step 0 leaving => destroy BEFORE unmount (this is the real fix)
+    if (currentStep === 0) cleanupMoveInPicker();
+
     setCurrentStep((s) => Math.min(s + 1, 9));
   }
   function prevStep() {
@@ -654,6 +722,16 @@ export default function ApplyingClient({
                     <label className="form-label">
                       Desired Move-in <span style={{ color: "red" }}>*</span>
                     </label>
+                    {/* <input
+                      ref={dateRef}
+                      type="text"
+                      className="form-control"
+                      placeholder="Select Date"
+                      name="move_in_date"
+                      value={form.move_in_date}
+                      readOnly
+                      required
+                    /> */}
                     <input
                       ref={dateRef}
                       type="text"
@@ -663,6 +741,10 @@ export default function ApplyingClient({
                       value={form.move_in_date}
                       readOnly
                       required
+                      onClick={() => {
+                        if (!flatpickrRef.current) initMoveInPicker();
+                        flatpickrRef.current?.open();
+                      }}
                     />
                   </div>
                   <div className="mb-3">
@@ -929,18 +1011,18 @@ export default function ApplyingClient({
                       name="monthly_rent"
                       placeholder="e.g. 8000 or 8000.50"
                       value={form.monthly_rent}
-                     onChange={(e) => {
-    const value = e.target.value;
+                      onChange={(e) => {
+                        const value = e.target.value;
 
-    const cleaned = value
-      .replace(/[^0-9.]/g, "")
-      .replace(/(\..*)\./g, "$1");
+                        const cleaned = value
+                          .replace(/[^0-9.]/g, "")
+                          .replace(/(\..*)\./g, "$1");
 
-    setForm((p) => ({
-      ...p,
-      monthly_rent: cleaned,
-    }));
-  }}
+                        setForm((p) => ({
+                          ...p,
+                          monthly_rent: cleaned,
+                        }));
+                      }}
                     />
                   </div>
                   <div className="row g-3 mb-3">
@@ -1748,17 +1830,17 @@ export default function ApplyingClient({
                             value={form.monthly_salary}
                             placeholder="e.g. 5000 or 5000.50"
                             onChange={(e) => {
-    const value = e.target.value;
+                              const value = e.target.value;
 
-    const cleaned = value
-      .replace(/[^0-9.]/g, "")
-      .replace(/(\..*)\./g, "$1");
+                              const cleaned = value
+                                .replace(/[^0-9.]/g, "")
+                                .replace(/(\..*)\./g, "$1");
 
-    setForm((p) => ({
-      ...p,
-      monthly_salary: cleaned,
-    }));
-  }}
+                              setForm((p) => ({
+                                ...p,
+                                monthly_salary: cleaned,
+                              }));
+                            }}
                           />
                         </div>
                         <div className="col-md-6">
