@@ -45,6 +45,7 @@ export default function ContactPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...formData,
+        work_phone: "+1" + formData.work_phone.replace(/\D/g, "").slice(0, 10),
         captcha_answer: captchaAnswer,
         captcha_token: captchaToken,
       }),
@@ -137,15 +138,18 @@ export default function ContactPage() {
                         type="text"
                         name="work_phone"
                         className="form-control"
-                        placeholder="Enter Your Phone No."
+                        placeholder="Enter Your Phone Number"
                         required
                         value={formData.work_phone}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          let value = e.target.value.replace(/\D/g, "");
+                          value = value.slice(0, 10);
+
                           setFormData({
                             ...formData,
-                            work_phone: e.target.value,
-                          })
-                        }
+                            work_phone: value,
+                          });
+                        }}
                       />
                     </div>
                     <div className="col-md-6">

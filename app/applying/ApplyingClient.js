@@ -450,6 +450,16 @@ export default function ApplyingClient({
         return;
       }
       const fd = buildFormData();
+      const rawPhone = form.phone.replace(/\D/g, "").slice(0, 10);
+      fd.set("phone", "+1" + rawPhone);
+      const rawLandlordPhone = form.landlord_phone.replace(/\D/g, "").slice(0, 10);
+      fd.set("landlord_phone", "+1" + rawLandlordPhone);
+      const rawPersonalPhone = form.personal_phone.replace(/\D/g, "").slice(0, 10);
+      fd.set("personal_phone", "+1" + rawPersonalPhone);
+      const rawEmergencyPhone = form.emergency_phone.replace(/\D/g, "").slice(0, 10);
+      fd.set("emergency_phone", "+1" + rawEmergencyPhone);
+      const rawEmployerPhone = form.employer_phone.replace(/\D/g, "").slice(0, 10);
+      fd.set("employer_phone", "+1" + rawEmployerPhone);
       fd.set("payment_method", "card");
       fd.set("stripe_payment_method_id", pmResult.paymentMethod.id);
       const res = await fetch("/api/applying", { method: "POST", body: fd });
@@ -864,9 +874,13 @@ export default function ApplyingClient({
                       type="tel"
                       className="form-control"
                       name="phone"
-                      placeholder="Number"
+                      placeholder="Enter 10 digit number"
                       value={form.phone}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, ""); // only digits
+                        value = value.slice(0, 10);
+                        setForm({ ...form, phone: value });
+                      }}
                       required
                     />
                   </div>
@@ -1047,7 +1061,12 @@ export default function ApplyingClient({
                         name="landlord_phone"
                         placeholder="Phone Number"
                         value={form.landlord_phone}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          let value = e.target.value.replace(/\D/g, "");
+                          value = value.slice(0, 10);
+
+                          setForm({ ...form, landlord_phone: value });
+                        }}
                       />
                     </div>
                   </div>
@@ -1562,7 +1581,12 @@ export default function ApplyingClient({
                             className="form-control"
                             name="personal_phone"
                             value={form.personal_phone}
-                            onChange={handleChange}
+                            onChange={(e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.slice(0, 10);
+
+    setForm({ ...form, personal_phone: value });
+  }}
                           />
                         </div>
                       </div>
@@ -1588,7 +1612,12 @@ export default function ApplyingClient({
                             className="form-control"
                             name="emergency_phone"
                             value={form.emergency_phone}
-                            onChange={handleChange}
+                            onChange={(e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.slice(0, 10);
+
+    setForm({ ...form, emergency_phone: value });
+  }}
                           />
                         </div>
                         <div className="mb-3">
@@ -1816,7 +1845,12 @@ export default function ApplyingClient({
                             className="form-control"
                             name="employer_phone"
                             value={form.employer_phone}
-                            onChange={handleChange}
+                            onChange={(e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.slice(0, 10);
+
+    setForm({ ...form, employer_phone: value });
+  }}
                           />
                         </div>
                         <div className="col-md-6">

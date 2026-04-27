@@ -117,10 +117,14 @@ export default function BookingClient({ properties }) {
     setStepError("");
     setSubmitting(true);
     try {
+      const payload = {
+        ...form,
+        phone: "+1" + form.phone.replace(/\D/g, "").slice(0, 10),
+      };
       const res = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data.success) {
@@ -311,9 +315,15 @@ export default function BookingClient({ properties }) {
                       <input
                         type="tel"
                         className="form-control"
+                        placeholder="Enter 10 digit number"
                         name="phone"
                         value={form.phone}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          let value = e.target.value.replace(/\D/g, "");
+                          value = value.slice(0, 10);
+
+                          setForm({ ...form, phone: value });
+                        }}
                         required
                       />
                     </div>
