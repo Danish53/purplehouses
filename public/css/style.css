@@ -2582,3 +2582,8 @@ li#h_area {
 .slick-dotted.slick-slider{
   margin-bottom: 0 !important;
 }
+
+
+.flatpickr-calendar{
+  z-index: 999999 !important;
+}

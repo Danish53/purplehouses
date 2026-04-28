@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { STATE_CHOICES } from "@/lib/constants";
+import flatpickr from "flatpickr";
 
 const MONTHS = [
   "January",
@@ -195,6 +196,8 @@ export default function ApplyingClient({
   const cardCvcRef = useRef(null);
   const dateRef = useRef(null);
   const flatpickrRef = useRef(null);
+  const stepRef = useRef(currentStep);
+  useEffect(() => { stepRef.current = currentStep; }, [currentStep]);
 
   const cleanupMoveInPicker = () => {
     const fp = flatpickrRef.current || dateRef.current?._flatpickr;
@@ -221,44 +224,76 @@ export default function ApplyingClient({
 
   const initMoveInPicker = () => {
     if (!dateRef.current) return;
-    if (!window.flatpickr) return; // flatpickr script must be loaded
 
     cleanupMoveInPicker();
 
-    flatpickrRef.current = window.flatpickr(dateRef.current, {
-      disableMobile: true,     // ✅ important (double input + mobile bug fix)
+    flatpickrRef.current = flatpickr(dateRef.current, {
+      disableMobile: true,
+      allowInput: false,
+      clickOpens: true,
       altInput: false,
+      appendTo: document.body,
+      position: "auto",
       minDate: "today",
       dateFormat: "Y-m-d",
       defaultDate: form.move_in_date || undefined,
-      clickOpens: true,
-      allowInput: false,
-      onChange: (_dates, dateStr) => {
+      closeOnSelect: true,
+
+      onReady: (_d, _s, inst) => {
+        inst.input.setAttribute("readonly", "readonly");
+        inst.input.setAttribute("inputmode", "none");
+      },
+
+      onChange: (_dates, dateStr, inst) => {
         setForm((p) => ({ ...p, move_in_date: dateStr }));
+        inst.close();
+        inst.input.blur();
       },
     });
   };
 
-
   useEffect(() => {
-    if (currentStep !== 0) return;
+    if (currentStep !== 0) {
+      cleanupMoveInPicker();
+      return;
+    }
 
-    // wait next paint so ref available
-    const id = requestAnimationFrame(() => initMoveInPicker());
-    return () => cancelAnimationFrame(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const id = requestAnimationFrame(() => {
+      // BFCache se aaye thay to ensure init
+      if (needsPickerInitRef.current) {
+        needsPickerInitRef.current = false;
+      }
+      initMoveInPicker();
+    });
+
+    return () => {
+      cancelAnimationFrame(id);
+      cleanupMoveInPicker();
+    };
   }, [currentStep]);
 
   // PayPal/Venmo se wapas aane par (page restore / bfcache) re-init
+  const needsPickerInitRef = useRef(false);
+
   useEffect(() => {
-    const onPageShow = () => {
-      if (currentStep === 0) initMoveInPicker();
+    const onPageShow = (e) => {
+      // BFCache restore case
+      if (e.persisted) {
+        // purana/stale instance hata do
+        cleanupMoveInPicker();
+        needsPickerInitRef.current = true;
+
+        // agar abhi step 0 hai to init kar do
+        setTimeout(() => {
+          if (stepRef.current === 0) initMoveInPicker();
+        }, 0);
+      }
     };
 
     window.addEventListener("pageshow", onPageShow);
     return () => window.removeEventListener("pageshow", onPageShow);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStep]);
+    // IMPORTANT: [] (currentStep dependency mat do)
+  }, []);
 
   // useEffect(() => {
   //   // 🔥 Agar step 0 nahi hai → destroy karo
@@ -750,11 +785,17 @@ export default function ApplyingClient({
                       name="move_in_date"
                       value={form.move_in_date}
                       readOnly
-                      required
+                      inputMode="none"
+                      onKeyDown={(e) => e.preventDefault()}
                       onClick={() => {
-                        if (!flatpickrRef.current) initMoveInPicker();
-                        flatpickrRef.current?.open();
+                        const fp = flatpickrRef.current || dateRef.current?._flatpickr;
+                        if (!fp || fp.input !== dateRef.current) initMoveInPicker();
+
+                        setTimeout(() => {
+                          (flatpickrRef.current || dateRef.current?._flatpickr)?.open();
+                        }, 0);
                       }}
+                      required
                     />
                   </div>
                   <div className="mb-3">
@@ -1582,11 +1623,11 @@ export default function ApplyingClient({
                             name="personal_phone"
                             value={form.personal_phone}
                             onChange={(e) => {
-    let value = e.target.value.replace(/\D/g, "");
-    value = value.slice(0, 10);
+                              let value = e.target.value.replace(/\D/g, "");
+                              value = value.slice(0, 10);
 
-    setForm({ ...form, personal_phone: value });
-  }}
+                              setForm({ ...form, personal_phone: value });
+                            }}
                           />
                         </div>
                       </div>
@@ -1613,11 +1654,11 @@ export default function ApplyingClient({
                             name="emergency_phone"
                             value={form.emergency_phone}
                             onChange={(e) => {
-    let value = e.target.value.replace(/\D/g, "");
-    value = value.slice(0, 10);
+                              let value = e.target.value.replace(/\D/g, "");
+                              value = value.slice(0, 10);
 
-    setForm({ ...form, emergency_phone: value });
-  }}
+                              setForm({ ...form, emergency_phone: value });
+                            }}
                           />
                         </div>
                         <div className="mb-3">
@@ -1846,11 +1887,11 @@ export default function ApplyingClient({
                             name="employer_phone"
                             value={form.employer_phone}
                             onChange={(e) => {
-    let value = e.target.value.replace(/\D/g, "");
-    value = value.slice(0, 10);
+                              let value = e.target.value.replace(/\D/g, "");
+                              value = value.slice(0, 10);
 
-    setForm({ ...form, employer_phone: value });
-  }}
+                              setForm({ ...form, employer_phone: value });
+                            }}
                           />
                         </div>
                         <div className="col-md-6">

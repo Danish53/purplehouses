@@ -61,6 +61,11 @@ export default function RootLayout({ children }) {
         <Footer />
 
         {/* Scripts */}
+        {/* <Script
+          id="flatpickr-js"
+          src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"
+          strategy="beforeInteractive"
+        /> */}
         <Script
           src="https://code.jquery.com/jquery-3.6.0.min.js"
           strategy="beforeInteractive"
@@ -73,10 +78,10 @@ export default function RootLayout({ children }) {
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
           strategy="afterInteractive"
         />
-        <Script
+        {/* <Script
           src="https://cdn.jsdelivr.net/npm/flatpickr"
           strategy="afterInteractive"
-        />
+        /> */}
         <Script
           src="https://cdn.jsdelivr.net/npm/intl-tel-input@16.0.3/build/js/intlTelInput.js"
           strategy="afterInteractive"
