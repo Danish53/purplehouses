@@ -34,9 +34,9 @@ function getPayPalClientId() {
 // Check if we're in local development mode where webhooks can't reach
 function isLocalDevelopment() {
   return process.env.NODE_ENV === 'development' &&
-         (process.env.STRIPE_SKIP_WEBHOOK === 'true' ||
-          !process.env.STRIPE_WEBHOOK_SECRET ||
-          process.env.STRIPE_WEBHOOK_SECRET.includes('test'));
+    (process.env.STRIPE_SKIP_WEBHOOK === 'true' ||
+      !process.env.STRIPE_WEBHOOK_SECRET ||
+      process.env.STRIPE_WEBHOOK_SECRET.includes('test'));
 }
 
 export async function POST(request) {
@@ -61,6 +61,15 @@ export async function POST(request) {
     }
 
     const { photoPath } = validated;
+
+    const property = await prisma.$queryRaw`
+  SELECT prop_title 
+  FROM property 
+  WHERE id = ${fields.property_id}
+`;
+
+    const property_name = property?.[0]?.prop_title || "";
+
     const paymentMethod = fields.payment_method || "card";
 
     if (paymentMethod === "venmo") {
@@ -78,7 +87,7 @@ export async function POST(request) {
 
     if (paymentMethod === "card") {
       const stripe = getStripe();
-      
+
       // If Stripe is not configured, mark as paid for development/testing
       if (!stripe) {
         console.warn("Stripe not configured. Marking application as paid for development.");
@@ -86,43 +95,49 @@ export async function POST(request) {
           paymentMethod: "card",
           paymentStatus: "paid",
         });
-        
+
         await deleteApplyingDraft(draftToken);
         await sendApplyingNotificationEmail(
-          validated.fields,
+          {
+            ...validated.fields,
+            property_name, // 👈 ADD THIS
+          },
           result.insertId,
           "card",
           "paid",
           photoPath,
         );
-        
+
         return NextResponse.json({
           status: "succeeded",
           redirect_url: "/success",
           application_id: result.insertId,
         });
       }
-      
+
       // LOCAL DEVELOPMENT FALLBACK: Skip webhook dependency for local testing
       if (isLocalDevelopment()) {
         console.warn("Local development mode: Simulating successful payment (bypassing webhook)");
         console.warn("Add STRIPE_SKIP_WEBHOOK=false to .env.local to use real Stripe flow");
-        
+
         const result = await insertFullApplication(validated.fields, photoPath, {
           paymentMethod: "card",
           paymentStatus: "paid",
           stripePaymentIntent: "local_dev_" + Date.now(),
         });
-        
+
         await deleteApplyingDraft(draftToken);
         await sendApplyingNotificationEmail(
-          validated.fields,
+          {
+            ...validated.fields,
+            property_name,
+          },
           result.insertId,
           "card",
           "paid",
           photoPath,
         );
-        
+
         return NextResponse.json({
           status: "succeeded",
           redirect_url: "/success",
@@ -131,22 +146,22 @@ export async function POST(request) {
           message: "Local development mode - payment simulated",
         });
       }
-      
+
       // Check if using Stripe Elements (embedded payment form)
       const stripePaymentMethodId = fields.stripe_payment_method_id;
-      
+
       if (stripePaymentMethodId) {
         // STRIPE ELEMENTS FLOW: Create Payment Intent with provided payment method
         console.log("Using Stripe Elements flow with payment method:", stripePaymentMethodId);
-        
+
         // Save application with pending status first
         const result = await insertFullApplication(validated.fields, photoPath, {
           paymentMethod: "card",
           paymentStatus: "pending",
         });
-        
+
         const applicationId = result.insertId;
-        
+
         // Create Payment Intent
         const paymentIntent = await stripe.paymentIntents.create({
           amount: APPLICATION_FEE_CENTS,
@@ -162,10 +177,10 @@ export async function POST(request) {
           description: "Rental Application Fee",
           receipt_email: validated.fields.email,
         });
-        
+
         // Delete draft since we've saved the application
         await deleteApplyingDraft(draftToken);
-        
+
         // Return appropriate response based on Payment Intent status
         if (paymentIntent.status === "requires_action" || paymentIntent.status === "requires_confirmation") {
           // 3D Secure or additional authentication needed
@@ -184,15 +199,18 @@ export async function POST(request) {
              WHERE id = ?`,
             [paymentIntent.id, applicationId]
           );
-          
+
           await sendApplyingNotificationEmail(
-            validated.fields,
+            {
+              ...validated.fields,
+              property_name,
+            },
             applicationId,
             "card",
             "paid",
             photoPath,
           );
-          
+
           return NextResponse.json({
             status: "succeeded",
             redirect_url: "/success",
@@ -216,9 +234,9 @@ export async function POST(request) {
           paymentMethod: "card",
           paymentStatus: "pending",
         });
-        
+
         const applicationId = result.insertId;
-        
+
         // Create Stripe Checkout Session
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
         const checkoutSession = await stripe.checkout.sessions.create({

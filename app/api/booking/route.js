@@ -23,6 +23,7 @@ export async function POST(request) {
       last_name: lname || "",
       email,
       phone,
+      status: 'Pending',
     });
 
     const fullName = `${fname} ${lname || ""}`.trim();
@@ -66,6 +67,7 @@ export async function POST(request) {
       phone,
       booking_date: date,
       booking_time: time,
+      status: 'Pending',
     };
 
     // Admin only: visitor already knows they submitted; notify staff

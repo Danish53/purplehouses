@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import flatpickr from "flatpickr";
 
 const MORNING_SLOTS = [
   "8:00 AM",
@@ -70,17 +71,33 @@ export default function BookingClient({ properties }) {
   ];
   const progressWidth = `${((step - 1) / (stepMeta.length - 1)) * 100}%`;
 
+  // useEffect(() => {
+  //   if (step === 2 && dateRef.current && window.flatpickr) {
+  //     window.flatpickr(dateRef.current, {
+  //       // aaj ki date disable, kal se allow
+  //       minDate: new Date().fp_incr(1),
+  //       dateFormat: "Y-m-d",
+  //       onChange(selectedDates, dateStr) {
+  //         setForm((prev) => ({ ...prev, date: dateStr }));
+  //       },
+  //     });
+  //   }
+  // }, [step]);
   useEffect(() => {
-    if (step === 2 && dateRef.current && window.flatpickr) {
-      window.flatpickr(dateRef.current, {
-        // aaj ki date disable, kal se allow
-        minDate: new Date().fp_incr(1),
-        dateFormat: "Y-m-d",
-        onChange(selectedDates, dateStr) {
-          setForm((prev) => ({ ...prev, date: dateStr }));
-        },
-      });
-    }
+    if (step !== 2 || !dateRef.current) return;
+
+    const fp = flatpickr(dateRef.current, {
+      minDate: new Date().setDate(new Date().getDate() + 1), // ✅ FIXED
+      dateFormat: "Y-m-d",
+      onChange(selectedDates, dateStr) {
+        setForm((prev) => ({ ...prev, date: dateStr }));
+      },
+    });
+
+    // ✅ cleanup (VERY IMPORTANT)
+    return () => {
+      if (fp) fp.destroy();
+    };
   }, [step]);
 
   function handleChange(e) {
@@ -258,6 +275,7 @@ export default function BookingClient({ properties }) {
                         required
                         readOnly
                         value={form.date}
+                        onClick={() => dateRef.current?.focus()}
                       />
                     </div>
                     {form.date && (
