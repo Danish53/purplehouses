@@ -46,7 +46,14 @@ export default function PropertiesClient({
 
   const bedOptions = ["Any", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 Bedrooms", "5+ Bedrooms"];
   const bathOptions = ["Any", "1 Bathroom", "2 Bathrooms", "3 Bathrooms", "4 Bathrooms", "5 Bathrooms"];
-  const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
+  // const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
+  const homeTypes = [
+    { label: "Any Type", value: "" },
+    { label: "House", value: "house" },
+    { label: "Townhouse", value: "town_house" },
+    { label: "Apartment", value: "apartment" },
+    { label: "Duplex", value: "duplex" },
+  ];
 
   // function handleSearch(e) {
   //   e.preventDefault();
@@ -258,7 +265,7 @@ export default function PropertiesClient({
                       </option>
                     ))}
                 </select>
-                
+
                 {errors.beds && (
                   <span className="error-text">{errors.beds}</span>
                 )}
@@ -282,7 +289,7 @@ export default function PropertiesClient({
                       </option>
                     ))}
                 </select>
-                
+
                 {errors.baths && (
                   <span className="error-text">{errors.baths}</span>
                 )}
@@ -299,10 +306,10 @@ export default function PropertiesClient({
                     Home Type
                   </option>
                   {homeTypes
-                    .filter((x) => x !== "")
+                    // .filter((x) => x !== "")
                     .map((t) => (
-                      <option key={t} value={t}>
-                        {t}
+                      <option key={t.value} value={t.value}>
+                        {t.label}
                       </option>
                     ))}
                 </select>

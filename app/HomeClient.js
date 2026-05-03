@@ -88,7 +88,14 @@ export default function HomeClient({
 
   const bedOptions = ["Any", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 Bedrooms", "5+ Bedrooms"];
   const bathOptions = ["Any", "1 Bathroom", "2 Bathrooms", "3 Bathrooms", "4 Bathrooms", "5 Bathrooms"];
-  const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
+  // const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
+  const homeTypes = [
+    { label: "Any Type", value: "any" },
+    { label: "House", value: "house" },
+    { label: "Townhouse", value: "town_house" },
+    { label: "Apartment", value: "apartment" },
+    { label: "Duplex", value: "duplex" },
+  ];
 
   // function handleSearch(e) {
   //   e.preventDefault();
@@ -275,10 +282,10 @@ export default function HomeClient({
                 Home Type
               </option>
               {homeTypes
-                .filter((x) => x !== "")
+                // .filter((x) => x !== "")
                 .map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                  <option key={t.value} value={t.value}>
+                    {t.label}
                   </option>
                 ))}
             </select>
