@@ -1,10 +1,11 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import PropertyMap from "@/components/PropertyMap";
 import PropertyShowcaseCard from "@/components/PropertyShowcaseCard";
 import { blogSlugFromTitle } from "@/lib/blogSlug";
 import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
+import { useRouter } from "next/navigation";
 
 export default function HomeClient({
   properties = [],
@@ -68,6 +69,61 @@ export default function HomeClient({
     return () => clearInterval(timer);
   }, []);
 
+  const [query, setQuery] = useState("");
+  const [priceRange, setPriceRange] = useState("");
+  const [beds, setBeds] = useState("");
+  const [baths, setBaths] = useState("");
+  const [homeType, setHomeType] = useState("");
+  const [errors, setErrors] = useState({});
+  const router = useRouter();
+
+  const priceRanges = [
+    { label: "Any Price", value: "any" },
+    { label: "$1000 - $1500", value: "1000-1500" },
+    { label: "$1500 - $2000", value: "1500-2000" },
+    { label: "$2000 - $2500", value: "2000-2500" },
+    { label: "$2500 - $3000", value: "2500-3000" },
+    { label: "$3000+", value: "3000+" },
+  ];
+
+  const bedOptions = ["Any", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 Bedrooms", "5+ Bedrooms"];
+  const bathOptions = ["Any", "1 Bathroom", "2 Bathrooms", "3 Bathrooms", "4 Bathrooms", "5 Bathrooms"];
+  const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
+
+  // function handleSearch(e) {
+  //   e.preventDefault();
+  //   const payload = { query, priceRange, beds, baths, homeType };
+  //   onSearch?.(payload);
+  // }
+
+  function handleSearch(e) {
+    e.preventDefault();
+
+    const params = new URLSearchParams();
+
+    if (query) params.set("q", query);
+
+    if (priceRange && priceRange !== "any") {
+      params.set("priceRange", priceRange);
+    }
+
+    if (beds && beds !== "Any") {
+      params.set("beds", beds);
+    }
+
+    if (baths && baths !== "Any") {
+      params.set("baths", baths);
+    }
+
+    if (homeType && homeType !== "Any Type") {
+      params.set("homeType", homeType);
+    }
+
+    params.set("page", "1");
+
+    router.push(`/properties?${params.toString()}`);
+  }
+
   return (
     <>
       {/* Hero Slider */}
@@ -102,6 +158,151 @@ export default function HomeClient({
           )}
         </div>
       </div>
+
+      <form onSubmit={handleSearch} className="ph-pill-filter ph-pill-filter-home">
+        <div className="ph-pill-filter__pill">
+          {/* Address / keyword */}
+          <div className="ph-pill-filter__item ph-pill-filter__item--keyword">
+            {errors.query && (
+              <span className="error-text-search">{errors.query}</span>
+            )}
+            <span className="ph-pill-filter__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 22s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            </span>
+
+            <input
+              type="text"
+              className="ph-pill-filter__input"
+              placeholder="Address, neighborhood, city, ZIP"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+
+            <button type="submit" className="ph-pill-filter__iconBtn" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M21 21l-4.3-4.3"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Price Range */}
+          <div className="ph-pill-filter__item ph-pill-filter__select">
+            <select
+              className={`ph-pill-filter__selectEl ${errors.priceRange ? "error" : ""}`}
+              value={priceRange}
+              onChange={(e) => setPriceRange(e.target.value)}
+            >
+              <option value="" disabled>Price Range</option>
+              {priceRanges.map((pr) => (
+                <option key={pr.value} value={pr.value}>
+                  {pr.label}
+                </option>
+              ))}
+            </select>
+
+            {errors.priceRange && (
+              <span className="error-text">{errors.priceRange}</span>
+            )}
+          </div>
+
+          {/* Bedrooms */}
+          <div className="ph-pill-filter__item ph-pill-filter__select">
+            <select
+              className="ph-pill-filter__selectEl"
+              value={beds}
+              onChange={(e) => setBeds(e.target.value)}
+            >
+              <option value="" disabled>Bedrooms</option>
+              {bedOptions
+                .filter((x) => x !== "")
+                .map((b) => (
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
+                ))}
+            </select>
+
+            {errors.beds && (
+              <span className="error-text">{errors.beds}</span>
+            )}
+          </div>
+
+          {/* Bathrooms */}
+          <div className="ph-pill-filter__item ph-pill-filter__select">
+            <select
+              className="ph-pill-filter__selectEl"
+              value={baths}
+              onChange={(e) => setBaths(e.target.value)}
+            >
+              <option value="" disabled>
+                Bathrooms
+              </option>
+              {bathOptions
+                .filter((x) => x !== "")
+                .map((b) => (
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
+                ))}
+            </select>
+
+            {errors.baths && (
+              <span className="error-text">{errors.baths}</span>
+            )}
+          </div>
+
+          {/* Home Type */}
+          <div className="ph-pill-filter__item ph-pill-filter__select">
+            <select
+              className="ph-pill-filter__selectEl"
+              value={homeType}
+              onChange={(e) => setHomeType(e.target.value)}
+            >
+              <option value="" disabled>
+                Home Type
+              </option>
+              {homeTypes
+                .filter((x) => x !== "")
+                .map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+            </select>
+
+            {errors.homeType && (
+              <span className="error-text">{errors.homeType}</span>
+            )}
+          </div>
+
+          {/* Search button */}
+          <button type="submit" className="ph-pill-filter__btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="mt-1">
+              <path
+                d="M21 21l-4.3-4.3"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+            </svg>
+            Search
+          </button>
+        </div>
+      </form>
 
       {/* Featured Properties */}
       <section>

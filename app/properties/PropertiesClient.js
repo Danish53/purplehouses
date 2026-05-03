@@ -57,17 +57,17 @@ export default function PropertiesClient({
   function handleSearch(e) {
     e.preventDefault();
 
-    let newErrors = {};
+    // let newErrors = {};
 
-    if (!query) newErrors.query = "Enter keyword";
-    if (!priceRange) newErrors.priceRange = "Select price";
-    if (!beds) newErrors.beds = "Select bedrooms";
-    if (!baths) newErrors.baths = "Select bathrooms";
-    if (!homeType) newErrors.homeType = "Select home type";
+    // if (!query) newErrors.query = "Enter keyword";
+    // if (!priceRange) newErrors.priceRange = "Select price";
+    // if (!beds) newErrors.beds = "Select bedrooms";
+    // if (!baths) newErrors.baths = "Select bathrooms";
+    // if (!homeType) newErrors.homeType = "Select home type";
 
-    setErrors(newErrors);
+    // setErrors(newErrors);
 
-    if (Object.keys(newErrors).length > 0) return;
+    // if (Object.keys(newErrors).length > 0) return;
 
     const params = new URLSearchParams(window.location.search);
 

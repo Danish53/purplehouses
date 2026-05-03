@@ -3393,6 +3393,13 @@ li#h_area {
   top: 0;
 }
 
+/* home page form filter */
+.ph-pill-filter-home { 
+  margin: -142px auto 0 !important;
+  width: calc(90% - 24px);
+  margin-bottom: 25px !important;
+ }
+
 
 
 .propertDetails .hero-image {
