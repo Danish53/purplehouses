@@ -28,14 +28,78 @@ export default function PropertiesClient({
 
   const totalPages = Math.ceil(total / 9);
 
+  const [query, setQuery] = useState(filters.q || "");
+  const [priceRange, setPriceRange] = useState(filters.priceRange || "");
+  const [beds, setBeds] = useState(filters.beds || "");
+  const [baths, setBaths] = useState(filters.baths || "");
+  const [homeType, setHomeType] = useState(filters.homeType || "");
+  const [errors, setErrors] = useState({});
+
+  const priceRanges = [
+    { label: "Any Price", value: "any" },
+    { label: "$1000 - $1500", value: "1000-1500" },
+    { label: "$1500 - $2000", value: "1500-2000" },
+    { label: "$2000 - $2500", value: "2000-2500" },
+    { label: "$2500 - $3000", value: "2500-3000" },
+    { label: "$3000+", value: "3000+" },
+  ];
+
+  const bedOptions = ["Any", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 Bedrooms", "5+ Bedrooms"];
+  const bathOptions = ["Any", "1 Bathroom", "2 Bathrooms", "3 Bathrooms", "4 Bathrooms", "5 Bathrooms"];
+  const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
+
+  // function handleSearch(e) {
+  //   e.preventDefault();
+  //   const payload = { query, priceRange, beds, baths, homeType };
+  //   onSearch?.(payload);
+  // }
+
   function handleSearch(e) {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    if (city) params.set("city", city);
-    if (category) params.set("category", category);
-    if (purpose) params.set("purpose", purpose);
+
+    let newErrors = {};
+
+    if (!query) newErrors.query = "Enter keyword";
+    if (!priceRange) newErrors.priceRange = "Select price";
+    if (!beds) newErrors.beds = "Select bedrooms";
+    if (!baths) newErrors.baths = "Select bathrooms";
+    if (!homeType) newErrors.homeType = "Select home type";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (query) params.set("q", query);
+    else params.delete("q");
+
+    if (priceRange) params.set("priceRange", priceRange);
+    else params.delete("priceRange");
+
+    if (beds) params.set("beds", beds);
+    else params.delete("beds");
+
+    if (baths) params.set("baths", baths);
+    else params.delete("baths");
+
+    if (homeType) params.set("homeType", homeType);
+    else params.delete("homeType");
+
+    params.set("page", "1"); // reset page
+
     router.push(`/properties?${params.toString()}`);
+  }
+
+
+  function handleClearFilters() {
+    setQuery("");
+    setPriceRange("");
+    setBeds("");
+    setBaths("");
+    setHomeType("");
+
+    router.push("/properties");
   }
 
   return (
@@ -51,7 +115,7 @@ export default function PropertiesClient({
         </div>
       </div>
       <div className="inner">
-        <div className="propertiesList mt-5">
+        <div className="propertiesList">
           {/* Filter Bar */}
           {/* <form
             onSubmit={handleSearch}
@@ -119,27 +183,187 @@ export default function PropertiesClient({
               </div>
             </div>
           </form> */}
+          <form onSubmit={handleSearch} className="ph-pill-filter">
+            <div className="ph-pill-filter__pill">
+              {/* Address / keyword */}
+              <div className="ph-pill-filter__item ph-pill-filter__item--keyword">
+                {errors.query && (
+                  <span className="error-text-search">{errors.query}</span>
+                )}
+                <span className="ph-pill-filter__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 22s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                </span>
+
+                <input
+                  type="text"
+                  className="ph-pill-filter__input"
+                  placeholder="Address, neighborhood, city, ZIP"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+
+                <button type="submit" className="ph-pill-filter__iconBtn" aria-label="Search">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M21 21l-4.3-4.3"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Price Range */}
+              <div className="ph-pill-filter__item ph-pill-filter__select">
+                <select
+                  className={`ph-pill-filter__selectEl ${errors.priceRange ? "error" : ""}`}
+                  value={priceRange}
+                  onChange={(e) => setPriceRange(e.target.value)}
+                >
+                  <option value="" disabled>Price Range</option>
+                  {priceRanges.map((pr) => (
+                    <option key={pr.value} value={pr.value}>
+                      {pr.label}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.priceRange && (
+                  <span className="error-text">{errors.priceRange}</span>
+                )}
+              </div>
+
+              {/* Bedrooms */}
+              <div className="ph-pill-filter__item ph-pill-filter__select">
+                <select
+                  className="ph-pill-filter__selectEl"
+                  value={beds}
+                  onChange={(e) => setBeds(e.target.value)}
+                >
+                  <option value="" disabled>Bedrooms</option>
+                  {bedOptions
+                    .filter((x) => x !== "")
+                    .map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                </select>
+                
+                {errors.beds && (
+                  <span className="error-text">{errors.beds}</span>
+                )}
+              </div>
+
+              {/* Bathrooms */}
+              <div className="ph-pill-filter__item ph-pill-filter__select">
+                <select
+                  className="ph-pill-filter__selectEl"
+                  value={baths}
+                  onChange={(e) => setBaths(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Bathrooms
+                  </option>
+                  {bathOptions
+                    .filter((x) => x !== "")
+                    .map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                </select>
+                
+                {errors.baths && (
+                  <span className="error-text">{errors.baths}</span>
+                )}
+              </div>
+
+              {/* Home Type */}
+              <div className="ph-pill-filter__item ph-pill-filter__select">
+                <select
+                  className="ph-pill-filter__selectEl"
+                  value={homeType}
+                  onChange={(e) => setHomeType(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Home Type
+                  </option>
+                  {homeTypes
+                    .filter((x) => x !== "")
+                    .map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                </select>
+
+                {errors.homeType && (
+                  <span className="error-text">{errors.homeType}</span>
+                )}
+              </div>
+
+              {/* Search button */}
+              <button type="submit" className="ph-pill-filter__btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="mt-1">
+                  <path
+                    d="M21 21l-4.3-4.3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                </svg>
+                Search
+              </button>
+            </div>
+          </form>
 
           {/* Property Sort Bar */}
-          <div className="propertySort d-flex justify-content-between align-items-center mb-3">
+          <div className="propertySort d-lg-flex justify-content-between align-items-end mt-4 mb-5 ">
             <div className="left">
-              <span className="propertyTag">{total} Properties Found</span>
+              <span className="propertyTag"><span style={{ color: "#43086b", fontWeight: "bold" }}>{total}</span> Properties Found</span>
             </div>
-            <div className="right d-flex align-items-center gap-2">
-              <button
-                type="button"
-                className={`btn ph-view-toggle${viewMode === "grid" ? " ph-view-toggle--active" : ""}`}
-                onClick={() => setViewMode("grid")}
-              >
-                <i className="fa fa-table"></i>
-              </button>
-              <button
-                type="button"
-                className={`btn ph-view-toggle${viewMode === "list" ? " ph-view-toggle--active" : ""}`}
-                onClick={() => setViewMode("list")}
-              >
-                <i className="fa fa-list"></i>
-              </button>
+            <div className="right d-flex align-items-center gap-2 sort-by pe-3 mt-lg-0 mt-2">
+              <div className="pe-5">
+                <span className="sort_by me-2 sm_none">Sort By:</span>
+                <select
+                  value={filters.sort || "price_low_high"}
+                  onChange={(e) => {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set("sort", e.target.value);
+                    window.location.search = params.toString();
+                  }}
+                >
+                  <option value="price_low_high">Lowest to Highest</option>
+                  <option value="price_high_low">Highest to Lowest</option>
+                </select>
+              </div>
+              <div className="view-toggle d-flex align-items-center gap-2">
+                <button
+                  type="button"
+                  className={`btn ph-view-toggle${viewMode === "grid" ? " ph-view-toggle--active" : ""}`}
+                  onClick={() => setViewMode("grid")}
+                >
+                  <i className="fa fa-table"></i>
+                </button>
+                <button
+                  type="button"
+                  className={`btn ph-view-toggle${viewMode === "list" ? " ph-view-toggle--active" : ""}`}
+                  onClick={() => setViewMode("list")}
+                >
+                  <i className="fa fa-list"></i>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -153,6 +377,13 @@ export default function PropertiesClient({
             {properties.length === 0 && (
               <div className="col-12 text-center py-5">
                 <h4>No properties found matching your criteria.</h4>
+                {/* clear filter button that resets all filters and goes back to page 1 */}
+                <button
+                  onClick={handleClearFilters}
+                  className="btn btn-primary mt-3"
+                >
+                  Clear Filters
+                </button>
               </div>
             )}
           </div>

@@ -652,8 +652,9 @@
 .allProperties .inner .propertySort .left .propertyTag {
   color: #222222;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 400;
   font-family: "Poppins";
+  padding-left: 5px;
 }
 .allProperties .inner .propertySort .right .sort-by .sort-by-title {
   font-size: 15px;
