@@ -96,7 +96,7 @@ export default async function PropertiesPage({ searchParams }) {
     let result;
 
     // ✅ CASE 1: SEARCH / FILTER APPLY
-    if (q || priceRange || beds || baths || homeType) {
+    // if (q || priceRange || beds || baths || homeType) {
       result = await searchPropertiesAdvanced({
         query: q,
         priceRange,
@@ -106,16 +106,16 @@ export default async function PropertiesPage({ searchParams }) {
         page,
         limit: 9,
       });
-    }
+    // }
 
-    // ✅ CASE 2: ONLY SORT (or default)
-    else {
-      result = await getSortedProperties({
-        page,
-        limit: 9,
-        sort, // empty ho to default LOW→HIGH
-      });
-    }
+    // // ✅ CASE 2: ONLY SORT (or default)
+    // else {
+    //   result = await getSortedProperties({
+    //     page,
+    //     limit: 9,
+    //     sort, // empty ho to default LOW→HIGH
+    //   });
+    // }
 
     properties = result.rows.map(enrichProperty);
     total = result.total;

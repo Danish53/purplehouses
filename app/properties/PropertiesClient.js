@@ -47,22 +47,22 @@ export default function PropertiesClient({
   // const bedOptions = ["Any", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 Bedrooms", "5+ Bedrooms"];
   // const bathOptions = ["Any", "1 Bathroom", "2 Bathrooms", "3 Bathrooms", "4 Bathrooms", "5 Bathrooms"];
   const bedOptions = [
-  { label: "Any", value: "any" },
-  { label: "1 Bedroom", value: "1" },
-  { label: "2 Bedrooms", value: "2" },
-  { label: "3 Bedrooms", value: "3" },
-  { label: "4 Bedrooms", value: "4" },
-  { label: "5+ Bedrooms", value: "5+" },
-];
+    { label: "Any", value: "any" },
+    { label: "1 Bedroom", value: "1" },
+    { label: "2 Bedrooms", value: "2" },
+    { label: "3 Bedrooms", value: "3" },
+    { label: "4 Bedrooms", value: "4" },
+    { label: "5+ Bedrooms", value: "5+" },
+  ];
 
-const bathOptions = [
-  { label: "Any", value: "any" },
-  { label: "1 Bathroom", value: "1" },
-  { label: "2 Bathrooms", value: "2" },
-  { label: "3 Bathrooms", value: "3" },
-  { label: "4 Bathrooms", value: "4" },
-  { label: "5 Bathrooms", value: "5" },
-];
+  const bathOptions = [
+    { label: "Any", value: "any" },
+    { label: "1 Bathroom", value: "1" },
+    { label: "2 Bathrooms", value: "2" },
+    { label: "3 Bathrooms", value: "3" },
+    { label: "4 Bathrooms", value: "4" },
+    { label: "5 Bathrooms", value: "5" },
+  ];
   // const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
   const homeTypes = [
     { label: "Any Type", value: "any" },
@@ -141,75 +141,9 @@ const bathOptions = [
       <div className="inner">
         <div className="propertiesList">
           {/* Filter Bar */}
-          {/* <form
-            onSubmit={handleSearch}
-            className="ph-property-filter ph-property-filter--page mb-4"
-          >
-            <div className="ph-property-filter__card">
-              <div className="ph-property-filter__row">
-                <div className="ph-property-filter__field ph-property-filter__field--keyword">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search by keyword, address, city..."
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                  />
-                </div>
-                <div className="ph-property-filter__field">
-                  <select
-                    className="form-select"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                  >
-                    <option value="">All Cities</option>
-                    {(filterOptions.cities || []).map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="ph-property-filter__field">
-                  <select
-                    className="form-select"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option value="">Property Type</option>
-                    {(filterOptions.categories || []).map((c) => (
-                      <option key={c} value={c}>
-                        {friendlyLabel(c)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="ph-property-filter__field">
-                  <select
-                    className="form-select"
-                    value={purpose}
-                    onChange={(e) => setPurpose(e.target.value)}
-                  >
-                    <option value="">Purpose</option>
-                    {(filterOptions.purposes || []).map((p) => (
-                      <option key={p} value={p}>
-                        {friendlyLabel(p)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  type="submit"
-                  className="btn ph-property-filter__submit"
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </form> */}
-          <form onSubmit={handleSearch} className="ph-pill-filter">
+
+          {/* <form onSubmit={handleSearch} className="ph-pill-filter">
             <div className="ph-pill-filter__pill">
-              {/* Address / keyword */}
               <div className="ph-pill-filter__item ph-pill-filter__item--keyword">
                 {errors.query && (
                   <span className="error-text-search">{errors.query}</span>
@@ -246,7 +180,6 @@ const bathOptions = [
                 </button>
               </div>
 
-              {/* Price Range */}
               <div className="ph-pill-filter__item ph-pill-filter__select">
                 <select
                   className={`ph-pill-filter__selectEl ${errors.priceRange ? "error" : ""}`}
@@ -266,7 +199,6 @@ const bathOptions = [
                 )}
               </div>
 
-              {/* Bedrooms */}
               <div className="ph-pill-filter__item ph-pill-filter__select">
                 <select
                   className="ph-pill-filter__selectEl"
@@ -288,7 +220,6 @@ const bathOptions = [
                 )}
               </div>
 
-              {/* Bathrooms */}
               <div className="ph-pill-filter__item ph-pill-filter__select">
                 <select
                   className="ph-pill-filter__selectEl"
@@ -312,7 +243,6 @@ const bathOptions = [
                 )}
               </div>
 
-              {/* Home Type */}
               <div className="ph-pill-filter__item ph-pill-filter__select">
                 <select
                   className="ph-pill-filter__selectEl"
@@ -336,7 +266,6 @@ const bathOptions = [
                 )}
               </div>
 
-              {/* Search button */}
               <button type="submit" className="ph-pill-filter__btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="mt-1">
                   <path
@@ -350,7 +279,7 @@ const bathOptions = [
                 Search
               </button>
             </div>
-          </form>
+          </form> */}
 
           {/* Property Sort Bar */}
           <div className="propertySort d-lg-flex justify-content-between align-items-end mt-4 mb-5 ">
@@ -358,7 +287,7 @@ const bathOptions = [
               <span className="propertyTag"><span style={{ color: "#43086b", fontWeight: "bold" }}>{total}</span> Properties Found</span>
             </div>
             <div className="right d-flex align-items-center gap-2 sort-by pe-3 mt-lg-0 mt-2">
-              <div className="pe-5">
+              {/* <div className="pe-5">
                 <span className="sort_by me-2 sm_none">Sort By:</span>
                 <select
                   value={filters.sort || "price_low_high"}
@@ -371,7 +300,7 @@ const bathOptions = [
                   <option value="price_low_high">Lowest to Highest</option>
                   <option value="price_high_low">Highest to Lowest</option>
                 </select>
-              </div>
+              </div> */}
               <div className="view-toggle d-flex align-items-center gap-2">
                 <button
                   type="button"
@@ -402,12 +331,12 @@ const bathOptions = [
               <div className="col-12 text-center py-5">
                 <h4>No properties found matching your criteria.</h4>
                 {/* clear filter button that resets all filters and goes back to page 1 */}
-                <button
+                {/* <button
                   onClick={handleClearFilters}
                   className="btn btn-primary mt-3"
                 >
                   Clear Filters
-                </button>
+                </button> */}
               </div>
             )}
           </div>
@@ -418,7 +347,8 @@ const bathOptions = [
               <div className="my-page-numbers">
                 {page > 1 && (
                   <Link
-                    href={`/properties?${new URLSearchParams({ ...filters, page: page - 1 }).toString()}`}
+                    // href={`/properties?${new URLSearchParams({ ...filters, page: page - 1 }).toString()}`}
+                    href={`/properties?${new URLSearchParams({ page: page - 1 }).toString()}`}
                     className="my-page-btn"
                   >
                     <i className="fa fa-chevron-left"></i>
@@ -428,7 +358,8 @@ const bathOptions = [
                   (p) => (
                     <Link
                       key={p}
-                      href={`/properties?${new URLSearchParams({ ...filters, page: p }).toString()}`}
+                      // href={`/properties?${new URLSearchParams({ ...filters, page: p }).toString()}`}
+                      href={`/properties?${new URLSearchParams({ page: p }).toString()}`}
                       className={`my-page-btn ${p === page ? "active" : ""}`}
                     >
                       {p}

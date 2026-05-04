@@ -183,9 +183,8 @@ export default function HomeClient({
         </div>
       </div>
 
-      <form onSubmit={handleSearch} className="ph-pill-filter ph-pill-filter-home">
+      {/* <form onSubmit={handleSearch} className="ph-pill-filter ph-pill-filter-home">
         <div className="ph-pill-filter__pill">
-          {/* Address / keyword */}
           <div className="ph-pill-filter__item ph-pill-filter__item--keyword">
             {errors.query && (
               <span className="error-text-search">{errors.query}</span>
@@ -222,7 +221,6 @@ export default function HomeClient({
             </button>
           </div>
 
-          {/* Price Range */}
           <div className="ph-pill-filter__item ph-pill-filter__select">
             <select
               className={`ph-pill-filter__selectEl ${errors.priceRange ? "error" : ""}`}
@@ -242,7 +240,6 @@ export default function HomeClient({
             )}
           </div>
 
-          {/* Bedrooms */}
           <div className="ph-pill-filter__item ph-pill-filter__select">
             <select
               className="ph-pill-filter__selectEl"
@@ -264,7 +261,6 @@ export default function HomeClient({
             )}
           </div>
 
-          {/* Bathrooms */}
           <div className="ph-pill-filter__item ph-pill-filter__select">
             <select
               className="ph-pill-filter__selectEl"
@@ -288,7 +284,6 @@ export default function HomeClient({
             )}
           </div>
 
-          {/* Home Type */}
           <div className="ph-pill-filter__item ph-pill-filter__select">
             <select
               className="ph-pill-filter__selectEl"
@@ -312,7 +307,6 @@ export default function HomeClient({
             )}
           </div>
 
-          {/* Search button */}
           <button type="submit" className="ph-pill-filter__btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="mt-1">
               <path
@@ -326,7 +320,7 @@ export default function HomeClient({
             Search
           </button>
         </div>
-      </form>
+      </form> */}
 
       {/* Featured Properties */}
       <section>
