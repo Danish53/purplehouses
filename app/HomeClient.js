@@ -86,8 +86,25 @@ export default function HomeClient({
     { label: "$3000+", value: "3000+" },
   ];
 
-  const bedOptions = ["Any", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 Bedrooms", "5+ Bedrooms"];
-  const bathOptions = ["Any", "1 Bathroom", "2 Bathrooms", "3 Bathrooms", "4 Bathrooms", "5 Bathrooms"];
+  // const bedOptions = ["Any", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 Bedrooms", "5+ Bedrooms"];
+  // const bathOptions = ["Any", "1 Bathroom", "2 Bathrooms", "3 Bathrooms", "4 Bathrooms", "5 Bathrooms"];
+  const bedOptions = [
+    { label: "Any", value: "any" },
+    { label: "1 Bedroom", value: "1" },
+    { label: "2 Bedrooms", value: "2" },
+    { label: "3 Bedrooms", value: "3" },
+    { label: "4 Bedrooms", value: "4" },
+    { label: "5+ Bedrooms", value: "5+" },
+  ];
+
+  const bathOptions = [
+    { label: "Any", value: "any" },
+    { label: "1 Bathroom", value: "1" },
+    { label: "2 Bathrooms", value: "2" },
+    { label: "3 Bathrooms", value: "3" },
+    { label: "4 Bathrooms", value: "4" },
+    { label: "5 Bathrooms", value: "5" },
+  ];
   // const homeTypes = ["Any Type", "House", "Townhouse", "Apartment", "Duplex"];
   const homeTypes = [
     { label: "Any Type", value: "any" },
@@ -236,8 +253,8 @@ export default function HomeClient({
               {bedOptions
                 .filter((x) => x !== "")
                 .map((b) => (
-                  <option key={b} value={b}>
-                    {b}
+                  <option key={b.value} value={b.value}>
+                    {b.label}
                   </option>
                 ))}
             </select>
@@ -260,8 +277,8 @@ export default function HomeClient({
               {bathOptions
                 .filter((x) => x !== "")
                 .map((b) => (
-                  <option key={b} value={b}>
-                    {b}
+                  <option key={b.value} value={b.value}>
+                    {b.label}
                   </option>
                 ))}
             </select>
