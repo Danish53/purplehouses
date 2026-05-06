@@ -63,13 +63,20 @@ export async function POST(request) {
 
     const { photoPath } = validated;
 
-    const property = await prisma.$queryRaw`
-  SELECT prop_title 
-  FROM property 
-  WHERE id = ${fields.property_id}
-`;
-
-    const property_name = property?.[0]?.prop_title || "";
+    // DB table is `Property` (Prisma model name), not lowercase `property`.
+    let property_name = "";
+    try {
+      const pid = fields.property_id ? BigInt(String(fields.property_id)) : null;
+      if (pid != null) {
+        const propRow = await prisma.Property.findUnique({
+          where: { id: pid },
+          select: { prop_title: true },
+        });
+        property_name = propRow?.prop_title || "";
+      }
+    } catch {
+      property_name = "";
+    }
 
     const paymentMethod = fields.payment_method || "card";
 
