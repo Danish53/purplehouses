@@ -52,6 +52,11 @@ export default function sitemap() {
   ];
 
   const blogPages = [
+    "tcu-rental-homes-for-students-the-smart-way-to-find-your-perfect-off-campus-living",
+    "how-purple-housing-became-the-most-trusted-platform-for-students-looking-for-houses-near-tcu",
+    "how-to-secure-tcu-students-off-campus-housing-fast",
+    "best-time-to-book-tcu-off-campus-housing-for-rent",
+    "what-to-look-for-in-tcu-rental-houses-before-signing-a-lease",
     "student-guide-to-tcu-area-rentals-in-fort-worth",
     "why-tcu-off-campus-housing-is-better-than-dorm-living",
     "how-to-find-verified-tcu-rental-properties-without-getting-scammed",
@@ -62,8 +67,8 @@ export default function sitemap() {
     "purple-housing-the-ultimate-guide-to-finding-the-best-tcu-off-campus-housing-in-2026",
   ].map((slug) => ({
     url: `${baseUrl}/blogs/${slug}`,
-    lastModified: new Date("2026-04-23T06:06:40+00:00"),
-    priority: 0.8,
+    lastModified: new Date("2026-05-05T05:26:16+00:00"),
+    priority: slug.includes("complete") || slug.includes("ultimate") ? 0.64 : 0.8,
   }));
 
   const pdfFiles = [
@@ -79,7 +84,7 @@ export default function sitemap() {
     "1775807136354_dc00735c.pdf",
   ].map((file) => ({
     url: `${baseUrl}/media/property_attachments/${file}`,
-    lastModified: new Date("2026-04-15T00:00:00+00:00"),
+    lastModified: new Date("2026-05-05T05:26:16+00:00"),
     priority: 0.4,
   }));
 

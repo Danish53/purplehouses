@@ -107,8 +107,8 @@ export async function POST(request) {
           },
         ],
         application_context: {
-          return_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/api/applying/paypal/capture-order?application_id=${applicationId}`,
-          cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/applying?cancelled=1`,
+          return_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://purplehousing.com"}/api/applying/paypal/capture-order?application_id=${applicationId}`,
+          cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://purplehousing.com"}/applying?cancelled=1`,
         },
       }),
     });

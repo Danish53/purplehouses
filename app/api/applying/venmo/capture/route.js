@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { query } from "@/lib/db";
 import {
   deleteApplyingDraft,
   deleteOrderDraftLink,
@@ -6,7 +7,6 @@ import {
   loadDraftTokenByOrderId,
 } from "@/lib/applyingDraft";
 import {
-  insertFullApplication,
   sendApplyingNotificationEmail,
 } from "@/lib/applyingApplication";
 
@@ -79,8 +79,12 @@ export async function POST(request) {
       },
     );
     const orderBefore = await orderGetRes.json();
-    const customId = orderBefore.purchase_units?.[0]?.custom_id;
-    if (!orderGetRes.ok || customId !== draftToken) {
+    const customIdRaw = String(orderBefore.purchase_units?.[0]?.custom_id || "");
+    const [orderDraftToken, orderApplicationIdRaw] = customIdRaw.split(":");
+    const orderApplicationId = orderApplicationIdRaw
+      ? parseInt(orderApplicationIdRaw, 10)
+      : null;
+    if (!orderGetRes.ok || orderDraftToken !== draftToken) {
       return NextResponse.json(
         { error: "Invalid or expired PayPal order." },
         { status: 404 },
@@ -108,6 +112,14 @@ export async function POST(request) {
       !captureRes.ok ||
       !(captureStatus === "COMPLETED" || paymentsCompleted)
     ) {
+      if (orderApplicationId && !Number.isNaN(orderApplicationId)) {
+        await query(
+          `UPDATE frontend_applying
+           SET payment_status = 'failed', stripe_charge_id = ?
+           WHERE id = ?`,
+          [orderId, orderApplicationId],
+        );
+      }
       return NextResponse.json(
         {
           error:
@@ -117,34 +129,36 @@ export async function POST(request) {
       );
     }
 
-    const draft = await loadApplyingDraft(draftToken);
-    if (!draft?.fields || !draft.photoPath) {
-      await deleteApplyingDraft(draftToken);
-      await deleteOrderDraftLink(orderId);
+    if (!orderApplicationId || Number.isNaN(orderApplicationId)) {
       return NextResponse.json(
-        { error: "Application draft expired. Please contact support if you were charged." },
+        { error: "Missing linked application for this checkout." },
         { status: 400 },
       );
     }
-
-    const result = await insertFullApplication(
-      draft.fields,
-      draft.photoPath,
-      { paymentMethod: "venmo", paymentStatus: "paid" },
+    await query(
+      `UPDATE frontend_applying
+       SET payment_status = 'paid', stripe_charge_id = ?
+       WHERE id = ?`,
+      [orderId, orderApplicationId],
     );
+
+    const draft = await loadApplyingDraft(draftToken);
     await deleteApplyingDraft(draftToken);
     await deleteOrderDraftLink(orderId);
-    await sendApplyingNotificationEmail(
-      draft.fields,
-      result.insertId,
-      "venmo",
-      "paid",
-      draft.photoPath,
-    );
+
+    if (draft?.fields && draft.photoPath) {
+      await sendApplyingNotificationEmail(
+        draft.fields,
+        orderApplicationId,
+        "venmo",
+        "paid",
+        draft.photoPath,
+      );
+    }
 
     return NextResponse.json({
       status: "succeeded",
-      redirect_url: `/success?application_id=${result.insertId}`,
+      redirect_url: `/success?application_id=${orderApplicationId}`,
     });
   } catch (error) {
     console.error("Venmo capture error:", error);

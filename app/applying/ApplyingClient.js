@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Script from "next/script";
 import { STATE_CHOICES } from "@/lib/constants";
 import flatpickr from "flatpickr";
@@ -93,6 +93,7 @@ export default function ApplyingClient({
   paypalClientId,
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [form, setForm] = useState({
     property_id: "",
@@ -457,6 +458,18 @@ export default function ApplyingClient({
     return fd;
   }
 
+  function applyUsPhonePrefix(fd) {
+    const normalize = (value) => {
+      const raw = String(value || "").replace(/\D/g, "").slice(0, 10);
+      return raw ? `+1${raw}` : "";
+    };
+    fd.set("phone", normalize(form.phone));
+    fd.set("landlord_phone", normalize(form.landlord_phone));
+    fd.set("personal_phone", normalize(form.personal_phone));
+    fd.set("emergency_phone", normalize(form.emergency_phone));
+    fd.set("employer_phone", normalize(form.employer_phone));
+  }
+
   async function submitWithCard() {
     if (submitting) return;
     if (!validateAllRequiredForPayment()) return;
@@ -485,16 +498,7 @@ export default function ApplyingClient({
         return;
       }
       const fd = buildFormData();
-      const rawPhone = form.phone.replace(/\D/g, "").slice(0, 10);
-      fd.set("phone", "+1" + rawPhone);
-      const rawLandlordPhone = form.landlord_phone.replace(/\D/g, "").slice(0, 10);
-      fd.set("landlord_phone", "+1" + rawLandlordPhone);
-      const rawPersonalPhone = form.personal_phone.replace(/\D/g, "").slice(0, 10);
-      fd.set("personal_phone", "+1" + rawPersonalPhone);
-      const rawEmergencyPhone = form.emergency_phone.replace(/\D/g, "").slice(0, 10);
-      fd.set("emergency_phone", "+1" + rawEmergencyPhone);
-      const rawEmployerPhone = form.employer_phone.replace(/\D/g, "").slice(0, 10);
-      fd.set("employer_phone", "+1" + rawEmployerPhone);
+      applyUsPhonePrefix(fd);
       fd.set("payment_method", "card");
       fd.set("stripe_payment_method_id", pmResult.paymentMethod.id);
       const res = await fetch("/api/applying", { method: "POST", body: fd });
@@ -558,11 +562,15 @@ export default function ApplyingClient({
     setSdkTone("info");
     try {
       const fd = buildFormData();
+      applyUsPhonePrefix(fd);
       fd.set("payment_method", "paypal");
       const res = await fetch("/api/applying", { method: "POST", body: fd });
       const result = await res.json();
       if (!res.ok) {
-        setSdkStatus(result.error || "Payment failed");
+        setSdkStatus(
+          result.error ||
+            "PayPal checkout start nahi ho saka. Please dobara try karein.",
+        );
         setSdkTone("error");
         return;
       }
@@ -571,7 +579,9 @@ export default function ApplyingClient({
       } else if (result.status === "succeeded") {
         router.push(result.redirect_url || "/success");
       } else {
-        setSdkStatus(result.error || "Payment failed");
+        setSdkStatus(
+          result.error || "PayPal payment complete nahi hui. Please dobara try karein.",
+        );
         setSdkTone("error");
       }
     } catch (err) {
@@ -608,6 +618,7 @@ export default function ApplyingClient({
       },
       async createOrder() {
         const fd = buildFormData();
+        applyUsPhonePrefix(fd);
         fd.set("payment_method", "venmo");
         const res = await fetch("/api/applying/venmo/create", {
           method: "POST",
@@ -616,7 +627,9 @@ export default function ApplyingClient({
         const result = await res.json();
         if (!res.ok || result.status !== "created") {
           setSubmitting(false);
-          setSdkStatus(result.error || "Unable to initialize Venmo checkout.");
+          setSdkStatus(
+            result.error || "Venmo checkout initialize nahi ho saka.",
+          );
           setSdkTone("error");
           throw new Error(result.error || "Unable to initialize Venmo.");
         }
@@ -636,7 +649,9 @@ export default function ApplyingClient({
         const result = await res.json();
         if (!res.ok || result.status !== "succeeded") {
           setSubmitting(false);
-          setSdkStatus(result.error || "Unable to confirm the Venmo payment.");
+          setSdkStatus(
+            result.error || "Venmo payment confirm nahi ho saki.",
+          );
           setSdkTone("error");
           return;
         }
@@ -666,6 +681,37 @@ export default function ApplyingClient({
   }, [currentStep]);
 
   const totalSteps = 10;
+
+  useEffect(() => {
+    const err = searchParams.get("error");
+    if (!err) return;
+
+    const messageByCode = {
+      missing_checkout:
+        "Checkout details missing thay. Please dobara payment try karein.",
+      paypal_not_configured:
+        "PayPal abhi configured nahi hai. Please card ya Venmo try karein.",
+      paypal_auth_failed:
+        "PayPal authentication fail hui. Thori dair baad dobara try karein.",
+      invalid_checkout:
+        "Checkout session invalid ya expired hai. Please dobara submit karein.",
+      draft_expired:
+        "Application session expire ho gayi. Please dubara apply karein.",
+      missing_application:
+        "Application record nahi mila. Agar payment deduct hui hai to support se rabta karein.",
+      payment_failed:
+        "Payment complete nahi hui. Please dobara try karein.",
+      server_error:
+        "Server error aaya hai. Please dobara try karein.",
+    };
+
+    setCurrentStep(9);
+    setSdkTone("error");
+    setSdkStatus(
+      messageByCode[err] ||
+        "Payment process me issue aaya hai. Please dobara try karein.",
+    );
+  }, [searchParams]);
 
   return (
     <>

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { query } from "@/lib/db";
 import {
   APPLICATION_FEE_DOLLARS,
+  insertFullApplication,
   parseApplyingFormEntries,
   validateApplyingAndSavePhoto,
 } from "@/lib/applyingApplication";
@@ -74,6 +76,11 @@ export async function POST(request) {
 
     const draftToken = generateDraftToken();
     await saveApplyingDraft(draftToken, { fields, photoPath });
+    const created = await insertFullApplication(validated.fields, photoPath, {
+      paymentMethod: "venmo",
+      paymentStatus: "pending",
+    });
+    const applicationId = created.insertId;
 
     const { token, base } = await getPayPalAccessToken();
 
@@ -89,7 +96,7 @@ export async function POST(request) {
           {
             amount: { currency_code: "USD", value: APPLICATION_FEE_DOLLARS },
             description: "Rental application fee ($50)",
-            custom_id: draftToken,
+            custom_id: `${draftToken}:${applicationId}`,
           },
         ],
       }),
@@ -99,6 +106,12 @@ export async function POST(request) {
     const orderId = order.id;
 
     if (!orderRes.ok || !orderId) {
+      await query(
+        `UPDATE frontend_applying
+         SET payment_status = 'failed'
+         WHERE id = ?`,
+        [applicationId],
+      );
       await deleteApplyingDraft(draftToken);
       return NextResponse.json(
         { error: order?.message || "Failed to create PayPal order." },
@@ -112,6 +125,7 @@ export async function POST(request) {
       status: "created",
       order_id: orderId,
       draft_token: draftToken,
+      application_id: applicationId,
     });
   } catch (error) {
     console.error("Venmo create-order error:", error);

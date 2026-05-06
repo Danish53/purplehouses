@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
+import { query } from "@/lib/db";
 import {
   deleteApplyingDraft,
   deleteOrderDraftLink,
   loadApplyingDraft,
 } from "@/lib/applyingDraft";
-import {
-  insertFullApplication,
-  sendApplyingNotificationEmail,
-} from "@/lib/applyingApplication";
+import { sendApplyingNotificationEmail } from "@/lib/applyingApplication";
 
 function getPayPalClientId() {
   return (
@@ -20,8 +18,9 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const draftToken = searchParams.get("draft_token");
     const orderId = searchParams.get("token");
+    const applicationId = searchParams.get("application_id");
 
-    if (!draftToken || !orderId) {
+    if (!draftToken || !orderId || !applicationId) {
       return NextResponse.redirect(
         new URL("/applying?error=missing_checkout", request.url),
       );
@@ -61,9 +60,9 @@ export async function GET(request) {
       },
     );
     const orderBefore = await orderGetRes.json();
-    const linkedDraft = orderBefore.purchase_units?.[0]?.custom_id;
-    if (!orderGetRes.ok || linkedDraft !== draftToken) {
-      await deleteApplyingDraft(draftToken);
+    const linkedCustomId = String(orderBefore.purchase_units?.[0]?.custom_id || "");
+    const expectedCustomId = `${draftToken}:${applicationId}`;
+    if (!orderGetRes.ok || linkedCustomId !== expectedCustomId) {
       return NextResponse.redirect(
         new URL("/applying?error=invalid_checkout", request.url),
       );
@@ -82,33 +81,48 @@ export async function GET(request) {
     const captureData = await captureResponse.json();
 
     if (captureResponse.ok && captureData.status === "COMPLETED") {
-      const draft = await loadApplyingDraft(draftToken);
-      if (!draft?.fields || !draft.photoPath) {
-        await deleteApplyingDraft(draftToken);
-        await deleteOrderDraftLink(orderId);
+      const current = await query(
+        `SELECT id, payment_status
+         FROM frontend_applying
+         WHERE id = ? LIMIT 1`,
+        [applicationId],
+      );
+      if (!current?.length) {
         return NextResponse.redirect(
-          new URL("/applying?error=draft_expired", request.url),
+          new URL("/applying?error=missing_application", request.url),
         );
       }
 
-      const result = await insertFullApplication(
-        draft.fields,
-        draft.photoPath,
-        { paymentMethod: "paypal", paymentStatus: "paid" },
-      );
+      if (String(current[0].payment_status || "").toLowerCase() !== "paid") {
+        await query(
+          `UPDATE frontend_applying
+           SET payment_status = 'paid', stripe_charge_id = ?
+           WHERE id = ?`,
+          [orderId, applicationId],
+        );
+      }
+
+      const draft = await loadApplyingDraft(draftToken);
+      if (draft?.fields && draft.photoPath) {
+        await sendApplyingNotificationEmail(
+          draft.fields,
+          Number(applicationId),
+          "paypal",
+          "paid",
+          draft.photoPath,
+        );
+      }
       await deleteApplyingDraft(draftToken);
       await deleteOrderDraftLink(orderId);
-      await sendApplyingNotificationEmail(
-        draft.fields,
-        result.insertId,
-        "paypal",
-        "paid",
-        draft.photoPath,
-      );
       return NextResponse.redirect(new URL("/success", request.url));
     }
 
-    await deleteApplyingDraft(draftToken);
+    await query(
+      `UPDATE frontend_applying
+       SET payment_status = 'failed', stripe_charge_id = ?
+       WHERE id = ?`,
+      [orderId, applicationId],
+    );
     await deleteOrderDraftLink(orderId);
     return NextResponse.redirect(
       new URL("/applying?error=payment_failed", request.url),

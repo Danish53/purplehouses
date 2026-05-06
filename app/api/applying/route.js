@@ -16,6 +16,7 @@ import {
   saveOrderDraftLink,
 } from "@/lib/applyingDraft";
 import { query } from "@/lib/db";
+import prisma from "@/lib/prisma";
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -169,7 +170,7 @@ export async function POST(request) {
           payment_method: stripePaymentMethodId,
           confirmation_method: "manual",
           confirm: true, // Try to confirm immediately
-          return_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/success`,
+          return_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://purplehousing.com"}/success`,
           metadata: {
             application_id: applicationId.toString(),
             draft_token: draftToken,
@@ -238,7 +239,7 @@ export async function POST(request) {
         const applicationId = result.insertId;
 
         // Create Stripe Checkout Session
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purplehousing.com";
         const checkoutSession = await stripe.checkout.sessions.create({
           payment_method_types: ["card"],
           line_items: [
@@ -310,8 +311,15 @@ export async function POST(request) {
       }
       const accessToken = authData.access_token;
 
+      // Stripe-like flow: persist full application before redirecting to external checkout.
+      const result = await insertFullApplication(validated.fields, photoPath, {
+        paymentMethod: "paypal",
+        paymentStatus: "pending",
+      });
+      const applicationId = result.insertId;
+
       const siteUrl =
-        process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+        process.env.NEXT_PUBLIC_SITE_URL || "https://purplehousing.com";
       const orderResponse = await fetch(`${PAYPAL_API}/v2/checkout/orders`, {
         method: "POST",
         headers: {
@@ -327,17 +335,23 @@ export async function POST(request) {
                 value: APPLICATION_FEE_DOLLARS,
               },
               description: "Rental application fee ($50)",
-              custom_id: draftToken,
+              custom_id: `${draftToken}:${applicationId}`,
             },
           ],
           application_context: {
-            return_url: `${siteUrl}/api/applying/paypal/capture?draft_token=${encodeURIComponent(draftToken)}`,
+            return_url: `${siteUrl}/api/applying/paypal/capture?draft_token=${encodeURIComponent(draftToken)}&application_id=${encodeURIComponent(String(applicationId))}`,
             cancel_url: `${siteUrl}/applying`,
           },
         }),
       });
       const order = await orderResponse.json();
       if (!orderResponse.ok) {
+        await query(
+          `UPDATE frontend_applying
+           SET payment_status = 'failed'
+           WHERE id = ?`,
+          [applicationId],
+        );
         await deleteApplyingDraft(draftToken);
         return NextResponse.json(
           { error: order?.message || "Failed to create PayPal order." },
@@ -352,9 +366,16 @@ export async function POST(request) {
         return NextResponse.json({
           status: "paypal_redirect",
           redirect_url: approvalUrl,
+          application_id: applicationId,
         });
       }
 
+      await query(
+        `UPDATE frontend_applying
+         SET payment_status = 'failed'
+         WHERE id = ?`,
+        [applicationId],
+      );
       await deleteApplyingDraft(draftToken);
       return NextResponse.json(
         { error: "Failed to create PayPal order." },
