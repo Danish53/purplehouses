@@ -26,9 +26,23 @@ export default function PropertyEditClient({
   const [lat, setLat] = useState(initialLat);
   const [lng, setLng] = useState(initialLng);
   const mapRef = useRef(null);
+  const mapContainerRef = useRef(null);
   const markerRef = useRef(null);
+  const placePinRef = useRef(null);
+  const geocodeTimerRef = useRef(null);
+  const geocodeAbortRef = useRef(null);
+  const lastGeocodeQueryRef = useRef("");
+  const pendingGeocodeRef = useRef(null);
 
-  const syncMarkerToLatLng = (latStr, lngStr) => {
+  const syncMarkerToLatLng = (latStr, lngStr, zoom = null) => {
+    if (placePinRef.current) {
+      const la = parseFloat(latStr);
+      const lo = parseFloat(lngStr);
+      if (!Number.isNaN(la) && !Number.isNaN(lo)) {
+        placePinRef.current(la, lo, zoom ?? 17);
+      }
+      return;
+    }
     const la = parseFloat(latStr);
     const lo = parseFloat(lngStr);
     if (
@@ -38,61 +52,196 @@ export default function PropertyEditClient({
       !Number.isNaN(lo)
     ) {
       markerRef.current.setLatLng([la, lo]);
-      mapRef.current.setView([la, lo], Math.max(mapRef.current.getZoom(), 14));
+      mapRef.current.setView(
+        [la, lo],
+        zoom ?? Math.max(mapRef.current.getZoom(), 15),
+      );
     }
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.L && !mapRef.current) {
-      const la = parseFloat(lat) || 32.7295;
-      const lo = parseFloat(lng) || -97.3664;
-      const map = window.L.map("edit-map").setView([la, lo], 13);
-      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap contributors",
-      }).addTo(map);
-      markerRef.current = window.L.marker([la, lo], { draggable: true }).addTo(
-        map,
-      );
-      markerRef.current.on("dragend", (e) => {
-        const pos = e.target.getLatLng();
-        setLat(pos.lat.toFixed(6));
-        setLng(pos.lng.toFixed(6));
-      });
-      map.on("click", (e) => {
-        setLat(e.latlng.lat.toFixed(6));
-        setLng(e.latlng.lng.toFixed(6));
-        markerRef.current.setLatLng(e.latlng);
-      });
-      mapRef.current = map;
-    }
+    return () => {
+      if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+      if (geocodeAbortRef.current) geocodeAbortRef.current.abort();
+    };
   }, []);
 
-  const geocodeAddress = async () => {
-    const address = document.getElementById("e-address")?.value || "";
-    const city = document.getElementById("e-city")?.value || "";
-    const state = document.getElementById("e-state")?.value || "";
-    const zip = document.getElementById("e-zip")?.value || "";
-    const country = document.getElementById("e-country")?.value || "";
-    const q = [address, city, state, zip, country].filter(Boolean).join(", ");
-    if (!q.trim()) return;
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
-      );
-      const data = await res.json();
-      if (data && data.length) {
-        const la = parseFloat(data[0].lat);
-        const lo = parseFloat(data[0].lon);
-        setLat(la.toFixed(6));
-        setLng(lo.toFixed(6));
-        if (mapRef.current && markerRef.current) {
-          markerRef.current.setLatLng([la, lo]);
-          mapRef.current.setView([la, lo], 15);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let cancelled = false;
+    let intervalId = null;
+
+    function initMap() {
+      if (cancelled || mapRef.current) return true;
+      const el = mapContainerRef.current;
+      if (!el || !window.L) return false;
+
+      try {
+        const la = parseFloat(initialLat) || 32.7295;
+        const lo = parseFloat(initialLng) || -97.3664;
+        const map = window.L.map(el).setView([la, lo], 13);
+        window.L.tileLayer(
+          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          { attribution: "© OpenStreetMap contributors" },
+        ).addTo(map);
+        mapRef.current = map;
+
+        function placePin(latVal, lngVal, zoom) {
+          const m = mapRef.current;
+          if (!m || !window.L) return;
+          const pinLat = parseFloat(latVal);
+          const pinLng = parseFloat(lngVal);
+          if (Number.isNaN(pinLat) || Number.isNaN(pinLng)) return;
+          setLat(String(pinLat.toFixed(6)));
+          setLng(String(pinLng.toFixed(6)));
+          if (markerRef.current) m.removeLayer(markerRef.current);
+          markerRef.current = window.L.marker([pinLat, pinLng], {
+            draggable: true,
+          }).addTo(m);
+          markerRef.current.on("dragend", (e) => {
+            const pos = e.target.getLatLng();
+            setLat(String(Number(pos.lat).toFixed(6)));
+            setLng(String(Number(pos.lng).toFixed(6)));
+          });
+          if (zoom != null && zoom !== false) {
+            m.setView([pinLat, pinLng], zoom);
+          } else {
+            m.panTo([pinLat, pinLng]);
+            if (m.getZoom() < 14) m.setZoom(15);
+          }
         }
+
+        placePinRef.current = placePin;
+
+        map.on("click", (e) => {
+          placePin(e.latlng.lat, e.latlng.lng, false);
+        });
+
+        if (pendingGeocodeRef.current) {
+          const { la: pLat, lo: pLng } = pendingGeocodeRef.current;
+          pendingGeocodeRef.current = null;
+          placePin(pLat, pLng, 17);
+        } else {
+          placePin(la, lo, false);
+        }
+
+        requestAnimationFrame(() => {
+          if (mapRef.current) mapRef.current.invalidateSize();
+        });
+        return true;
+      } catch (e) {
+        console.error("Leaflet map init failed:", e);
+        return false;
+      }
+    }
+
+    if (initMap()) {
+      return () => {
+        cancelled = true;
+        if (mapRef.current) {
+          mapRef.current.remove();
+          mapRef.current = null;
+        }
+        markerRef.current = null;
+        placePinRef.current = null;
+      };
+    }
+
+    let attempts = 0;
+    const maxAttempts = 100;
+    intervalId = setInterval(() => {
+      if (cancelled) {
+        clearInterval(intervalId);
+        return;
+      }
+      attempts++;
+      if (initMap() || attempts >= maxAttempts) {
+        clearInterval(intervalId);
+      }
+    }, 100);
+
+    return () => {
+      cancelled = true;
+      if (intervalId) clearInterval(intervalId);
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+      markerRef.current = null;
+      placePinRef.current = null;
+    };
+  }, [initialLat, initialLng]);
+
+  const getLocationInputValue = (id) =>
+    (document.getElementById(id)?.value || "").trim();
+
+  const buildLocationQuery = () => {
+    const address = getLocationInputValue("e-address");
+    const city = getLocationInputValue("e-city");
+    const state = getLocationInputValue("e-state");
+    const zip = getLocationInputValue("e-zip");
+    const country = getLocationInputValue("e-country");
+    return [address, city, state, zip, country].filter(Boolean).join(", ");
+  };
+
+  const applyGeocodeResult = (la, lo) => {
+    if (Number.isNaN(la) || Number.isNaN(lo)) return;
+    const latStr = la.toFixed(6);
+    const lngStr = lo.toFixed(6);
+    setLat(latStr);
+    setLng(lngStr);
+    if (placePinRef.current) {
+      placePinRef.current(la, lo, 17);
+    } else {
+      pendingGeocodeRef.current = { la, lo };
+    }
+  };
+
+  const geocodeAddress = async () => {
+    const q = buildLocationQuery();
+    if (!q || q === lastGeocodeQueryRef.current) return;
+
+    try {
+      if (geocodeAbortRef.current) geocodeAbortRef.current.abort();
+      const controller = new AbortController();
+      geocodeAbortRef.current = controller;
+
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+        signal: controller.signal,
+      });
+      if (!res.ok) return;
+
+      const data = await res.json();
+      const la = parseFloat(data.lat);
+      const lo = parseFloat(data.lng);
+      if (!Number.isNaN(la) && !Number.isNaN(lo)) {
+        lastGeocodeQueryRef.current = q;
+        applyGeocodeResult(la, lo);
       }
     } catch (err) {
-      console.error("Geocoding error:", err);
+      if (err?.name !== "AbortError") {
+        console.error("Geocoding error:", err);
+      }
     }
+  };
+
+  const scheduleGeocode = () => {
+    if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+    geocodeTimerRef.current = setTimeout(() => {
+      geocodeAddress();
+    }, 800);
+  };
+
+  const handleLocationInputChange = () => {
+    lastGeocodeQueryRef.current = "";
+    scheduleGeocode();
+  };
+
+  const handleLocationBlur = () => {
+    if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+    lastGeocodeQueryRef.current = "";
+    geocodeAddress();
   };
 
   const toggleFeature = (f) => {
@@ -489,7 +638,7 @@ export default function PropertyEditClient({
                 <button
                   type="button"
                   className="btn btn-outline-primary"
-                  onClick={geocodeAddress}
+                  onClick={handleLocationBlur}
                 >
                   Update Pin From Address
                 </button>
@@ -503,6 +652,8 @@ export default function PropertyEditClient({
                     id="e-address"
                     name="property_map_address"
                     defaultValue={prop.property_map_address || ""}
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -513,6 +664,8 @@ export default function PropertyEditClient({
                     id="e-city"
                     name="city"
                     defaultValue={prop.city || ""}
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -523,6 +676,8 @@ export default function PropertyEditClient({
                     id="e-state"
                     name="administrative_area_level_1"
                     defaultValue={prop.administrative_area_level_1 || ""}
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -533,6 +688,8 @@ export default function PropertyEditClient({
                     id="e-country"
                     name="country"
                     defaultValue={prop.country || ""}
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -543,6 +700,8 @@ export default function PropertyEditClient({
                     id="e-zip"
                     name="zip_code"
                     defaultValue={prop.zip_code || ""}
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-3">
@@ -570,7 +729,8 @@ export default function PropertyEditClient({
               </div>
               <div className="mt-3">
                 <div
-                  id="edit-map"
+                  ref={mapContainerRef}
+                  className="rounded border"
                   style={{ height: "420px", borderRadius: "18px" }}
                 ></div>
               </div>

@@ -35,6 +35,7 @@ export default function ListingPage() {
   const geocodeTimerRef = useRef(null);
   const geocodeAbortRef = useRef(null);
   const lastGeocodeQueryRef = useRef("");
+  const pendingGeocodeRef = useRef(null);
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
 
@@ -83,6 +84,12 @@ export default function ListingPage() {
         }
 
         placePinRef.current = placePin;
+
+        if (pendingGeocodeRef.current) {
+          const { la, lo } = pendingGeocodeRef.current;
+          pendingGeocodeRef.current = null;
+          placePin(la, lo, 17);
+        }
 
         map.on("click", (e) => {
           placePin(e.latlng.lat, e.latlng.lng, false);
@@ -145,36 +152,46 @@ export default function ListingPage() {
   const getLocationInputValue = (id, fallback = "") =>
     (document.getElementById(id)?.value || fallback || "").trim();
 
-  const geocodeAddress = async (overrides = {}) => {
+  const buildLocationQuery = (overrides = {}) => {
     const address = (overrides.address ?? getLocationInputValue("c-address")).trim();
     const city = (overrides.city ?? getLocationInputValue("c-city")).trim();
     const state = (overrides.state ?? getLocationInputValue("c-state")).trim();
     const zip = (overrides.zip ?? getLocationInputValue("c-zip")).trim();
     const country = (overrides.country ?? getLocationInputValue("c-country")).trim();
+    return [address, city, state, zip, country].filter(Boolean).join(", ");
+  };
 
-    // Address + city/state/country required for better and more precise results.
-    if (!address || (!city && !state && !country)) return;
+  const applyGeocodeResult = (la, lo) => {
+    if (Number.isNaN(la) || Number.isNaN(lo)) return;
+    setLat(String(la.toFixed(6)));
+    setLng(String(lo.toFixed(6)));
+    if (placePinRef.current) {
+      placePinRef.current(la, lo, 17);
+    } else {
+      pendingGeocodeRef.current = { la, lo };
+    }
+  };
 
-    const q = [address, city, state, zip, country].filter(Boolean).join(", ");
+  const geocodeAddress = async (overrides = {}) => {
+    const q = buildLocationQuery(overrides);
     if (!q || q === lastGeocodeQueryRef.current) return;
-    lastGeocodeQueryRef.current = q;
 
     try {
       if (geocodeAbortRef.current) geocodeAbortRef.current.abort();
       const controller = new AbortController();
       geocodeAbortRef.current = controller;
 
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
-        { signal: controller.signal },
-      );
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+        signal: controller.signal,
+      });
+      if (!res.ok) return;
+
       const data = await res.json();
-      if (data && data.length && placePinRef.current) {
-        const la = parseFloat(data[0].lat);
-        const lo = parseFloat(data[0].lon);
-        if (!Number.isNaN(la) && !Number.isNaN(lo)) {
-          placePinRef.current(la, lo, 17);
-        }
+      const la = parseFloat(data.lat);
+      const lo = parseFloat(data.lng);
+      if (!Number.isNaN(la) && !Number.isNaN(lo)) {
+        lastGeocodeQueryRef.current = q;
+        applyGeocodeResult(la, lo);
       }
     } catch (err) {
       if (err?.name !== "AbortError") {
@@ -183,22 +200,22 @@ export default function ListingPage() {
     }
   };
 
-  const scheduleGeocode = (overrides = {}) => {
+  const scheduleGeocode = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     geocodeTimerRef.current = setTimeout(() => {
-      geocodeAddress(overrides);
-    }, 700);
+      geocodeAddress();
+    }, 800);
   };
 
-  const handleLocationInputChange = (field, value) => {
-    const map = {
-      address: "address",
-      city: "city",
-      state: "state",
-      zip: "zip",
-      country: "country",
-    };
-    scheduleGeocode({ [map[field]]: value });
+  const handleLocationInputChange = () => {
+    lastGeocodeQueryRef.current = "";
+    scheduleGeocode();
+  };
+
+  const handleLocationBlur = () => {
+    if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+    lastGeocodeQueryRef.current = "";
+    geocodeAddress();
   };
 
   const toggleFeature = (f) => {
@@ -439,12 +456,8 @@ export default function ListingPage() {
                     name="property_map_address"
                     id="c-address"
                     required
-                    onChange={(e) =>
-                      handleLocationInputChange("address", e.target.value)
-                    }
-                    onBlur={() =>
-                      geocodeAddress({ address: getLocationInputValue("c-address") })
-                    }
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -454,12 +467,8 @@ export default function ListingPage() {
                     className="form-control"
                     name="country"
                     id="c-country"
-                    onChange={(e) =>
-                      handleLocationInputChange("country", e.target.value)
-                    }
-                    onBlur={() =>
-                      geocodeAddress({ country: getLocationInputValue("c-country") })
-                    }
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -469,12 +478,8 @@ export default function ListingPage() {
                     className="form-control"
                     name="administrative_area_level_1"
                     id="c-state"
-                    onChange={(e) =>
-                      handleLocationInputChange("state", e.target.value)
-                    }
-                    onBlur={() =>
-                      geocodeAddress({ state: getLocationInputValue("c-state") })
-                    }
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -484,12 +489,8 @@ export default function ListingPage() {
                     className="form-control"
                     name="locality"
                     id="c-city"
-                    onChange={(e) =>
-                      handleLocationInputChange("city", e.target.value)
-                    }
-                    onBlur={() =>
-                      geocodeAddress({ city: getLocationInputValue("c-city") })
-                    }
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
                 <div className="col-md-6">
@@ -499,12 +500,8 @@ export default function ListingPage() {
                     className="form-control"
                     name="postal_code"
                     id="c-zip"
-                    onChange={(e) =>
-                      handleLocationInputChange("zip", e.target.value)
-                    }
-                    onBlur={() =>
-                      geocodeAddress({ zip: getLocationInputValue("c-zip") })
-                    }
+                    onChange={handleLocationInputChange}
+                    onBlur={handleLocationBlur}
                   />
                 </div>
               </div>
@@ -528,7 +525,7 @@ export default function ListingPage() {
                   <button
                     type="button"
                     className="btn btn-primary w-100 mt-3"
-                    onClick={geocodeAddress}
+                    onClick={handleLocationBlur}
                   >
                     Place the pin in address above
                   </button>

@@ -1,92 +1,125 @@
-export default function sitemap() {
-  const baseUrl = "https://purplehousing.com";
+import {
+  getPublicProperties,
+  getAllBlogs,
+  enrichProperty,
+} from "@/lib/queries";
+import { blogSlugFromTitle } from "@/lib/blogSlug";
 
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://purplehousing.com"
+).replace(/\/$/, "");
+
+const DEFAULT_LASTMOD = new Date("2026-06-15T22:31:58+00:00");
+
+function sitemapEntry(url, { lastModified = DEFAULT_LASTMOD, priority } = {}) {
+  return { url, lastModified, priority };
+}
+
+export const dynamic = "force-dynamic";
+
+export default async function sitemap() {
   const staticPages = [
-    {
-      url: `${baseUrl}/`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/applying`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/properties`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/booking`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/blogs`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
-
-    // extra pages
-    {
-      url: `${baseUrl}/iab`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/consumer-prediction`,
-      lastModified: new Date("2026-04-23T06:06:40+00:00"),
-      priority: 0.8,
-    },
+    sitemapEntry(`${BASE_URL}/`, { priority: 1.0 }),
+    sitemapEntry(`${BASE_URL}/about`, { priority: 0.8 }),
+    sitemapEntry(`${BASE_URL}/applying`, { priority: 0.8 }),
+    sitemapEntry(`${BASE_URL}/properties`, { priority: 0.8 }),
+    sitemapEntry(`${BASE_URL}/booking`, { priority: 0.8 }),
+    sitemapEntry(`${BASE_URL}/contact`, { priority: 0.8 }),
+    sitemapEntry(`${BASE_URL}/blogs`, { priority: 0.8 }),
+    sitemapEntry(`${BASE_URL}/iab`, { priority: 0.8 }),
+    sitemapEntry(`${BASE_URL}/consumer-prediction`, { priority: 0.8 }),
   ];
 
-  const blogPages = [
-    "tcu-rental-homes-for-students-the-smart-way-to-find-your-perfect-off-campus-living",
-    "how-purple-housing-became-the-most-trusted-platform-for-students-looking-for-houses-near-tcu",
-    "how-to-secure-tcu-students-off-campus-housing-fast",
-    "best-time-to-book-tcu-off-campus-housing-for-rent",
-    "what-to-look-for-in-tcu-rental-houses-before-signing-a-lease",
-    "student-guide-to-tcu-area-rentals-in-fort-worth",
-    "why-tcu-off-campus-housing-is-better-than-dorm-living",
-    "how-to-find-verified-tcu-rental-properties-without-getting-scammed",
-    "affordable-houses-for-rent-near-tcu-students-can-actually-afford",
-    "complete-guide-to-finding-houses-for-rent-near-tcu",
-    "top-areas-for-tcu-rental-homes-near-campus-in-2026",
-    "best-tcu-off-campus-housing-options-for-students-in-2026",
-    "purple-housing-the-ultimate-guide-to-finding-the-best-tcu-off-campus-housing-in-2026",
-  ].map((slug) => ({
-    url: `${baseUrl}/blogs/${slug}`,
-    lastModified: new Date("2026-05-05T05:26:16+00:00"),
-    priority: slug.includes("complete") || slug.includes("ultimate") ? 0.64 : 0.8,
-  }));
+  const propertyPages = [];
+  const applyingPages = [];
+  const bookingPages = [];
+  const pdfPages = [];
+  const paginationPages = [];
+  let blogPages = [];
 
-  const pdfFiles = [
-    "1776282038940_a1a768b4.pdf",
-    "1776282206116_ddf05b2b.pdf",
-    "1775807352705_51aec9d6.pdf",
-    "1775807352728_f6372158.pdf",
-    "1776292108617_6b98f57a.pdf",
-    "1776292216322_3565e5b8.pdf",
-    "1775807156478_566961e8.pdf",
-    "1776292485497_8c69b416.pdf",
-    "1776292590681_dd4a0644.pdf",
-    "1775807136354_dc00735c.pdf",
-  ].map((file) => ({
-    url: `${baseUrl}/media/property_attachments/${file}`,
-    lastModified: new Date("2026-05-05T05:26:16+00:00"),
-    priority: 0.4,
-  }));
+  try {
+    const properties = (await getPublicProperties()).map(enrichProperty);
+    const limit = 9;
+    const totalPages = Math.max(1, Math.ceil(properties.length / limit));
 
-  return [...staticPages, ...blogPages, ...pdfFiles];
+    for (let page = 1; page <= totalPages; page++) {
+      paginationPages.push(
+        sitemapEntry(`${BASE_URL}/properties?page=${page}`, {
+          priority: page === 1 ? 0.64 : 0.51,
+        }),
+      );
+    }
+
+    for (const prop of properties) {
+      const id = prop.id;
+      const lastModified = prop.updated_at
+        ? new Date(prop.updated_at)
+        : DEFAULT_LASTMOD;
+
+      propertyPages.push(
+        sitemapEntry(`${BASE_URL}/property/${id}`, {
+          lastModified,
+          priority: 0.8,
+        }),
+      );
+
+      applyingPages.push(
+        sitemapEntry(`${BASE_URL}/applying?property_id=${id}`, {
+          lastModified,
+          priority: 0.8,
+        }),
+      );
+
+      const bookingLabel =
+        prop.property_map_address?.trim() || prop.prop_title?.trim();
+      if (bookingLabel) {
+        bookingPages.push(
+          sitemapEntry(
+            `${BASE_URL}/booking?property=${encodeURIComponent(bookingLabel)}`,
+            { lastModified, priority: 0.64 },
+          ),
+        );
+      }
+
+      for (const att of prop.attachment_urls || []) {
+        const path = typeof att === "string" ? att : att?.url;
+        if (!path || !path.includes("/property_attachments/")) continue;
+        const fullUrl = path.startsWith("http")
+          ? path
+          : `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+        pdfPages.push(
+          sitemapEntry(fullUrl, { lastModified, priority: 0.51 }),
+        );
+      }
+    }
+  } catch (err) {
+    console.error("Sitemap properties fetch error:", err);
+  }
+
+  try {
+    const blogs = await getAllBlogs();
+    blogPages = blogs.map((blog) => {
+      const slug = blogSlugFromTitle(blog.title);
+      return sitemapEntry(`${BASE_URL}/blogs/${slug}`, { priority: 0.8 });
+    });
+  } catch (err) {
+    console.error("Sitemap blogs fetch error:", err);
+  }
+
+  const all = [
+    ...staticPages,
+    ...propertyPages,
+    ...applyingPages,
+    ...blogPages,
+    ...paginationPages,
+    ...bookingPages,
+    ...pdfPages,
+  ];
+
+  const seen = new Set();
+  return all.filter((item) => {
+    if (seen.has(item.url)) return false;
+    seen.add(item.url);
+    return true;
+  });
 }
