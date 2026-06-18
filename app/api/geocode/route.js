@@ -37,3 +37,5 @@ export async function GET(request) {
     return NextResponse.json({ error: "Geocode failed" }, { status: 500 });
   }
 }
+
+// ok
