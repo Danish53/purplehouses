@@ -267,13 +267,25 @@ export default function ApplicationsClient({ applications: initial }) {
               <span
                 style={{
                   position: "absolute",
-                  top: "10px",
-                  right: "15px",
+                  top: "8px",
+                  right: "8px",
+                  zIndex: 2,
                   cursor: "pointer",
-                  fontSize: "20px",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: "#43086b",
+                  color: "#fff",
+                  fontSize: "28px",
                   fontWeight: "bold",
+                  lineHeight: "32px",
+                  textAlign: "center",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+                  border: "2px solid #fff",
                 }}
                 onClick={() => setShowViewer(false)}
+                title="Close"
+                aria-label="Close"
               >
                 &times;
               </span>

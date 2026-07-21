@@ -40,5 +40,20 @@ export default async function ApplicationDetailPage({ params }) {
       }
     }
   }
-  return <ApplicationViewClient app={app} />;
+
+  // Same order as applications list: submitted_at DESC
+  const idRows = await query(
+    "SELECT id FROM frontend_applying ORDER BY submitted_at DESC",
+  );
+  const ids = idRows.map((r) => String(r.id));
+  const currentIndex = ids.indexOf(String(id));
+  const prevId = currentIndex > 0 ? ids[currentIndex - 1] : null;
+  const nextId =
+    currentIndex >= 0 && currentIndex < ids.length - 1
+      ? ids[currentIndex + 1]
+      : null;
+
+  return (
+    <ApplicationViewClient app={app} prevId={prevId} nextId={nextId} />
+  );
 }

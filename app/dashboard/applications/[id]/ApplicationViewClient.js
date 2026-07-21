@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export default function ApplicationViewClient({ app }) {
+export default function ApplicationViewClient({ app, prevId, nextId }) {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showViewer, setShowViewer] = useState(false);
   const [password, setPassword] = useState("");
@@ -48,12 +48,42 @@ export default function ApplicationViewClient({ app }) {
       <div className="inner">
         <div className="top d-flex align-items-center justify-content-between">
           <p className="m-0 title">Application Details</p>
-          <Link
-            href="/dashboard/applications"
-            className="btn btn-secondary btn-sm"
-          >
-            Back
-          </Link>
+          <div className="d-flex align-items-center gap-2">
+            <Link
+              href={
+                prevId
+                  ? `/dashboard/applications/${prevId}`
+                  : "/dashboard/applications"
+              }
+              className={`btn btn-outline-secondary btn-sm${prevId ? "" : " disabled"}`}
+              aria-disabled={!prevId}
+              onClick={(e) => {
+                if (!prevId) e.preventDefault();
+              }}
+            >
+              Previous
+            </Link>
+            <Link
+              href={
+                nextId
+                  ? `/dashboard/applications/${nextId}`
+                  : "/dashboard/applications"
+              }
+              className={`btn btn-outline-secondary btn-sm${nextId ? "" : " disabled"}`}
+              aria-disabled={!nextId}
+              onClick={(e) => {
+                if (!nextId) e.preventDefault();
+              }}
+            >
+              Next
+            </Link>
+            <Link
+              href="/dashboard/applications"
+              className="btn btn-secondary btn-sm"
+            >
+              Back
+            </Link>
+          </div>
         </div>
 
         <hr />
@@ -443,13 +473,25 @@ export default function ApplicationViewClient({ app }) {
               <span
                 style={{
                   position: "absolute",
-                  top: "10px",
-                  right: "15px",
+                  top: "8px",
+                  right: "8px",
+                  zIndex: 2,
                   cursor: "pointer",
-                  fontSize: "20px",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: "#43086b",
+                  color: "#fff",
+                  fontSize: "28px",
                   fontWeight: "bold",
+                  lineHeight: "32px",
+                  textAlign: "center",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+                  border: "2px solid #fff",
                 }}
                 onClick={() => setShowViewer(false)}
+                title="Close"
+                aria-label="Close"
               >
                 &times;
               </span>
