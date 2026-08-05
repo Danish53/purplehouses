@@ -152,14 +152,21 @@ export default function ListingPage() {
   const getLocationInputValue = (id, fallback = "") =>
     (document.getElementById(id)?.value || fallback || "").trim();
 
-  const buildLocationQuery = (overrides = {}) => {
-    const address = (overrides.address ?? getLocationInputValue("c-address")).trim();
-    const city = (overrides.city ?? getLocationInputValue("c-city")).trim();
-    const state = (overrides.state ?? getLocationInputValue("c-state")).trim();
-    const zip = (overrides.zip ?? getLocationInputValue("c-zip")).trim();
-    const country = (overrides.country ?? getLocationInputValue("c-country")).trim();
-    return [address, city, state, zip, country].filter(Boolean).join(", ");
-  };
+  const getLocationParts = () => ({
+    address: getLocationInputValue("c-address"),
+    city: getLocationInputValue("c-city"),
+    state: getLocationInputValue("c-state"),
+    zip: getLocationInputValue("c-zip"),
+    country: getLocationInputValue("c-country"),
+  });
+
+  const buildLocationQuery = (parts = getLocationParts()) =>
+    [parts.address, parts.city, parts.state, parts.zip, parts.country]
+      .filter(Boolean)
+      .join(", ");
+
+  const hasCoreLocationFields = (parts = getLocationParts()) =>
+    Boolean(parts.address && parts.city && parts.country && parts.zip);
 
   const applyGeocodeResult = (la, lo) => {
     if (Number.isNaN(la) || Number.isNaN(lo)) return;
@@ -172,8 +179,11 @@ export default function ListingPage() {
     }
   };
 
-  const geocodeAddress = async (overrides = {}) => {
-    const q = buildLocationQuery(overrides);
+  const geocodeAddress = async ({ requireCoreFields = false } = {}) => {
+    const parts = getLocationParts();
+    if (requireCoreFields && !hasCoreLocationFields(parts)) return;
+
+    const q = buildLocationQuery(parts);
     if (!q || q === lastGeocodeQueryRef.current) return;
 
     try {
@@ -181,7 +191,15 @@ export default function ListingPage() {
       const controller = new AbortController();
       geocodeAbortRef.current = controller;
 
-      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+      const params = new URLSearchParams();
+      params.set("q", q);
+      if (parts.address) params.set("street", parts.address);
+      if (parts.city) params.set("city", parts.city);
+      if (parts.state) params.set("state", parts.state);
+      if (parts.country) params.set("country", parts.country);
+      if (parts.zip) params.set("postalcode", parts.zip);
+
+      const res = await fetch(`/api/geocode?${params.toString()}`, {
         signal: controller.signal,
       });
       if (!res.ok) return;
@@ -203,8 +221,8 @@ export default function ListingPage() {
   const scheduleGeocode = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     geocodeTimerRef.current = setTimeout(() => {
-      geocodeAddress();
-    }, 800);
+      geocodeAddress({ requireCoreFields: true });
+    }, 500);
   };
 
   const handleLocationInputChange = () => {
@@ -215,7 +233,13 @@ export default function ListingPage() {
   const handleLocationBlur = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     lastGeocodeQueryRef.current = "";
-    geocodeAddress();
+    geocodeAddress({ requireCoreFields: true });
+  };
+
+  const handlePlacePinFromAddress = () => {
+    if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+    lastGeocodeQueryRef.current = "";
+    geocodeAddress({ requireCoreFields: false });
   };
 
   const toggleFeature = (f) => {
@@ -388,8 +412,9 @@ export default function ListingPage() {
                     type="number"
                     className="form-control"
                     name="prop_beds"
-                    min="1"
+                    min="0"
                     max="500"
+                    step="any"
                   />
                 </div>
                 <div className="col-md-6">
@@ -398,8 +423,9 @@ export default function ListingPage() {
                     type="number"
                     className="form-control"
                     name="prop_baths"
-                    min="1"
+                    min="0"
                     max="500"
+                    step="any"
                   />
                 </div>
                 <div className="col-md-6">
@@ -525,7 +551,7 @@ export default function ListingPage() {
                   <button
                     type="button"
                     className="btn btn-primary w-100 mt-3"
-                    onClick={handleLocationBlur}
+                    onClick={handlePlacePinFromAddress}
                   >
                     Place the pin in address above
                   </button>

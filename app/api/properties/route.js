@@ -143,8 +143,8 @@ export async function POST(request) {
         available_date: fields.available_date
           ? new Date(fields.available_date)
           : null,
-        prop_beds: fields.prop_beds ? parseInt(fields.prop_beds) : null,
-        prop_baths: fields.prop_baths ? parseInt(fields.prop_baths) : null,
+        prop_beds: fields.prop_beds ? parseFloat(fields.prop_beds) : null,
+        prop_baths: fields.prop_baths ? parseFloat(fields.prop_baths) : null,
         prop_size: fields.prop_size || "",
         prop_year_built: fields.prop_year_built || "",
         prop_features: JSON.stringify(fields.prop_features || []),
@@ -294,10 +294,10 @@ export async function PUT(request) {
           ? new Date(fields.available_date)
           : existing.available_date,
         prop_beds: fields.prop_beds
-          ? parseInt(fields.prop_beds)
+          ? parseFloat(fields.prop_beds)
           : existing.prop_beds,
         prop_baths: fields.prop_baths
-          ? parseInt(fields.prop_baths)
+          ? parseFloat(fields.prop_baths)
           : existing.prop_baths,
         prop_size: fields.prop_size || existing.prop_size,
         prop_year_built: fields.prop_year_built || existing.prop_year_built,

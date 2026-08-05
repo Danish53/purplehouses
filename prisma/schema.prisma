@@ -257,8 +257,8 @@ model Property {
   category                    String?   @db.VarChar(255)
   purpose                     String?   @db.VarChar(255)
   prop_price                  String    @db.VarChar(50)
-  prop_beds                   Int?
-  prop_baths                  Int?
+  prop_beds                   Float?
+  prop_baths                  Float?
   prop_size                   String    @db.VarChar(50)
   prop_year_built             String?   @db.VarChar(10)
   prop_features               String    @db.LongText

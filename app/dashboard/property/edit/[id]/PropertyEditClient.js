@@ -176,14 +176,21 @@ export default function PropertyEditClient({
   const getLocationInputValue = (id) =>
     (document.getElementById(id)?.value || "").trim();
 
-  const buildLocationQuery = () => {
-    const address = getLocationInputValue("e-address");
-    const city = getLocationInputValue("e-city");
-    const state = getLocationInputValue("e-state");
-    const zip = getLocationInputValue("e-zip");
-    const country = getLocationInputValue("e-country");
-    return [address, city, state, zip, country].filter(Boolean).join(", ");
-  };
+  const getLocationParts = () => ({
+    address: getLocationInputValue("e-address"),
+    city: getLocationInputValue("e-city"),
+    state: getLocationInputValue("e-state"),
+    zip: getLocationInputValue("e-zip"),
+    country: getLocationInputValue("e-country"),
+  });
+
+  const buildLocationQuery = (parts = getLocationParts()) =>
+    [parts.address, parts.city, parts.state, parts.zip, parts.country]
+      .filter(Boolean)
+      .join(", ");
+
+  const hasCoreLocationFields = (parts = getLocationParts()) =>
+    Boolean(parts.address && parts.city && parts.country && parts.zip);
 
   const applyGeocodeResult = (la, lo) => {
     if (Number.isNaN(la) || Number.isNaN(lo)) return;
@@ -198,8 +205,11 @@ export default function PropertyEditClient({
     }
   };
 
-  const geocodeAddress = async () => {
-    const q = buildLocationQuery();
+  const geocodeAddress = async ({ requireCoreFields = false } = {}) => {
+    const parts = getLocationParts();
+    if (requireCoreFields && !hasCoreLocationFields(parts)) return;
+
+    const q = buildLocationQuery(parts);
     if (!q || q === lastGeocodeQueryRef.current) return;
 
     try {
@@ -207,7 +217,15 @@ export default function PropertyEditClient({
       const controller = new AbortController();
       geocodeAbortRef.current = controller;
 
-      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+      const params = new URLSearchParams();
+      params.set("q", q);
+      if (parts.address) params.set("street", parts.address);
+      if (parts.city) params.set("city", parts.city);
+      if (parts.state) params.set("state", parts.state);
+      if (parts.country) params.set("country", parts.country);
+      if (parts.zip) params.set("postalcode", parts.zip);
+
+      const res = await fetch(`/api/geocode?${params.toString()}`, {
         signal: controller.signal,
       });
       if (!res.ok) return;
@@ -229,8 +247,8 @@ export default function PropertyEditClient({
   const scheduleGeocode = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     geocodeTimerRef.current = setTimeout(() => {
-      geocodeAddress();
-    }, 800);
+      geocodeAddress({ requireCoreFields: true });
+    }, 500);
   };
 
   const handleLocationInputChange = () => {
@@ -241,7 +259,13 @@ export default function PropertyEditClient({
   const handleLocationBlur = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     lastGeocodeQueryRef.current = "";
-    geocodeAddress();
+    geocodeAddress({ requireCoreFields: true });
+  };
+
+  const handlePlacePinFromAddress = () => {
+    if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+    lastGeocodeQueryRef.current = "";
+    geocodeAddress({ requireCoreFields: false });
   };
 
   const toggleFeature = (f) => {
@@ -585,6 +609,9 @@ export default function PropertyEditClient({
                     type="number"
                     className="form-control"
                     name="prop_beds"
+                    min="0"
+                    max="500"
+                    step="any"
                     defaultValue={prop.prop_beds || ""}
                   />
                 </div>
@@ -594,6 +621,9 @@ export default function PropertyEditClient({
                     type="number"
                     className="form-control"
                     name="prop_baths"
+                    min="0"
+                    max="500"
+                    step="any"
                     defaultValue={prop.prop_baths || ""}
                   />
                 </div>
@@ -638,7 +668,7 @@ export default function PropertyEditClient({
                 <button
                   type="button"
                   className="btn btn-outline-primary"
-                  onClick={handleLocationBlur}
+                  onClick={handlePlacePinFromAddress}
                 >
                   Update Pin From Address
                 </button>
