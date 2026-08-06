@@ -22,23 +22,54 @@ function buildStoredFilename(originalName, subdir, mimeType = "") {
 async function saveFiles(files, subdir) {
   const paths = [];
   const dir = path.join(process.cwd(), "public", "media", subdir);
-  await mkdir(dir, { recursive: true });
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch (err) {
+    console.error(`mkdir failed for ${dir}:`, err);
+    throw new Error(
+      `Cannot create media folder (${subdir}). Check server folder permissions.`,
+    );
+  }
+
   // Videos need a higher limit than images/attachments
   const maxBytes =
     subdir === "property_videos" ? 100 * 1024 * 1024 : 20 * 1024 * 1024;
+  const maxLabel = subdir === "property_videos" ? "100MB" : "20MB";
+
   for (const file of files) {
-    if (file instanceof File && file.size > 0) {
-      // Allow images in image dirs, any file type for attachments
-      if (subdir === "property_images" && !file.type.startsWith("image/"))
-        continue;
-      if (subdir === "property_videos" && file.type && !file.type.startsWith("video/"))
-        continue;
-      if (file.size > maxBytes) continue;
+    if (!(file instanceof File) || file.size <= 0) continue;
+
+    // Allow images in image dirs, any file type for attachments
+    if (subdir === "property_images" && !file.type.startsWith("image/")) {
+      continue;
+    }
+    if (
+      subdir === "property_videos" &&
+      file.type &&
+      !file.type.startsWith("video/")
+    ) {
+      throw new Error("Please upload a valid video file.");
+    }
+    if (file.size > maxBytes) {
+      throw new Error(
+        `File "${file.name}" is too large. Max allowed is ${maxLabel}.`,
+      );
+    }
+
+    try {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const filename = buildStoredFilename(file.name, subdir, file.type);
       await writeFile(path.join(dir, filename), buffer);
       paths.push(`${subdir}/${filename}`);
+    } catch (err) {
+      console.error(`writeFile failed in ${subdir}:`, err);
+      if (err?.code === "EACCES" || err?.code === "EPERM") {
+        throw new Error(
+          `Server cannot write to media/${subdir}. Fix folder ownership/permissions.`,
+        );
+      }
+      throw new Error(`Failed to save file "${file.name}" on server.`);
     }
   }
   return paths;
@@ -186,10 +217,14 @@ export async function POST(request) {
     return NextResponse.json({ success: true, id: Number(row.id) });
   } catch (error) {
     console.error("Add property error:", error);
-    return NextResponse.json(
-      { error: "Failed to add property." },
-      { status: 500 },
-    );
+    const msg =
+      error?.message &&
+      /media|video|too large|write|folder|permission|valid video/i.test(
+        error.message,
+      )
+        ? error.message
+        : "Failed to add property.";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
@@ -353,10 +388,14 @@ export async function PUT(request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Update property error:", error);
-    return NextResponse.json(
-      { error: "Failed to update property." },
-      { status: 500 },
-    );
+    const msg =
+      error?.message &&
+      /media|video|too large|write|folder|permission|valid video/i.test(
+        error.message,
+      )
+        ? error.message
+        : "Failed to update property.";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
