@@ -189,9 +189,6 @@ export default function PropertyEditClient({
       .filter(Boolean)
       .join(", ");
 
-  const hasCoreLocationFields = (parts = getLocationParts()) =>
-    Boolean(parts.address && parts.city && parts.country && parts.zip);
-
   const applyGeocodeResult = (la, lo) => {
     if (Number.isNaN(la) || Number.isNaN(lo)) return;
     const latStr = la.toFixed(6);
@@ -205,27 +202,18 @@ export default function PropertyEditClient({
     }
   };
 
-  const geocodeAddress = async ({ requireCoreFields = false } = {}) => {
+  const geocodeAddress = async () => {
     const parts = getLocationParts();
-    if (requireCoreFields && !hasCoreLocationFields(parts)) return;
-
+    // Full address often typed in one field, e.g. "3141 mccart ave, fort worth, tx 76110"
     const q = buildLocationQuery(parts);
-    if (!q || q === lastGeocodeQueryRef.current) return;
+    if (!parts.address || !q || q === lastGeocodeQueryRef.current) return;
 
     try {
       if (geocodeAbortRef.current) geocodeAbortRef.current.abort();
       const controller = new AbortController();
       geocodeAbortRef.current = controller;
 
-      const params = new URLSearchParams();
-      params.set("q", q);
-      if (parts.address) params.set("street", parts.address);
-      if (parts.city) params.set("city", parts.city);
-      if (parts.state) params.set("state", parts.state);
-      if (parts.country) params.set("country", parts.country);
-      if (parts.zip) params.set("postalcode", parts.zip);
-
-      const res = await fetch(`/api/geocode?${params.toString()}`, {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
         signal: controller.signal,
       });
       if (!res.ok) return;
@@ -247,8 +235,8 @@ export default function PropertyEditClient({
   const scheduleGeocode = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     geocodeTimerRef.current = setTimeout(() => {
-      geocodeAddress({ requireCoreFields: true });
-    }, 500);
+      geocodeAddress();
+    }, 600);
   };
 
   const handleLocationInputChange = () => {
@@ -259,13 +247,13 @@ export default function PropertyEditClient({
   const handleLocationBlur = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     lastGeocodeQueryRef.current = "";
-    geocodeAddress({ requireCoreFields: true });
+    geocodeAddress();
   };
 
   const handlePlacePinFromAddress = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     lastGeocodeQueryRef.current = "";
-    geocodeAddress({ requireCoreFields: false });
+    geocodeAddress();
   };
 
   const toggleFeature = (f) => {
@@ -830,11 +818,29 @@ export default function PropertyEditClient({
                   name="video_file"
                   accept="video/*"
                 />
+                <p className="small text-muted mt-1 mb-0">
+                  Max 100 MB. Leave empty to keep the current video.
+                </p>
               </div>
               {prop.video_file && (
-                <video width="360" controls className="rounded border">
-                  <source src={`/media/${prop.video_file}`} type="video/mp4" />
-                </video>
+                <div className="mt-2">
+                  <p className="small mb-2">
+                    Current video:{" "}
+                    <strong>
+                      {String(prop.video_file).split("/").pop()}
+                    </strong>
+                  </p>
+                  <video
+                    width="360"
+                    controls
+                    className="rounded border"
+                    key={prop.video_file}
+                  >
+                    <source
+                      src={`/media/${String(prop.video_file).replace(/^\/?media\//, "")}`}
+                    />
+                  </video>
+                </div>
               )}
             </div>
 

@@ -165,9 +165,6 @@ export default function ListingPage() {
       .filter(Boolean)
       .join(", ");
 
-  const hasCoreLocationFields = (parts = getLocationParts()) =>
-    Boolean(parts.address && parts.city && parts.country && parts.zip);
-
   const applyGeocodeResult = (la, lo) => {
     if (Number.isNaN(la) || Number.isNaN(lo)) return;
     setLat(String(la.toFixed(6)));
@@ -179,27 +176,19 @@ export default function ListingPage() {
     }
   };
 
-  const geocodeAddress = async ({ requireCoreFields = false } = {}) => {
+  const geocodeAddress = async () => {
     const parts = getLocationParts();
-    if (requireCoreFields && !hasCoreLocationFields(parts)) return;
-
+    // Full address often typed in one field, e.g. "3141 mccart ave, fort worth, tx 76110"
     const q = buildLocationQuery(parts);
-    if (!q || q === lastGeocodeQueryRef.current) return;
+    if (!parts.address || !q || q === lastGeocodeQueryRef.current) return;
 
     try {
       if (geocodeAbortRef.current) geocodeAbortRef.current.abort();
       const controller = new AbortController();
       geocodeAbortRef.current = controller;
 
-      const params = new URLSearchParams();
-      params.set("q", q);
-      if (parts.address) params.set("street", parts.address);
-      if (parts.city) params.set("city", parts.city);
-      if (parts.state) params.set("state", parts.state);
-      if (parts.country) params.set("country", parts.country);
-      if (parts.zip) params.set("postalcode", parts.zip);
-
-      const res = await fetch(`/api/geocode?${params.toString()}`, {
+      // Prefer free-text search so a single address line geocodes correctly
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
         signal: controller.signal,
       });
       if (!res.ok) return;
@@ -221,8 +210,8 @@ export default function ListingPage() {
   const scheduleGeocode = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     geocodeTimerRef.current = setTimeout(() => {
-      geocodeAddress({ requireCoreFields: true });
-    }, 500);
+      geocodeAddress();
+    }, 600);
   };
 
   const handleLocationInputChange = () => {
@@ -233,13 +222,13 @@ export default function ListingPage() {
   const handleLocationBlur = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     lastGeocodeQueryRef.current = "";
-    geocodeAddress({ requireCoreFields: true });
+    geocodeAddress();
   };
 
   const handlePlacePinFromAddress = () => {
     if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
     lastGeocodeQueryRef.current = "";
-    geocodeAddress({ requireCoreFields: false });
+    geocodeAddress();
   };
 
   const toggleFeature = (f) => {

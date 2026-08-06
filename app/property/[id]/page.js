@@ -42,6 +42,8 @@ export default async function PropertyDetailsPage({ params }) {
     lng: row.longitude || row.lng || "",
     available_date: formatDisplayDate(enrichedRow.available_date),
     created_at: formatDisplayDate(row.created_at),
+    video_file: row.video_file || "",
+    youtube_url: row.youtube_url || "",
   };
 
   return (

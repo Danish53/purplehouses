@@ -70,6 +70,16 @@ export default function PropertyDetailsClient({
     property.featured === true ||
     property.featured === 1 ||
     property.featured === "1";
+
+  const videoSrc = property.video_file
+    ? `/media/${String(property.video_file).replace(/^\/?media\//, "")}`
+    : "";
+  const youtubeMatch = String(property.youtube_url || "").match(
+    /(?:v=|\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+  );
+  const youtubeEmbedUrl = youtubeMatch
+    ? `https://www.youtube.com/embed/${youtubeMatch[1]}`
+    : "";
   // Fixed thumbnails: always images[1..4], regardless of active index
   const fixedThumbIndexes = [];
   for (let i = 1; i <= 4 && i < images.length; i++) {
@@ -387,6 +397,33 @@ export default function PropertyDetailsClient({
                 </div>
               </div>
             </div>
+
+            {/* PROPERTY VIDEO */}
+            {(youtubeEmbedUrl || videoSrc) && (
+              <div className="pd-card">
+                <div className="pd-card__header">
+                  <h2>Property Video</h2>
+                </div>
+                <div className="pd-card__body">
+                  <div className="pd-video-wrap">
+                    {youtubeEmbedUrl && (
+                      <iframe
+                        src={youtubeEmbedUrl}
+                        title="Property YouTube video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    )}
+                    {videoSrc && (
+                      <video controls className={youtubeEmbedUrl ? "mt-3" : ""}>
+                        <source src={videoSrc} />
+                        Your browser does not support the video tag.
+                      </video>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* AMENITIES & FEATURES */}
             {features.length > 0 && (

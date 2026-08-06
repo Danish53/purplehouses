@@ -6,11 +6,15 @@ import path from "path";
 import crypto from "crypto";
 
 /** Short, unique names — avoids very long URLs / odd chars on Linux + nginx. */
-function buildStoredFilename(originalName, subdir) {
+function buildStoredFilename(originalName, subdir, mimeType = "") {
   let ext = path.extname(originalName || "").toLowerCase();
   if (!ext || !/^\.[a-z0-9]{1,12}$/i.test(ext)) {
     if (subdir === "property_images") ext = ".jpg";
-    else ext = ".bin";
+    else if (subdir === "property_videos") {
+      if (String(mimeType).includes("webm")) ext = ".webm";
+      else if (String(mimeType).includes("quicktime")) ext = ".mov";
+      else ext = ".mp4";
+    } else ext = ".bin";
   }
   return `${Date.now()}_${crypto.randomBytes(4).toString("hex")}${ext}`;
 }
@@ -19,15 +23,20 @@ async function saveFiles(files, subdir) {
   const paths = [];
   const dir = path.join(process.cwd(), "public", "media", subdir);
   await mkdir(dir, { recursive: true });
+  // Videos need a higher limit than images/attachments
+  const maxBytes =
+    subdir === "property_videos" ? 100 * 1024 * 1024 : 20 * 1024 * 1024;
   for (const file of files) {
     if (file instanceof File && file.size > 0) {
       // Allow images in image dirs, any file type for attachments
       if (subdir === "property_images" && !file.type.startsWith("image/"))
         continue;
-      if (file.size > 20 * 1024 * 1024) continue; // 20 MB limit per file
+      if (subdir === "property_videos" && file.type && !file.type.startsWith("video/"))
+        continue;
+      if (file.size > maxBytes) continue;
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const filename = buildStoredFilename(file.name, subdir);
+      const filename = buildStoredFilename(file.name, subdir, file.type);
       await writeFile(path.join(dir, filename), buffer);
       paths.push(`${subdir}/${filename}`);
     }
@@ -107,7 +116,7 @@ export async function POST(request) {
     for (const [key, value] of formData.entries()) {
       if (key === "gallery_images" && value instanceof File) {
         galleryFiles.push(value);
-      } else if (key === "video_file" && value instanceof File) {
+      } else if (key === "video_file" && value instanceof File && value.size > 0) {
         videoFiles.push(value);
       } else if (key === "attachments" && value instanceof File) {
         attachmentFiles.push(value);
