@@ -11,7 +11,7 @@ const nextConfig = {
   experimental: {
     // Allow larger property video uploads via API formData
     serverActions: {
-      bodySizeLimit: "100mb",
+      bodySizeLimit: "150mb",
     },
   },
 };

@@ -45,7 +45,7 @@ export default function PropertyMap({ markers = [] }) {
               <strong>${m.title || ""}</strong>
               <span>${m.address || ""}</span>
               <span>$${m.price || ""}</span>
-              <a href="/property/${m.id}/">View Details</a>
+              <a href="${m.url || `/property/${m.id}/`}">View Details</a>
             </div>
           `);
       });

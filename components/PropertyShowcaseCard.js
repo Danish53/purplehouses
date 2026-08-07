@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
+import { propertyDetailPath } from "@/lib/propertySlug";
 
 function formatAvailableDate(d) {
   if (!d) return null;
@@ -53,6 +54,8 @@ export default function PropertyShowcaseCard({
     formatPropertyCardAddress(property) || property.property_map_address;
   const galleryCount = gallery.length;
 
+  const detailHref = propertyDetailPath(property);
+
   return (
     <div className={`ph-showcase-wrap ${columnClass} d-flex relative`}>
       <div className="w-100">
@@ -69,7 +72,7 @@ export default function PropertyShowcaseCard({
         </div>
 
         <Link
-          href={`/property/${property.id}`}
+          href={detailHref}
           className="ph-showcase-card__hit"
           aria-label={`View details: ${headline}`}
         />
@@ -140,7 +143,7 @@ export default function PropertyShowcaseCard({
       </article>
       <div className="d-flex justify-content-between mt-2">
       <Link
-                href={`/property/${property.id}`}
+                href={detailHref}
                 className="ph-showcase-card__apply"
                 onClick={(e) => e.stopPropagation()}
               >

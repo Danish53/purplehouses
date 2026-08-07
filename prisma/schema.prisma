@@ -253,6 +253,7 @@ model frontend_customuser {
 model Property {
   id                          BigInt    @id @default(autoincrement())
   prop_title                  String    @db.VarChar(255)
+  slug                        String?   @unique @db.VarChar(255)
   prop_des                    String?   @db.LongText
   category                    String?   @db.VarChar(255)
   purpose                     String?   @db.VarChar(255)

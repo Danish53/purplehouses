@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import { enrichProperty, getPropertyById } from "@/lib/queries";
+import { enrichProperty, getPropertyBySlug } from "@/lib/queries";
 import PropertyDetailsClient from "./PropertyDetailsClient";
 import { notFound } from "next/navigation";
 
@@ -11,8 +11,8 @@ function formatDisplayDate(value) {
 }
 
 export default async function PropertyDetailsPage({ params }) {
-  const { id } = await params;
-  const row = await getPropertyById(id);
+  const { id: slugOrId } = await params;
+  const row = await getPropertyBySlug(slugOrId);
   if (!row) return notFound();
   const enrichedRow = enrichProperty(row);
 
@@ -22,6 +22,7 @@ export default async function PropertyDetailsPage({ params }) {
 
   const property = {
     id: row.id,
+    slug: row.slug || "",
     prop_title: row.prop_title,
     prop_des: row.prop_des,
     prop_price: row.prop_price,
@@ -44,6 +45,7 @@ export default async function PropertyDetailsPage({ params }) {
     created_at: formatDisplayDate(row.created_at),
     video_file: row.video_file || "",
     youtube_url: row.youtube_url || "",
+    featured_image: Number(row.featured_image) || 0,
   };
 
   return (

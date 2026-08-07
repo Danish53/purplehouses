@@ -9,6 +9,7 @@ import {
   showingApprovedCustomerEmail,
   showingDeclinedCustomerEmail,
 } from "@/lib/emailTemplates";
+import { propertyDetailPath } from "@/lib/propertySlug";
 
 export async function POST(request) {
   try {
@@ -46,8 +47,8 @@ export async function POST(request) {
         ? String(propRow.status).replace(/_/g, " ").toUpperCase()
         : "ACTIVE";
       const statusPipeId = propId ? `${listingStatus} | ${propId}` : listingStatus;
-      const propertyPath = propRow?.id
-        ? `${siteBase}/property/${propRow.id}`
+      const propertyPath = propRow
+        ? `${siteBase}${propertyDetailPath(propRow)}`
         : `${siteBase}/`;
       const rawImg = propRow?.primary_image_url || "/images/1.jpg";
       const property_image_url = /^https?:\/\//i.test(rawImg)

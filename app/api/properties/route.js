@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
+import { ensureUniquePropertySlug } from "@/lib/ensurePropertySlug";
 
 /** Short, unique names — avoids very long URLs / odd chars on Linux + nginx. */
 function buildStoredFilename(originalName, subdir, mimeType = "") {
@@ -33,8 +34,8 @@ async function saveFiles(files, subdir) {
 
   // Videos need a higher limit than images/attachments
   const maxBytes =
-    subdir === "property_videos" ? 100 * 1024 * 1024 : 20 * 1024 * 1024;
-  const maxLabel = subdir === "property_videos" ? "100MB" : "20MB";
+    subdir === "property_videos" ? 150 * 1024 * 1024 : 20 * 1024 * 1024;
+  const maxLabel = subdir === "property_videos" ? "150MB" : "20MB";
 
   for (const file of files) {
     if (!(file instanceof File) || file.size <= 0) continue;
@@ -173,9 +174,12 @@ export async function POST(request) {
       );
     }
 
+    const slug = await ensureUniquePropertySlug(fields.prop_title || "");
+
     const row = await prisma.Property.create({
       data: {
         prop_title: fields.prop_title || "",
+        slug,
         prop_des: fields.prop_des || "",
         category: fields.category || "",
         purpose: fields.purpose || "",
@@ -326,10 +330,18 @@ export async function PUT(request) {
         ? String(lngRaw).trim()
         : String(existing.lng ?? "");
 
+    const nextTitle = fields.prop_title || existing.prop_title;
+    const slug =
+      !existing.slug ||
+      String(nextTitle).trim() !== String(existing.prop_title || "").trim()
+        ? await ensureUniquePropertySlug(nextTitle, id)
+        : existing.slug;
+
     await prisma.Property.update({
       where: { id: BigInt(id) },
       data: {
-        prop_title: fields.prop_title || existing.prop_title,
+        prop_title: nextTitle,
+        slug,
         prop_des: fields.prop_des ?? existing.prop_des,
         category: fields.category || existing.category,
         purpose: fields.purpose || existing.purpose,

@@ -28,7 +28,14 @@ export default function PropertyDetailsClient({
 }) {
   // Gallery
   const images = galleryImages.length ? galleryImages : ["/images/1.jpg"];
-  const [activeIdx, setActiveIdx] = useState(0);
+  const initialFeatured = Number(property.featured_image);
+  const startingIdx =
+    Number.isInteger(initialFeatured) &&
+    initialFeatured >= 0 &&
+    initialFeatured < images.length
+      ? initialFeatured
+      : 0;
+  const [activeIdx, setActiveIdx] = useState(startingIdx);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const prevImage = useCallback(

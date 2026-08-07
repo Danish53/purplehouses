@@ -819,7 +819,7 @@ export default function PropertyEditClient({
                   accept="video/*"
                 />
                 <p className="small text-muted mt-1 mb-0">
-                  Max 100 MB. Leave empty to keep the current video.
+                  Max 150 MB. Leave empty to keep the current video.
                 </p>
               </div>
               {prop.video_file && (

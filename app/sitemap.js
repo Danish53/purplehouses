@@ -4,6 +4,7 @@ import {
   enrichProperty,
 } from "@/lib/queries";
 import { blogSlugFromTitle } from "@/lib/blogSlug";
+import { propertyDetailPath } from "@/lib/propertySlug";
 
 const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://purplehousing.com"
@@ -57,7 +58,7 @@ export default async function sitemap() {
         : DEFAULT_LASTMOD;
 
       propertyPages.push(
-        sitemapEntry(`${BASE_URL}/property/${id}`, {
+        sitemapEntry(`${BASE_URL}${propertyDetailPath(prop)}`, {
           lastModified,
           priority: 0.8,
         }),

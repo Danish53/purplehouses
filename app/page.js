@@ -7,6 +7,7 @@ import {
   enrichBlog,
 } from "@/lib/queries";
 import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
+import { propertyDetailPath } from "@/lib/propertySlug";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,7 @@ export default async function HomePage() {
           price: p.prop_price,
           lat,
           lng,
-          url: `/property/${p.id}/`,
+          url: propertyDetailPath(p),
         };
       })
       .filter(Boolean);
