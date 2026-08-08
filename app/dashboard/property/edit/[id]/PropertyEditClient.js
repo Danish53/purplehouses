@@ -319,6 +319,7 @@ export default function PropertyEditClient({
     fd.append("featured_image", featuredIndex);
     fd.append("prop_featured", form.prop_featured.value);
     fd.append("youtube_url", form.youtube_url.value);
+    fd.append("matterport_url", form.matterport_url?.value || "");
     fd.append("existing_gallery", JSON.stringify(existingImages));
     fd.append("removed_gallery", JSON.stringify(removedImages));
     fd.append("existing_attachments", JSON.stringify(existingAttachments));
@@ -808,6 +809,16 @@ export default function PropertyEditClient({
                   className="form-control"
                   name="youtube_url"
                   defaultValue={prop.youtube_url || ""}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Virtual Walkthrough Link</label>
+                <input
+                  type="url"
+                  className="form-control"
+                  name="matterport_url"
+                  defaultValue={prop.matterport_url || ""}
+                  placeholder="https://my.matterport.com/show/?m=..."
                 />
               </div>
               <div className="mb-3">

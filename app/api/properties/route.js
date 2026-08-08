@@ -207,6 +207,7 @@ export async function POST(request) {
         gallery_images: JSON.stringify(galleryPaths),
         video_file: videoPaths[0] || null,
         youtube_url: fields.youtube_url || "",
+        matterport_url: fields.matterport_url || "",
         attachments: JSON.stringify(attachmentPaths),
         featured: fields.featured === "1" || fields.featured === "true",
         featured_image: fields.featured_image
@@ -386,6 +387,10 @@ export async function PUT(request) {
           fields.youtube_url !== undefined
             ? fields.youtube_url
             : existing.youtube_url,
+        matterport_url:
+          fields.matterport_url !== undefined
+            ? fields.matterport_url
+            : existing.matterport_url,
         attachments: JSON.stringify(attachmentPaths),
         featured:
           fields.featured === "1" ||

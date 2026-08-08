@@ -285,6 +285,7 @@ export default function ListingPage() {
     fd.append("featured_image", featuredIndex);
     fd.append("featured", form.prop_featured.value);
     fd.append("youtube_url", form.youtube_url.value);
+    fd.append("matterport_url", form.matterport_url?.value || "");
 
     if (galleryFiles.length === 0) {
       alert("Please add at least one property image.");
@@ -661,6 +662,7 @@ export default function ListingPage() {
                 className="form-control mb-2"
                 placeholder="YouTube Video Link (optional)"
               />
+              
               <input
                 type="file"
                 name="video_file"
@@ -668,6 +670,13 @@ export default function ListingPage() {
                 className="form-control"
               />
             </div>
+
+            <input
+                type="url"
+                name="matterport_url"
+                className="form-control mb-2"
+                placeholder="Virtual Walkthrough Link (optional)"
+              />
 
             {/* Settings */}
             <div className="dashboard-content-block-wrap active p-4 bg-light rounded mb-4">

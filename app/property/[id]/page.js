@@ -45,6 +45,7 @@ export default async function PropertyDetailsPage({ params }) {
     created_at: formatDisplayDate(row.created_at),
     video_file: row.video_file || "",
     youtube_url: row.youtube_url || "",
+    matterport_url: row.matterport_url || "",
     featured_image: Number(row.featured_image) || 0,
   };
 

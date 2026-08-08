@@ -282,6 +282,7 @@ model Property {
   attachments                 String    @db.LongText
   video_file                  String?   @db.VarChar(255)
   youtube_url                 String?   @db.VarChar(200)
+  matterport_url              String?   @db.VarChar(500)
   available_date              DateTime? @db.Date
 }
 

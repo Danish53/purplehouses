@@ -454,7 +454,25 @@ export default function PropertyDetailsClient({
               </div>
             )}
 
-            
+            {/* VIRTUAL WALKTHROUGH */}
+            {property.matterport_url && (
+              <div className="pd-card pd-walkthrough">
+                <div className="pd-card__header">
+                  <h2>Virtual Walkthrough</h2>
+                </div>
+                <div className="pd-card__body p-0">
+                  <div className="pd-walkthrough__stage">
+                    <iframe
+                      className="pd-walkthrough__iframe"
+                      src={property.matterport_url}
+                      title={`${property.prop_title || "Property"} Virtual Walkthrough`}
+                      allow="xr-spatial-tracking; gyroscope; accelerometer"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* FLOOR PLANS */}
             {floorPlans.length > 0 && (
