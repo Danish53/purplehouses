@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { friendlyFeatureLabel, friendlyLabel } from "@/lib/constants";
+import { toDateOnlyInputValue } from "@/lib/dateOnly";
 
 export default function PropertyEditClient({
   prop,
@@ -350,11 +351,10 @@ export default function PropertyEditClient({
     }
   };
 
-  const availableDate = prop.available_date
-    ? new Date(prop.available_date).toISOString().split("T")[0]
-    : prop.created_at
-      ? new Date(prop.created_at).toISOString().split("T")[0]
-      : "";
+  const availableDate =
+    toDateOnlyInputValue(prop.available_date) ||
+    toDateOnlyInputValue(prop.created_at) ||
+    "";
 
   return (
     <div className="dashboardHome">

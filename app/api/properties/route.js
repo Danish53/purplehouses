@@ -5,6 +5,7 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 import { ensureUniquePropertySlug } from "@/lib/ensurePropertySlug";
+import { parseDateOnly } from "@/lib/dateOnly";
 
 /** Short, unique names — avoids very long URLs / odd chars on Linux + nginx. */
 function buildStoredFilename(originalName, subdir, mimeType = "") {
@@ -185,7 +186,7 @@ export async function POST(request) {
         purpose: fields.purpose || "",
         prop_price: fields.prop_price || "0",
         available_date: fields.available_date
-          ? new Date(fields.available_date)
+          ? parseDateOnly(fields.available_date)
           : null,
         prop_beds: fields.prop_beds ? parseFloat(fields.prop_beds) : null,
         prop_baths: fields.prop_baths ? parseFloat(fields.prop_baths) : null,
@@ -348,7 +349,7 @@ export async function PUT(request) {
         purpose: fields.purpose || existing.purpose,
         prop_price: fields.prop_price || existing.prop_price,
         available_date: fields.available_date
-          ? new Date(fields.available_date)
+          ? parseDateOnly(fields.available_date)
           : existing.available_date,
         prop_beds: fields.prop_beds
           ? parseFloat(fields.prop_beds)

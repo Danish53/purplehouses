@@ -2,12 +2,10 @@ export const dynamic = "force-dynamic";
 import { enrichProperty, getPropertyBySlug } from "@/lib/queries";
 import PropertyDetailsClient from "./PropertyDetailsClient";
 import { notFound } from "next/navigation";
+import { formatDateOnlyUS } from "@/lib/dateOnly";
 
 function formatDisplayDate(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-US");
+  return formatDateOnlyUS(value);
 }
 
 export default async function PropertyDetailsPage({ params }) {

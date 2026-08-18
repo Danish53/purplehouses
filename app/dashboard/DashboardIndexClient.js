@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { formatDateOnlyUS } from "@/lib/dateOnly";
 
 export default function DashboardIndexClient({ properties }) {
   const [props, setProps] = useState(properties);
@@ -38,7 +39,7 @@ export default function DashboardIndexClient({ properties }) {
 
   const formatDate = (d) => {
     if (!d) return "—";
-    return new Date(d).toLocaleDateString("en-US");
+    return formatDateOnlyUS(d) || "—";
   };
 
   return (

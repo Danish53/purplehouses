@@ -7,6 +7,7 @@ import {
   friendlyLabel,
   friendlyFeatureLabel,
 } from "@/lib/constants";
+import { todayDateOnlyInputValue } from "@/lib/dateOnly";
 
 const PURPOSE_OPTIONS = [
   "For_Rent",
@@ -386,7 +387,7 @@ export default function ListingPage() {
                     type="date"
                     className="form-control"
                     name="available_date"
-                    defaultValue={new Date().toISOString().split("T")[0]}
+                    defaultValue={todayDateOnlyInputValue()}
                   />
                 </div>
               </div>

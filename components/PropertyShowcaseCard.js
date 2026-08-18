@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { formatPropertyCardAddress } from "@/lib/formatPropertyCardAddress";
 import { propertyDetailPath } from "@/lib/propertySlug";
+import { formatDateOnlyUS } from "@/lib/dateOnly";
 
 function formatAvailableDate(d) {
   if (!d) return null;
-  const date = new Date(d);
-  if (Number.isNaN(date.getTime())) return null;
-  return `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}/${date.getFullYear()}`;
+  const formatted = formatDateOnlyUS(d);
+  if (!formatted) return null;
+  const [month, day, year] = formatted.split("/");
+  return `${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}/${year}`;
 }
 
 function shortPurposeLabel(purpose) {
