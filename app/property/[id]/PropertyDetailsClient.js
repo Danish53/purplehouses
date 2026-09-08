@@ -142,6 +142,11 @@ export default function PropertyDetailsClient({
                 <span className="pd-gallery__badge pd-gallery__badge--purpose">
                   {purposeLabel}
                 </span>
+                {property.category && (
+                  <span className="pd-gallery__badge pd-gallery__badge--purpose">
+                    {property.category.replace(/_/g, " ")}
+                  </span>
+                )}
               </div>
               <button
                 className="pd-gallery__arrow pd-gallery__arrow--prev"
@@ -310,6 +315,11 @@ export default function PropertyDetailsClient({
                   <span className="pd-hero-badge pd-hero-badge--purpose">
                     {purposeLabel}
                   </span>
+                  {property.category && (
+                    <span className="pd-hero-badge pd-hero-badge--purpose">
+                      {property.category.replace(/_/g, " ")}
+                    </span>
+                  )}
                 </div>
                 <div className="pd-hero-info__price">
                   <span className="pd-hero-info__price-amount">
