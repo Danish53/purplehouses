@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { friendlyFeatureLabel, friendlyLabel } from "@/lib/constants";
 import { toDateOnlyInputValue } from "@/lib/dateOnly";
+import { optimizePropertyImages } from "@/lib/clientImageCompression";
 
 export default function PropertyEditClient({
   prop,
@@ -15,6 +17,7 @@ export default function PropertyEditClient({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState("");
   const [features, setFeatures] = useState(propFeatures);
   const [existingImages, setExistingImages] = useState(galleryImages);
   const [removedImages, setRemovedImages] = useState([]);
@@ -326,8 +329,6 @@ export default function PropertyEditClient({
     fd.append("existing_attachments", JSON.stringify(existingAttachments));
     fd.append("removed_attachments", JSON.stringify(removedAttachments));
 
-    newFiles.forEach((f) => fd.append("gallery_images", f));
-
     const videoFile = form.video_file?.files?.[0];
     if (videoFile) fd.append("video_file", videoFile);
 
@@ -337,6 +338,13 @@ export default function PropertyEditClient({
     }
 
     try {
+      if (newFiles.length > 0) {
+        setSubmitStatus("Optimizing images...");
+        const optimizedNewFiles = await optimizePropertyImages(newFiles);
+        optimizedNewFiles.forEach((file) => fd.append("gallery_images", file));
+      }
+
+      setSubmitStatus("Uploading...");
       const res = await fetch("/api/properties", { method: "PUT", body: fd });
       const data = await res.json();
       if (data.success) {
@@ -348,6 +356,7 @@ export default function PropertyEditClient({
       alert("Error updating property.");
     } finally {
       setLoading(false);
+      setSubmitStatus("");
     }
   };
 
@@ -391,8 +400,12 @@ export default function PropertyEditClient({
                       overflow: "hidden",
                     }}
                   >
-                    <img
+                    <Image
                       src={`/media/${img}`}
+                      width={170}
+                      height={150}
+                      sizes="170px"
+                      quality={72}
                       style={{
                         width: "100%",
                         height: "150px",
@@ -897,7 +910,7 @@ export default function PropertyEditClient({
                 className="btn btn-primary"
                 disabled={loading}
               >
-                {loading ? "Updating..." : "Update Property"}
+                {loading ? submitStatus || "Updating..." : "Update Property"}
               </button>
             </div>
           </div>

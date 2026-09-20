@@ -22,6 +22,9 @@ function buildStoredFilename(originalName, subdir, mimeType = "") {
 }
 
 async function saveFiles(files, subdir) {
+  // Metadata-only updates must not touch the media filesystem at all.
+  if (!files || files.length === 0) return [];
+
   const paths = [];
   const dir = path.join(process.cwd(), "public", "media", subdir);
   try {

@@ -8,6 +8,7 @@ import {
   friendlyFeatureLabel,
 } from "@/lib/constants";
 import { todayDateOnlyInputValue } from "@/lib/dateOnly";
+import { optimizePropertyImages } from "@/lib/clientImageCompression";
 
 const PURPOSE_OPTIONS = [
   "For_Rent",
@@ -23,6 +24,7 @@ const PURPOSE_OPTIONS = [
 export default function ListingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState("");
   const [features, setFeatures] = useState([]);
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [featuredIndex, setFeaturedIndex] = useState(0);
@@ -293,8 +295,6 @@ export default function ListingPage() {
       setLoading(false);
       return;
     }
-    galleryFiles.forEach((f) => fd.append("gallery_images", f));
-
     const videoFile = form.video_file?.files?.[0];
     if (videoFile) fd.append("video_file", videoFile);
 
@@ -304,6 +304,13 @@ export default function ListingPage() {
     }
 
     try {
+      setSubmitStatus("Optimizing images...");
+      const optimizedGalleryFiles = await optimizePropertyImages(galleryFiles);
+      optimizedGalleryFiles.forEach((file) =>
+        fd.append("gallery_images", file),
+      );
+
+      setSubmitStatus("Uploading...");
       const res = await fetch("/api/properties", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
@@ -315,6 +322,7 @@ export default function ListingPage() {
       alert("Error submitting property.");
     } finally {
       setLoading(false);
+      setSubmitStatus("");
     }
   };
 
@@ -719,7 +727,7 @@ export default function ListingPage() {
                 className="btn btn-primary"
                 disabled={loading}
               >
-                {loading ? "Submitting..." : "Submit Property"}
+                {loading ? submitStatus || "Submitting..." : "Submit Property"}
               </button>
             </div>
           </div>
