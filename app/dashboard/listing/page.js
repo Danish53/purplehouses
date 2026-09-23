@@ -9,6 +9,7 @@ import {
 } from "@/lib/constants";
 import { todayDateOnlyInputValue } from "@/lib/dateOnly";
 import { optimizePropertyImages } from "@/lib/clientImageCompression";
+import { uploadPropertyImages } from "@/lib/uploadPropertyImages";
 
 const PURPOSE_OPTIONS = [
   "For_Rent",
@@ -306,11 +307,19 @@ export default function ListingPage() {
     try {
       setSubmitStatus("Optimizing images...");
       const optimizedGalleryFiles = await optimizePropertyImages(galleryFiles);
-      optimizedGalleryFiles.forEach((file) =>
-        fd.append("gallery_images", file),
+      const uploadedGallery = await uploadPropertyImages(
+        optimizedGalleryFiles,
+        {
+          onProgress: ({ percent, uploaded, total }) => {
+            setSubmitStatus(
+              `Uploading images... ${percent}% (${uploaded}/${total})`,
+            );
+          },
+        },
       );
+      fd.append("uploaded_gallery", JSON.stringify(uploadedGallery));
 
-      setSubmitStatus("Uploading...");
+      setSubmitStatus("Saving property...");
       const res = await fetch("/api/properties", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
@@ -318,8 +327,8 @@ export default function ListingPage() {
       } else {
         alert(data.error || "Failed to create property.");
       }
-    } catch {
-      alert("Error submitting property.");
+    } catch (error) {
+      alert(error?.message || "Error submitting property.");
     } finally {
       setLoading(false);
       setSubmitStatus("");

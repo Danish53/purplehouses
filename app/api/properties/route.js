@@ -90,6 +90,12 @@ function parseStoredJsonArray(value, fallback = []) {
   }
 }
 
+function parseUploadedGallery(fields) {
+  return parseStoredJsonArray(fields.uploaded_gallery, [])
+    .map((value) => String(value || "").trim())
+    .filter((value) => /^property_images\/[a-zA-Z0-9._-]+$/.test(value));
+}
+
 /** Merge client-sent existing paths (after user removed some) with newly uploaded files. */
 function parseExistingGalleryFromForm(fields, dbGalleryJson) {
   const raw = fields.existing_gallery;
@@ -164,7 +170,12 @@ export async function POST(request) {
       }
     }
 
-    const galleryPaths = await saveFiles(galleryFiles, "property_images");
+    const uploadedGallery = parseUploadedGallery(fields);
+    const requestGalleryPaths = await saveFiles(
+      galleryFiles,
+      "property_images",
+    );
+    const galleryPaths = [...uploadedGallery, ...requestGalleryPaths];
     const videoPaths = await saveFiles(videoFiles, "property_videos");
     const attachmentPaths = await saveFiles(
       attachmentFiles,
@@ -290,11 +301,16 @@ export async function PUT(request) {
       fields,
       existing.gallery_images,
     );
+    const uploadedGallery = parseUploadedGallery(fields);
     const newGalleryPaths = await saveFiles(
       galleryFiles,
       "property_images",
     );
-    const galleryPaths = [...keptGallery, ...newGalleryPaths];
+    const galleryPaths = [
+      ...keptGallery,
+      ...uploadedGallery,
+      ...newGalleryPaths,
+    ];
 
     const videoPaths =
       videoFiles.length > 0

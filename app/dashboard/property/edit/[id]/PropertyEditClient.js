@@ -5,6 +5,7 @@ import Image from "next/image";
 import { friendlyFeatureLabel, friendlyLabel } from "@/lib/constants";
 import { toDateOnlyInputValue } from "@/lib/dateOnly";
 import { optimizePropertyImages } from "@/lib/clientImageCompression";
+import { uploadPropertyImages } from "@/lib/uploadPropertyImages";
 
 export default function PropertyEditClient({
   prop,
@@ -341,10 +342,20 @@ export default function PropertyEditClient({
       if (newFiles.length > 0) {
         setSubmitStatus("Optimizing images...");
         const optimizedNewFiles = await optimizePropertyImages(newFiles);
-        optimizedNewFiles.forEach((file) => fd.append("gallery_images", file));
+        const uploadedGallery = await uploadPropertyImages(
+          optimizedNewFiles,
+          {
+            onProgress: ({ percent, uploaded, total }) => {
+              setSubmitStatus(
+                `Uploading images... ${percent}% (${uploaded}/${total})`,
+              );
+            },
+          },
+        );
+        fd.append("uploaded_gallery", JSON.stringify(uploadedGallery));
       }
 
-      setSubmitStatus("Uploading...");
+      setSubmitStatus("Saving property...");
       const res = await fetch("/api/properties", { method: "PUT", body: fd });
       const data = await res.json();
       if (data.success) {
@@ -352,8 +363,8 @@ export default function PropertyEditClient({
       } else {
         alert(data.error || "Failed to update property.");
       }
-    } catch {
-      alert("Error updating property.");
+    } catch (error) {
+      alert(error?.message || "Error updating property.");
     } finally {
       setLoading(false);
       setSubmitStatus("");
@@ -401,11 +412,11 @@ export default function PropertyEditClient({
                     }}
                   >
                     <Image
-                      src={`/media/${img}`}
+                      src={`/media/${String(img).replace(/^\/?media\//, '')}`}
                       width={170}
                       height={150}
                       sizes="170px"
-                      quality={72}
+                      unoptimized
                       style={{
                         width: "100%",
                         height: "150px",
