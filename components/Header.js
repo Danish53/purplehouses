@@ -76,8 +76,8 @@ export default function Header() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className={`nav-link${pathname === "/properties" ? " active" : ""}`} href="/properties">
-                  All Properties
+                <Link className={`nav-link${pathname === "/properties" || pathname.startsWith("/move-in") ? " active" : ""}`} href="/move-in">
+                  Properties
                 </Link>
               </li>
               <li className="nav-item">

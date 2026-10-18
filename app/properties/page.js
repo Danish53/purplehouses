@@ -72,6 +72,7 @@ import {
   enrichProperty,
   getSortedProperties,
 } from "@/lib/queries";
+import { getMoveInGroups } from "@/lib/moveIn";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "All Properties - Purple Housing" };
@@ -91,6 +92,13 @@ export default async function PropertiesPage({ searchParams }) {
   let properties = [];
   let total = 0;
   let filterOptions = { cities: [], categories: [], purposes: [] };
+  let moveInYears = [];
+
+  try {
+    moveInYears = (await getMoveInGroups()).map((g) => g.year);
+  } catch (err) {
+    console.error("Move-in years fetch error:", err);
+  }
 
   try {
     let result;
@@ -131,6 +139,7 @@ export default async function PropertiesPage({ searchParams }) {
       page={page}
       filters={{ q, priceRange, beds, baths, homeType, sort }}
       filterOptions={filterOptions}
+      moveInYears={moveInYears}
     />
   );
 }

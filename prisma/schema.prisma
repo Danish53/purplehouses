@@ -284,6 +284,7 @@ model Property {
   youtube_url                 String?   @db.VarChar(200)
   matterport_url              String?   @db.VarChar(500)
   available_date              DateTime? @db.Date
+  sort_order                  Int       @default(0)
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

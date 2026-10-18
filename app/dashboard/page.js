@@ -4,7 +4,16 @@ import { enrichDashboardProperty } from "@/lib/queries";
 import DashboardIndexClient from "./DashboardIndexClient";
 
 export default async function DashboardPage() {
-  const rows = await query("SELECT * FROM Property ORDER BY created_at DESC");
+  // sort_order = manual drag order (ties / unset keep newest first)
+  let rows;
+  try {
+    rows = await query(
+      "SELECT * FROM Property ORDER BY sort_order ASC, created_at DESC",
+    );
+  } catch {
+    // sort_order column not added yet (run: npx prisma db push)
+    rows = await query("SELECT * FROM Property ORDER BY created_at DESC");
+  }
 
   const properties = rows.map((p) => {
     const enriched = enrichDashboardProperty(p);

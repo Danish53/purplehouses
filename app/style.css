@@ -6804,3 +6804,213 @@ li#h_area {
     margin-top: 5px;
   }
 }
+
+/* -- Move-in year sections (/move-in) -- */
+/* same hero look as the other pages, trimmed so there is no empty gap below it */
+.ph-movein-page {
+  padding-bottom: 0;
+}
+
+.ph-movein-page .ph-page-hero {
+  min-height: 0;
+}
+
+.ph-movein-page .ph-page-hero__inner {
+  padding: 60px 24px 50px;
+}
+
+.ph-movein-page .ph-page-hero__content {
+  width: calc(100% - 48px);
+  max-width: 1400px;
+  margin: 24px auto 0;
+}
+
+.ph-movein-section {
+  margin-bottom: 28px;
+}
+
+/* lavender strip only behind the heading; cards sit outside it */
+.ph-movein-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #f1ecfb;
+  border: 1px solid #e4dbf6;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+
+.ph-movein-title {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(22px, 2.8vw, 32px);
+  font-weight: 700;
+  color: #1c1230;
+}
+
+.ph-movein-title span {
+  color: var(--ph-theme, #43086b);
+}
+
+.ph-movein-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #5b5470;
+}
+
+.ph-movein-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ph-movein-count {
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #e2d8f6;
+  color: #43086b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ph-movein-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  background: var(--ph-theme, #43086b);
+  color: #fff !important;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  transition: background 0.2s ease;
+}
+
+.ph-movein-btn:hover {
+  background: var(--ph-theme-dark, #2f064a);
+}
+
+.ph-movein-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px 56px;
+  flex-wrap: wrap;
+  background: #ece6fb;
+  border-radius: 8px;
+  padding: 22px 28px;
+  margin-bottom: 24px;
+}
+
+/* text block stays left-aligned; whole group is centered */
+.ph-movein-cta > div {
+  text-align: left;
+}
+
+.ph-movein-cta h3 {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #14091f;
+}
+
+.ph-movein-cta p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #4a4360;
+}
+
+.ph-movein-cta .ph-movein-btn {
+  padding: 12px 22px;
+  min-width: 156px;
+  justify-content: center;
+  background: #3b0764;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(59, 7, 100, 0.3);
+}
+
+.ph-movein-cta .ph-movein-btn:hover {
+  background: #2d0550;
+}
+
+@media (max-width: 991px) {
+  .ph-movein-head__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 767px) {
+  .ph-movein-page .ph-page-hero__content {
+    width: calc(100% - 24px);
+    margin-top: 16px;
+  }
+  .ph-movein-head,
+  .ph-movein-cta {
+    padding: 12px;
+  }
+  .ph-movein-cta {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .ph-movein-cta > div {
+    text-align: center;
+  }
+  .ph-movein-cta .ph-movein-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .ph-movein-head__actions .ph-movein-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .ph-movein-cta h3 {
+    font-size: 18px;
+  }
+}
+
+/* Move-in year dropdown on /properties */
+.ph-year-select select {
+  min-height: 45px;
+  min-width: 150px;
+  padding: 8px 36px 8px 14px;
+  border: 1px solid #c8c8c8;
+  border-radius: 6px;
+  background-color: #fff;
+  color: var(--ph-theme, #43086b);
+  font: 600 13px/20px "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.ph-year-select select:focus {
+  outline: none;
+  border-color: #43086b;
+  box-shadow: 0 0 0 2px rgba(67, 8, 107, 0.15);
+}
+
+/* "Available MM/DD/YYYY" tag: solid purple badge in the card's top-right corner */
+.ph-showcase-card__avail.ph-showcase-card__gallery-ic {
+  top: 0;
+  right: 0;
+  height: auto;
+  margin: 0;
+  padding: 9px 16px;
+  background: var(--ph-theme-dark, #3b0764);
+  border-radius: 0 4px 0 8px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+  white-space: nowrap;
+  filter: none;
+}

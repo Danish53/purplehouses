@@ -8,6 +8,46 @@ export default function DashboardIndexClient({ properties }) {
   const [page, setPage] = useState(1);
   const perPage = 10;
 
+  // Reorder mode: all properties in one list, drag rows, then save
+  const [reorderMode, setReorderMode] = useState(false);
+  const [order, setOrder] = useState([]);
+  const [dragIndex, setDragIndex] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  const startReorder = () => {
+    setOrder(props);
+    setReorderMode(true);
+  };
+
+  const handleDrop = (dropIndex) => {
+    if (dragIndex === null || dragIndex === dropIndex) return;
+    const next = [...order];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(dropIndex, 0, moved);
+    setOrder(next);
+    setDragIndex(null);
+  };
+
+  const saveOrder = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/properties/reorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: order.map((p) => p.id) }),
+      });
+      if (res.ok) {
+        setProps(order);
+        setReorderMode(false);
+        setPage(1);
+      } else {
+        alert("Could not save the order. Please try again.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const totalPages = Math.ceil(props.length / perPage);
   const paginated = props.slice((page - 1) * perPage, page * perPage);
 
@@ -47,6 +87,37 @@ export default function DashboardIndexClient({ properties }) {
       <div className="inner">
         <div className="top d-flex align-items-center justify-content-between">
           <p className="m-0 title">Properties</p>
+          <div className="d-flex align-items-center gap-2">
+          {reorderMode ? (
+            <>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setReorderMode(false)}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn"
+                style={{ background: "#43086b", color: "white", fontWeight: "bold" }}
+                onClick={saveOrder}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save order"}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={startReorder}
+              disabled={props.length < 2}
+            >
+              <i className="fas fa-arrows-alt-v me-1" /> Reorder
+            </button>
+          )}
           <Link
             href="/dashboard/listing"
             style={{
@@ -60,10 +131,58 @@ export default function DashboardIndexClient({ properties }) {
           >
             Create a Listing
           </Link>
+          </div>
         </div>
 
         <hr />
 
+        {reorderMode ? (
+          <div>
+            <p className="text-muted small">
+              Drag a row up or down, then press &quot;Save order&quot;.
+            </p>
+            {order.map((prop, i) => (
+              <div
+                key={prop.id}
+                draggable
+                onDragStart={() => setDragIndex(i)}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => handleDrop(i)}
+                onDragEnd={() => setDragIndex(null)}
+                className="d-flex align-items-center gap-3 border rounded p-2 mb-2 bg-white"
+                style={{
+                  cursor: "grab",
+                  opacity: dragIndex === i ? 0.4 : 1,
+                }}
+              >
+                <i className="fas fa-grip-vertical text-muted" />
+                <span className="fw-bold" style={{ width: 28 }}>
+                  {i + 1}
+                </span>
+                <img
+                  src={
+                    prop.primary_image_url ||
+                    (Array.isArray(prop.gallery_urls) && prop.gallery_urls[0]) ||
+                    "/images/1.jpg"
+                  }
+                  width="70"
+                  height="52"
+                  style={{ objectFit: "cover", borderRadius: 4 }}
+                  alt=""
+                  draggable={false}
+                />
+                <div className="flex-grow-1">
+                  <div className="fw-bold">{prop.prop_title}</div>
+                  <div className="small text-muted">
+                    {prop.property_map_address}
+                  </div>
+                </div>
+                <strong>{prop.prop_price}</strong>
+              </div>
+            ))}
+          </div>
+        ) : (
+        <>
         <table className="table align-middle">
           <thead>
             <tr>
@@ -217,6 +336,8 @@ export default function DashboardIndexClient({ properties }) {
               </li>
             </ul>
           </nav>
+        )}
+        </>
         )}
       </div>
     </div>
